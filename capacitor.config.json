@@ -1,0 +1,6 @@
+{
+  "appId": "com.example.app",
+  "appName": "missRiin-client",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
