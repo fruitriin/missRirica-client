@@ -13,7 +13,7 @@
     "@capacitor/core": "^4.5.0",
     "@capacitor/ios": "^4.5.0",
     "@capacitor/push-notifications": "^4.1.2",
-    "firebase": "^9.14.0",
+    "onesignal-cordova-plugin": "^3.2.0",
     "vue": "^3.2.41"
   },
   "devDependencies": {

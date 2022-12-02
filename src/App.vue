@@ -4,25 +4,27 @@
 import HelloWorld from './components/HelloWorld.vue'
 
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
 import { PushNotifications } from '@capacitor/push-notifications';
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCSMtIGHiynM8NjH_gF8Ze3V2Lwc9YIgxs",
-  authDomain: "missriin.firebaseapp.com",
-  projectId: "missriin",
-  storageBucket: "missriin.appspot.com",
-  messagingSenderId: "574411188297",
-  appId: "1:574411188297:web:4af349d8e876a6042c3798"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
+// import OneSignal from 'onesignal-cordova-plugin'
+//
+//
+// // Call this function when your app starts
+// function OneSignalInit() {
+//   // Uncomment to set OneSignal device logging to VERBOSE
+//   // OneSignal.setLogLevel(6, 0);
+//
+//   // NOTE: Update the setAppId value below with your OneSignal AppId.
+//   OneSignal.setAppId();
+//   OneSignal.setNotificationOpenedHandler(function(jsonData) {
+//     console.log('notificationOpenedCallback: ' + JSON.stringify(jsonData));
+//   });
+//
+//   // Prompts the user for notification permissions.
+//   //    * Since this shows a generic native prompt, we recommend instead using an In-App Message to prompt for notification permission (See step 7) to better communicate to your users what notifications they will get.
+//   OneSignal.promptForPushNotificationsWithUserResponse(function(accepted) {
+//     console.log("User accepted notifications: " + accepted);
+//   });
+// }
 
 const addListeners = async () => {
   await PushNotifications.addListener('registration', token => {
@@ -43,16 +45,22 @@ const addListeners = async () => {
 }
 
 const registerNotifications = async () => {
-  let permStatus = await PushNotifications.checkPermissions();
 
-  if (permStatus.receive === 'prompt') {
-    permStatus = await PushNotifications.requestPermissions();
-  }
+  setTimeout(async () => {
 
-  if (permStatus.receive !== 'granted') {
-    throw new Error('User denied permissions!');
-  }
-  await PushNotifications.register();
+    let permStatus = await PushNotifications.checkPermissions();
+
+    if (permStatus.receive === 'prompt') {
+      permStatus = await PushNotifications.requestPermissions();
+    }
+
+    if (permStatus.receive !== 'granted') {
+      throw new Error('User denied permissions!');
+    }
+    await PushNotifications.register();
+    console.log('register')
+
+  }, 3000)
 }
 addListeners()
 registerNotifications()
