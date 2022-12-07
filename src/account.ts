@@ -86,7 +86,7 @@ function fetchAccount(token: string): Promise<Account> {
 		window.fetch(`${apiUrl}/i`, {
 			method: 'POST',
 			body: JSON.stringify({
-				i: token,
+				i: 'STxuH4R5TDE7SrlEUjxNqZj1gW2XCbhi',
 			}),
 			headers: {
 				'Content-Type': 'application/json',

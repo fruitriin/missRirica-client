@@ -8,5 +8,5 @@ export function char2fileName(char: string): string {
 }
 
 export function char2filePath(char: string): string {
-	return `${twemojiSvgBase}/${char2fileName(char)}.svg`;
+	return `https://misskey.io/${twemojiSvgBase}/${char2fileName(char)}.svg`;
 }

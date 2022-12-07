@@ -113,6 +113,7 @@ import { getAccountFromId } from '@/scripts/get-account-from-id';
     //#endregion
 
     //#region Fetch user
+    console.info($i)
     if ($i && $i.token) {
         if (_DEV_) {
             console.log('account cache found. refreshing...');

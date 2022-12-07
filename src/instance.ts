@@ -13,6 +13,7 @@ export const instance: Misskey.entities.InstanceMetadata = reactive(instanceData
 });
 
 export async function fetchInstance() {
+
 	const meta = await api('meta', {
 		detail: false
 	});
