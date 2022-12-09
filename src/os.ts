@@ -9,6 +9,7 @@ import MkPostFormDialog from '@/components/MkPostFormDialog.vue';
 import MkWaitingDialog from '@/components/MkWaitingDialog.vue';
 import { MenuItem } from '@/types/menu';
 import { $i } from '@/account';
+import { Endpoints} from "misskey-js";
 
 export const pendingApiRequestsCount = ref(0);
 
@@ -17,11 +18,11 @@ const apiClient = new Misskey.api.APIClient({
 	credential: import.meta.env.VITE_DEV_MISKEY_TOKEN,
 });
 
-export const api = ((endpoint: string, data: Record<string, any> = {}) => {
+export const api = ((endpoint: keyof Endpoints, data: Record<string, any> = {}) => {
 	return apiClient.request(endpoint, data)
 }) as typeof apiClient.request;
 
-export const apiGet = ((endpoint: string, data: Record<string, any> = {}) => {
+export const apiGet = ((endpoint: keyof Endpoints, data: Record<string, any> = {}) => {
 	pendingApiRequestsCount.value++;
 
 	const onFinally = () => {
@@ -51,7 +52,7 @@ export const apiGet = ((endpoint: string, data: Record<string, any> = {}) => {
 }) as typeof apiClient.request;
 
 export const apiWithDialog = ((
-	endpoint: string,
+	endpoint: keyof Endpoints,
 	data: Record<string, any> = {},
 	token?: string | null | undefined,
 ) => {

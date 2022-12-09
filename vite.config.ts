@@ -14,15 +14,18 @@ export default defineConfig({
   plugins: [
       vue({reactivityTransform: true}),
     pluginJson5(),
-    tsconfigPaths(),],
-
+    tsconfigPaths(),
+  ],
   resolve: {
     extensions,
     alias: {
       '@/': __dirname + '/src/',
-      // '/client-assets/': __dirname + '/assets/',
+      '/client-assets/': __dirname + '/src/assets/',
       // '/static-assets/': __dirname + '/../backend/assets/',
     },
+  },
+  build: {
+    outDir: "dist"
   },
 
   define: {

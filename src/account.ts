@@ -3,9 +3,11 @@ import * as misskey from 'misskey-js';
 import { showSuspendedDialog } from './scripts/show-suspended-dialog';
 import { i18n } from './i18n';
 import { del, get, set } from '@/scripts/idb-proxy';
-import { apiUrl } from '@/config';
+import {apiUrl, url} from '@/config';
 import { waiting, api, popup, popupMenu, success, alert } from '@/os';
 import { unisonReload, reloadChannel } from '@/scripts/unison-reload';
+import {APIClient} from "misskey-js/built/api";
+import * as Misskey from "misskey-js";
 
 // TODO: 他のタブと永続化されたstateを同期
 
@@ -81,38 +83,30 @@ export async function removeAccount(id: Account['id']) {
 }
 
 function fetchAccount(token: string): Promise<Account> {
-	return new Promise((done, fail) => {
-		// Fetch user
-		window.fetch(`${apiUrl}/i`, {
-			method: 'POST',
-			body: JSON.stringify({
-				i: 'STxuH4R5TDE7SrlEUjxNqZj1gW2XCbhi',
-			}),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		})
-			.then(res => res.json())
-			.then(res => {
-				if (res.error) {
-					if (res.error.id === 'a8c724b3-6e9c-4b46-b1a8-bc3ed6258370') {
-						showSuspendedDialog().then(() => {
-							signout();
-						});
-					} else {
-						alert({
-							type: 'error',
-							title: i18n.ts.failedToFetchAccountInformation,
-							text: JSON.stringify(res.error),
-						});
-					}
-				} else {
-					res.token = token;
-					done(res);
-				}
-			})
-			.catch(fail);
+
+	const apiClient = new Misskey.api.APIClient({
+		origin: url,
+		credential: token,
 	});
+	return apiClient.request('i').then(res => {
+		res.token = token
+		return res as Account
+	}).catch(err => {
+		if (err.id === 'a8c724b3-6e9c-4b46-b1a8-bc3ed6258370') {
+			showSuspendedDialog().then(() => {
+				signout();
+			});
+		} else {
+			alert({
+				type: 'error',
+				title: i18n.ts.failedToFetchAccountInformation,
+				text: JSON.stringify(err),
+			});
+		}
+		return Promise.reject()
+		}
+	)
+
 }
 
 export function updateAccount(accountData) {

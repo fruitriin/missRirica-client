@@ -32,6 +32,7 @@ import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import { $i } from '@/account';
 import { definePageMetadata } from '@/scripts/page-metadata';
+import {PushNotifications} from "@capacitor/push-notifications";
 
 const XTutorial = defineAsyncComponent(() => import('./timeline.tutorial.vue'));
 
@@ -152,6 +153,52 @@ definePageMetadata(computed(() => ({
 	title: i18n.ts.timeline,
 	icon: src === 'local' ? 'fas fa-comments' : src === 'social' ? 'fas fa-share-alt' : src === 'global' ? 'fas fa-globe' : 'fas fa-home',
 })));
+
+
+const addListeners = async () => {
+  await PushNotifications.addListener('registration', token => {
+    console.info('Registration token: ', token.value);
+  });
+
+  await PushNotifications.addListener('registrationError', err => {
+    console.error('Registration error: ', err.error);
+  });
+
+  await PushNotifications.addListener('pushNotificationReceived', notification => {
+    console.log('Push notification received: ', notification);
+  });
+
+  await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
+    console.log('Push notification action performed', notification.actionId, notification.inputValue);
+  });
+}
+
+const registerNotifications = async () => {
+
+  setTimeout(async () => {
+
+    let permStatus = await PushNotifications.checkPermissions();
+
+    if (permStatus.receive === 'prompt') {
+      permStatus = await PushNotifications.requestPermissions();
+    }
+
+    if (permStatus.receive !== 'granted') {
+      throw new Error('User denied permissions!');
+    }
+    await PushNotifications.register();
+    console.log('register')
+
+  }, 3000)
+}
+addListeners()
+registerNotifications()
+const getDeliveredNotifications = async () => {
+  const notificationList = await PushNotifications.getDeliveredNotifications();
+  console.log('delivered notifications', notificationList);
+}
+getDeliveredNotifications()
+
 </script>
 
 <style lang="scss" scoped>

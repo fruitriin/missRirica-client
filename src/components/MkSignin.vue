@@ -6,14 +6,15 @@
 			{{ message }}
 		</MkInfo>
 		<div v-if="!totpLogin" class="normal-signin">
-			<MkInput v-model="username" class="_formBlock" :placeholder="i18n.ts.username" type="text" pattern="^[a-zA-Z0-9_]+$" :spellcheck="false" autofocus required data-cy-signin-username @update:modelValue="onUsernameChange">
-				<template #prefix>@</template>
-				<template #suffix>@{{ host }}</template>
-			</MkInput>
-			<MkInput v-if="!user || user && !user.usePasswordLessLogin" v-model="password" class="_formBlock" :placeholder="i18n.ts.password" type="password" :with-password-toggle="true" required data-cy-signin-password>
-				<template #prefix><i class="fas fa-lock"></i></template>
-				<template #caption><button class="_textButton" type="button" @click="resetPassword">{{ i18n.ts.forgotPassword }}</button></template>
-			</MkInput>
+<!--			<MkInput v-model="username" class="_formBlock" :placeholder="i18n.ts.username" type="text" pattern="^[a-zA-Z0-9_]+$" :spellcheck="false" autofocus required data-cy-signin-username @update:modelValue="onUsernameChange">-->
+<!--				<template #prefix>@</template>-->
+<!--				<template #suffix>@{{ host }}</template>-->
+<!--			</MkInput>-->
+<!--			<MkInput v-if="!user || user && !user.usePasswordLessLogin" v-model="password" class="_formBlock" :placeholder="i18n.ts.password" type="password" :with-password-toggle="true" required data-cy-signin-password>-->
+<!--				<template #prefix><i class="fas fa-lock"></i></template>-->
+<!--				<template #caption><button class="_textButton" type="button" @click="resetPassword">{{ i18n.ts.forgotPassword }}</button></template>-->
+<!--			</MkInput>-->
+      <MkInput v-model="token" :spellcheck="false" autofocus required data-cy-signin-username></MkInput>
 			<MkButton class="_formBlock" type="submit" primary :disabled="signing" style="margin: 0 auto;">{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}</MkButton>
 		</div>
 		<div v-if="totpLogin" class="2fa-signin" :class="{ securityKeys: user && user.securityKeys }">
@@ -61,6 +62,7 @@ import { login } from '@/account';
 import { showSuspendedDialog } from '../scripts/show-suspended-dialog';
 import { instance } from '@/instance';
 import { i18n } from '@/i18n';
+import {sign} from "chart.js/helpers";
 
 let signing = $ref(false);
 let user = $ref(null);
@@ -160,34 +162,10 @@ function queryKey() {
 function onSubmit() {
 	signing = true;
 	console.log('submit');
-	if (!totpLogin && user && user.twoFactorEnabled) {
-		if (window.PublicKeyCredential && user.securityKeys) {
-			os.api('signin', {
-				username,
-				password,
-        'hcaptcha-response': hCaptchaResponse,
-        'g-recaptcha-response': reCaptchaResponse,
-			}).then(res => {
-				totpLogin = true;
-				signing = false;
-				challengeData = res;
-				return queryKey();
-			}).catch(loginFailed);
-		} else {
-			totpLogin = true;
-			signing = false;
-		}
-	} else {
-		os.api('signin', {
-			username,
-			password,
-      'hcaptcha-response': hCaptchaResponse,
-			'g-recaptcha-response': reCaptchaResponse,
-			token: user && user.twoFactorEnabled ? token : undefined
-		}).then(res => {
-			emit('login', res);
-			onLogin(res);
-		}).catch(loginFailed);
+	if (!token.value) {
+    login(token)
+    signing = false
+
 	}
 }
 
