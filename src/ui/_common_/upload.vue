@@ -1,41 +1,69 @@
 <template>
-<div class="mk-uploader _acrylic" :style="{ zIndex }">
-	<ol v-if="uploads.length > 0">
-		<li v-for="ctx in uploads" :key="ctx.id">
-			<div class="img" :style="{ backgroundImage: `url(${ ctx.img })` }"></div>
-			<div class="top">
-				<p class="name"><i class="fas fa-spinner fa-pulse"></i>{{ ctx.name }}</p>
-				<p class="status">
-					<span v-if="ctx.progressValue === undefined" class="initing">{{ i18n.ts.waiting }}<MkEllipsis/></span>
-					<span v-if="ctx.progressValue !== undefined" class="kb">{{ String(Math.floor(ctx.progressValue / 1024)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}<i>KB</i> / {{ String(Math.floor(ctx.progressMax / 1024)).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,') }}<i>KB</i></span>
-					<span v-if="ctx.progressValue !== undefined" class="percentage">{{ Math.floor((ctx.progressValue / ctx.progressMax) * 100) }}</span>
-				</p>
-			</div>
-			<progress :value="ctx.progressValue || 0" :max="ctx.progressMax || 0" :class="{ initing: ctx.progressValue === undefined, waiting: ctx.progressValue !== undefined && ctx.progressValue === ctx.progressMax }"></progress>
-		</li>
-	</ol>
-</div>
+  <div class="mk-uploader _acrylic" :style="{ zIndex }">
+    <ol v-if="uploads.length > 0">
+      <li v-for="ctx in uploads" :key="ctx.id">
+        <div class="img" :style="{ backgroundImage: `url(${ctx.img})` }"></div>
+        <div class="top">
+          <p class="name">
+            <i class="fas fa-spinner fa-pulse"></i>{{ ctx.name }}
+          </p>
+          <p class="status">
+            <span v-if="ctx.progressValue === undefined" class="initing"
+              >{{ i18n.ts.waiting }}<MkEllipsis
+            /></span>
+            <span v-if="ctx.progressValue !== undefined" class="kb"
+              >{{
+                String(Math.floor(ctx.progressValue / 1024)).replace(
+                  /(\d)(?=(\d\d\d)+(?!\d))/g,
+                  "$1,"
+                )
+              }}<i>KB</i> /
+              {{
+                String(Math.floor(ctx.progressMax / 1024)).replace(
+                  /(\d)(?=(\d\d\d)+(?!\d))/g,
+                  "$1,"
+                )
+              }}<i>KB</i></span
+            >
+            <span v-if="ctx.progressValue !== undefined" class="percentage">{{
+              Math.floor((ctx.progressValue / ctx.progressMax) * 100)
+            }}</span>
+          </p>
+        </div>
+        <progress
+          :value="ctx.progressValue || 0"
+          :max="ctx.progressMax || 0"
+          :class="{
+            initing: ctx.progressValue === undefined,
+            waiting:
+              ctx.progressValue !== undefined &&
+              ctx.progressValue === ctx.progressMax,
+          }"
+        ></progress>
+      </li>
+    </ol>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import * as os from '@/os';
-import { uploads } from '@/scripts/upload';
-import { i18n } from '@/i18n';
+import {} from "vue";
+import * as os from "@/os";
+import { uploads } from "@/scripts/upload";
+import { i18n } from "@/i18n";
 
-const zIndex = os.claimZIndex('high');
+const zIndex = os.claimZIndex("high");
 </script>
 
 <style lang="scss" scoped>
 .mk-uploader {
-	position: fixed;
-	right: 16px;
-	width: 260px;
-	top: 32px;
-	padding: 16px 20px;
-	pointer-events: none;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-	border-radius: 8px;
+  position: fixed;
+  right: 16px;
+  width: 260px;
+  top: 32px;
+  padding: 16px 20px;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
 }
 .mk-uploader:empty {
   display: none;
@@ -105,7 +133,7 @@ const zIndex = os.claimZIndex('high');
   text-align: right;
 }
 .mk-uploader > ol > li > .top > .status > .percentage:after {
-  content: '%';
+  content: "%";
 }
 .mk-uploader > ol > li > progress {
   display: block;
@@ -116,14 +144,14 @@ const zIndex = os.claimZIndex('high');
   grid-column: 2/3;
   grid-row: 2/3;
   z-index: 2;
-	width: 100%;
-	height: 8px;
+  width: 100%;
+  height: 8px;
 }
 .mk-uploader > ol > li > progress::-webkit-progress-value {
   background: var(--accent);
 }
 .mk-uploader > ol > li > progress::-webkit-progress-bar {
   //background: var(--accentAlpha01);
-	background: transparent;
+  background: transparent;
 }
 </style>
