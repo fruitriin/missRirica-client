@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build; npx cap sync",
+    "build": "rm -rf dist/; vite build; npx cap sync",
     "lint": "vue-tsc",
     "preview": "vite preview"
   },
