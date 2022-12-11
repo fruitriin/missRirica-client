@@ -39,6 +39,11 @@
               i18n.ts.login
             }}</MkButton>
           </div>
+          <div>
+            <a href="https://riinswork.space/missRirica/privacy/"
+              >プライバシーポリシー</a
+            >
+          </div>
         </div>
       </div>
       <div v-if="instances" class="federation">
@@ -79,6 +84,7 @@ import { host, instanceName } from "@/config";
 import * as os from "@/os";
 import number from "@/filters/number";
 import { i18n } from "@/i18n";
+import { noCredentialApi } from "@/os";
 
 let meta = $ref();
 let stats = $ref();
@@ -86,31 +92,35 @@ let tags = $ref();
 let onlineUsersCount = $ref();
 let instances = $ref();
 
-os.api("meta", { detail: true }).then((_meta) => {
+noCredentialApi.request("meta", { detail: true }).then((_meta) => {
   meta = _meta;
 });
 
-os.api("stats").then((_stats) => {
+noCredentialApi.request("stats").then((_stats) => {
   stats = _stats;
 });
 
-os.api("get-online-users-count").then((res) => {
+noCredentialApi.request("get-online-users-count").then((res) => {
   onlineUsersCount = res.count;
 });
 
-os.api("hashtags/list", {
-  sort: "+mentionedLocalUsers",
-  limit: 8,
-}).then((_tags) => {
-  tags = _tags;
-});
+noCredentialApi
+  .request("hashtags/list", {
+    sort: "+mentionedLocalUsers",
+    limit: 8,
+  })
+  .then((_tags) => {
+    tags = _tags;
+  });
 
-os.api("federation/instances", {
-  sort: "+pubSub",
-  limit: 20,
-}).then((_instances) => {
-  instances = _instances;
-});
+noCredentialApi
+  .request("federation/instances", {
+    sort: "+pubSub",
+    limit: 20,
+  })
+  .then((_instances) => {
+    instances = _instances;
+  });
 
 function signin() {
   os.popup(

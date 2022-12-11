@@ -46,9 +46,6 @@ import { reactionPicker } from "@/scripts/reaction-picker";
 import { getUrlWithoutLoginId } from "@/scripts/login-id";
 import { getAccountFromId } from "@/scripts/get-account-from-id";
 
-// Import the functions you need from the SDKs you need
-import { PushNotifications } from "@capacitor/push-notifications";
-
 (async () => {
   console.info(`Misskey v${version}`);
 
