@@ -24,7 +24,7 @@ class NotificationService: UNNotificationServiceExtension {
                           Note, this extension only runs when mutable-content is set
                           Setting an attachment or action buttons automatically adds this */
             //OneSignal.setLogLevel(.LL_VERBOSE, visualLevel: .LL_NONE)
-            //bestAttemptContent.body = "[Modified] " + bestAttemptContent.body
+//            bestAttemptContent.body = "[Modified] " + bestAttemptContent.body
             
             OneSignal.didReceiveNotificationExtensionRequest(self.receivedRequest, with: bestAttemptContent, withContentHandler: self.contentHandler)
         }
