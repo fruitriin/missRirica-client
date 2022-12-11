@@ -1,12 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + Vue + TS</title>
+      <style>
+          #header {
+              padding-top: env(safe-area-inset-top);
+              padding-bottom: env(safe-area-inset-bottom);
+              padding-left: env(safe-area-inset-left);
+              padding-right: env(safe-area-inset-right);
+          }
+      </style>
   </head>
   <body>
+    <div id="header" style="background: white;"></div>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
