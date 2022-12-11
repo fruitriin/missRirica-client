@@ -72,6 +72,7 @@
     "vuedraggable": "4.0.1"
   },
   "devDependencies": {
+    "@capacitor/assets": "^2.0.4",
     "@capacitor/cli": "^4.5.0",
     "@types/escape-regexp": "0.0.1",
     "@types/glob": "8.0.0",
@@ -89,7 +90,6 @@
     "@typescript-eslint/eslint-plugin": "5.45.0",
     "@typescript-eslint/parser": "5.45.0",
     "@vitejs/plugin-vue": "^3.2.0",
-    "cordova-res": "^0.15.4",
     "cross-env": "7.0.3",
     "cypress": "11.2.0",
     "eslint": "8.29.0",

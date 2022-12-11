@@ -45,7 +45,15 @@
       <div class="contents">
         <XHeader v-if="!root" class="header" :info="pageInfo" />
         <main>
-          <RouterView />
+          aaaa
+          {{ root }}
+          <RouterView v-if="root" />
+          <div v-if="!meta" style="text-align: center">
+            <p>
+              Network connection has Lost!<br />ネットワークにつながっていません！
+            </p>
+            <p>ネットワークにつないだ状態で再度お試しください</p>
+          </div>
         </main>
         <div v-if="!root" class="powered-by">
           <b
