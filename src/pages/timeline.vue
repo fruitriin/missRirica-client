@@ -204,11 +204,37 @@ definePageMetadata(
   }))
 );
 
-const addListeners = async () => {
-  await PushNotifications.addListener("registration", (token) => {
-    console.info("Registration token: ", token.value);
-  });
+(async function addListeners() {
+  await PushNotifications.addListener("registration", async (token) => {
+    console.info("通知とーくんRegistration token: ", token);
+    localStorage.setItem("pushToken", token.value);
+    console.log({
+      misskey_token: $i.token,
+      push_token: token.value,
+    });
+    const res = await fetch(
+      "https://miss-ririca.herokuapp.com/api/setToken",
 
+      {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+          "Content-Type": "application/json",
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify({
+          misskey_token: $i.token,
+          push_token: token.value,
+        }), // 本体のデータ型は "Content-Type" ヘッダーと一致させる必要があります
+      }
+    ).catch((err) => {
+      throw err;
+    });
+    console.info(res.json());
+  });
   await PushNotifications.addListener("registrationError", (err) => {
     console.error("Registration error: ", err.error);
   });
@@ -230,7 +256,7 @@ const addListeners = async () => {
       );
     }
   );
-};
+})();
 
 const registerNotifications = async () => {
   setTimeout(async () => {
@@ -247,7 +273,6 @@ const registerNotifications = async () => {
     console.log("register");
   }, 3000);
 };
-addListeners();
 registerNotifications();
 const getDeliveredNotifications = async () => {
   const notificationList = await PushNotifications.getDeliveredNotifications();

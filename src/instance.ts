@@ -1,6 +1,6 @@
 import { computed, reactive } from "vue";
 import * as Misskey from "misskey-js";
-import { api } from "./os";
+import { api, noCredentialApi } from "./os";
 
 // TODO: 他のタブと永続化されたstateを同期
 
@@ -17,7 +17,7 @@ export const instance: Misskey.entities.InstanceMetadata = reactive(
 );
 
 export async function fetchInstance() {
-  const meta = await api("meta", {
+  const meta = await noCredentialApi.request("meta", {
     detail: false,
   });
 

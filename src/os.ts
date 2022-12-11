@@ -19,6 +19,10 @@ const apiClient = new Misskey.api.APIClient({
   credential: JSON.parse(localStorage.getItem("account"))?.token,
 });
 
+export const noCredentialApi = new Misskey.api.APIClient({
+  origin: url,
+});
+
 export const api = ((
   endpoint: keyof Endpoints,
   data: Record<string, any> = {}

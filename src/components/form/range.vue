@@ -265,7 +265,7 @@ const onMousedown = (ev: MouseEvent | TouchEvent) => {
           bottom: 0;
           width: $tickWidth;
           height: 3px;
-          margin-left: -math.div($tickWidth, 2);
+          margin-left: math.div(-$tickWidth, 2);
           background: var(--divider);
           border-radius: 999px;
         }
