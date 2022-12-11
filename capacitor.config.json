@@ -7,9 +7,6 @@
     "PushNotifications": {
       "presentationOptions": ["badge", "sound", "alert"]
     }
-  },
-  "ios": {
-    "scrollEnabled": false
   }
 }
 

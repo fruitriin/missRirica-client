@@ -51,7 +51,14 @@
           <XHeader :info="pageInfo" />
         </header>
         <main ref="main">
-          <RouterView />
+          <RouterView v-if="mainRouter" />
+          <pre v-else>
+        Network connection has Lost!
+        ネットワークにつながっていません！
+
+        ネットワークにつないだ状態で再度お試しください
+      </pre
+          >
         </main>
         <div class="powered-by">
           <b
