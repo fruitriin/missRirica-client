@@ -1,6 +1,14 @@
 import UIKit
 import Capacitor
 import OneSignal
+import CapacitorPushNotifications
+
+public class NotifyPlugin: CAPPlugin {
+    public func notify(_ eventName: String, data: Any?) {
+        self.notifyListeners(eventName, data: data as? [String: Any])
+    }
+}
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,15 +22,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // OneSignal initialization
         OneSignal.initWithLaunchOptions(launchOptions)
         OneSignal.setAppId("26c23e85-1fc8-4115-8cf3-f81338427bf3")
-        
-        // promptForPushNotifications will show the native iOS notification permission prompt.
-        // We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step 8)
         OneSignal.promptForPushNotifications(userResponse: { accepted in
           print("User accepted notifications: \(accepted)")
         })
         
         return true
     }
+    
+//    func application(_ application: UIApplication, capacitorDidRegisterForRemoteNotifications ){
+        
+//    }
+    
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let device = OneSignal.getDeviceState();
+
+        //Get the OneSignal Push Player Id
+        let userId = device?.userId
+        NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: userId)
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+      NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
+    }
+    
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
