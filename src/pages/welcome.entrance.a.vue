@@ -34,15 +34,18 @@
             専用です。アクセストークンを用意してログインしてください
           </div>
           <div class="action">
+            <div>
+              <input type="checkbox" id="term" v-model="isTerm"><label for="term">MissRiricaクライアント<br />
+              プライバシーポリシー及び利用規約に同意する</label><br>
+              <a href="https://riinswork.space/missRirica/privacy/"
+              >プライバシーポリシー及び利用規約を読む</a
+              >
+            </div>
+
             <!--					<MkButton inline rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.signup }}</MkButton>-->
-            <MkButton inline rounded data-cy-signin @click="signin()">{{
+            <MkButton inline rounded data-cy-signin @click="signin()" :disabled="!isTerm">{{
               i18n.ts.login
             }}</MkButton>
-          </div>
-          <div>
-            <a href="https://riinswork.space/missRirica/privacy/"
-              >プライバシーポリシー</a
-            >
           </div>
         </div>
       </div>
@@ -91,6 +94,7 @@ let stats = $ref();
 let tags = $ref();
 let onlineUsersCount = $ref();
 let instances = $ref();
+let isTerm = $ref()
 
 noCredentialApi.request("meta", { detail: true }).then((_meta) => {
   meta = _meta;

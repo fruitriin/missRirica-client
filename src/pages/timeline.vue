@@ -50,7 +50,8 @@ import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import { $i } from "@/account";
 import { definePageMetadata } from "@/scripts/page-metadata";
-import { PushNotifications } from "@capacitor/push-notifications";
+import OneSignal from "onesignal-cordova-plugin";
+import {Device} from "@capacitor/device";
 
 const XTutorial = defineAsyncComponent(() => import("./timeline.tutorial.vue"));
 
@@ -205,80 +206,43 @@ definePageMetadata(
 );
 
 (async function addListeners() {
-  await PushNotifications.addListener("registration", async (token) => {
-    console.info("通知とーくんRegistration token: ", token);
-    localStorage.setItem("pushToken", token.value);
-    console.log({
-      misskey_token: $i.token,
-      push_token: token.value,
-    });
-    const res = await fetch(
-      "https://miss-ririca.herokuapp.com/api/setToken",
+  OneSignal.setAppId("26c23e85-1fc8-4115-8cf3-f81338427bf3");
+  const deviceId = await Device.getId()
+  OneSignal.setExternalUserId(deviceId.uuid);
 
-      {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
-        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: "same-origin", // include, *same-origin, omit
-        headers: {
-          "Content-Type": "application/json",
-        },
-        redirect: "follow", // manual, *follow, error
-        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        body: JSON.stringify({
-          misskey_token: $i.token,
-          push_token: token.value,
-        }), // 本体のデータ型は "Content-Type" ヘッダーと一致させる必要があります
-      }
-    ).catch((err) => {
-      throw err;
-    });
-    console.info(res.json());
+  const res = await fetch(
+    "https://miss-ririca.herokuapp.com/api/setToken",
+
+    {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      mode: "cors", // no-cors, *cors, same-origin
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "same-origin", // include, *same-origin, omit
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow", // manual, *follow, error
+      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: JSON.stringify({
+        misskey_token: $i.token,
+        device_id: deviceId.uuid,
+      }), // 本体のデータ型は "Content-Type" ヘッダーと一致させる必要があります
+    }
+  ).catch((err) => {
+    throw err;
   });
-  await PushNotifications.addListener("registrationError", (err) => {
-    console.error("Registration error: ", err.error);
+  console.info(res);
+
+  OneSignal.setNotificationOpenedHandler(function (jsonData) {
+    console.log("notificationOpenedCallback: " + JSON.stringify(jsonData));
   });
 
-  await PushNotifications.addListener(
-    "pushNotificationReceived",
-    (notification) => {
-      console.log("Push notification received: ", notification);
-    }
-  );
-
-  await PushNotifications.addListener(
-    "pushNotificationActionPerformed",
-    (notification) => {
-      console.log(
-        "Push notification action performed",
-        notification.actionId,
-        notification.inputValue
-      );
-    }
-  );
+  // Prompts the user for notification permissions.
+  //    * Since this shows a generic native prompt, we recommend instead using an In-App Message to prompt for notification permission (See step 7) to better communicate to your users what notifications they will get.
+  OneSignal.promptForPushNotificationsWithUserResponse(function (accepted) {
+    console.log("User accepted notifications: " + accepted);
+  });
 })();
-
-const registerNotifications = async () => {
-  setTimeout(async () => {
-    let permStatus = await PushNotifications.checkPermissions();
-
-    if (permStatus.receive === "prompt") {
-      permStatus = await PushNotifications.requestPermissions();
-    }
-
-    if (permStatus.receive !== "granted") {
-      throw new Error("User denied permissions!");
-    }
-    await PushNotifications.register();
-    console.log("register");
-  }, 3000);
-};
-registerNotifications();
-const getDeliveredNotifications = async () => {
-  const notificationList = await PushNotifications.getDeliveredNotifications();
-  console.log("delivered notifications", notificationList);
-};
-getDeliveredNotifications();
 </script>
 
 <style lang="scss" scoped>
