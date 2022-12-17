@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>ja</string>
 	<key>CFBundleDisplayName</key>
@@ -23,7 +25,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>カメラを使用します。</string>
+	<string>アプリはカメラで撮影した写真を添付します。</string>
+    <key>NSCameraUsageDescription</key>
+    <string>アプリはPhotoLibraryで選択した写真を添付します。</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>位置情報を使用します。</string>
 	<key>NSMicrophoneUsageDescription</key>
