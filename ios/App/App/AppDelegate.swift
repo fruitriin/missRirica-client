@@ -16,16 +16,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        OneSignal.setLogLevel(.LL_VERBOSE, visualLevel: .LL_NONE)
-        
-        // OneSignal initialization
-        OneSignal.initWithLaunchOptions(launchOptions)
-        OneSignal.setAppId("26c23e85-1fc8-4115-8cf3-f81338427bf3")
-        OneSignal.promptForPushNotifications(userResponse: { accepted in
-          print("User accepted notifications: \(accepted)")
-        })
-        
+//        // Override point for customization after application launch.
+//        OneSignal.setLogLevel(.LL_VERBOSE, visualLevel: .LL_NONE)
+//
+//        // OneSignal initialization
+//        OneSignal.initWithLaunchOptions(launchOptions)
+//        OneSignal.setAppId("26c23e85-1fc8-4115-8cf3-f81338427bf3")
+//        OneSignal.promptForPushNotifications(userResponse: { accepted in
+//          print("User accepted notifications: \(accepted)")
+//        })
+//
         return true
     }
     
@@ -35,11 +35,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let device = OneSignal.getDeviceState();
-
-        //Get the OneSignal Push Player Id
-        let userId = device?.userId
-        NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: userId)
+//        let device = OneSignal.getDeviceState();
+//
+//        //Get the OneSignal Push Player Id
+//        let userId = device?.userId
+        NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: deviceToken)
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
