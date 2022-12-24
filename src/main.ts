@@ -32,7 +32,7 @@ import { version, ui, lang, host } from "@/config";
 import { applyTheme } from "@/scripts/theme";
 import { isDeviceDarkmode } from "@/scripts/is-device-darkmode";
 import { i18n } from "@/i18n";
-import { confirm, alert, post, popup, toast } from "@/os";
+import {confirm, alert, post, popup, toast} from "@/os";
 import { stream } from "@/stream";
 import * as sound from "@/scripts/sound";
 import { $i, refreshAccount, login, updateAccount, signout } from "@/account";
@@ -272,16 +272,14 @@ import {Device} from "@capacitor/device";
     { immediate: localStorage.theme == null }
   );
 
-  applyTheme(
-    defaultStore.reactiveState.darkMode
-      ? ColdDeviceStorage.get("darkTheme")
-      : ColdDeviceStorage.get("lightTheme")
-  );
+
 
   const darkTheme = computed(ColdDeviceStorage.makeGetterSetter("darkTheme"));
   const lightTheme = computed(ColdDeviceStorage.makeGetterSetter("lightTheme"));
 
+
   watch(darkTheme, (theme) => {
+
     if (defaultStore.state.darkMode) {
       applyTheme(theme);
     }
@@ -306,6 +304,12 @@ import {Device} from "@capacitor/device";
   //#endregion
 
   fetchInstanceMetaPromise.then(() => {
+    applyTheme(
+        defaultStore.reactiveState.darkMode.value
+            ? ColdDeviceStorage.get("darkTheme")
+            : ColdDeviceStorage.get("lightTheme")
+    );
+
     if (defaultStore.state.themeInitial) {
       if (instance.defaultLightTheme != null)
         ColdDeviceStorage.set(
@@ -346,6 +350,7 @@ import {Device} from "@capacitor/device";
 
   let reloadDialogShowing = false;
   stream.on("_disconnected_", async () => {
+    location.reload();
     if (defaultStore.state.serverDisconnectedBehavior === "reload") {
       location.reload();
     } else if (defaultStore.state.serverDisconnectedBehavior === "dialog") {
