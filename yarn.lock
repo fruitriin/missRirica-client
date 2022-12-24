@@ -1418,10 +1418,9 @@ broadcast-channel@4.18.1:
     rimraf "3.0.2"
     unload "2.3.1"
 
-"browser-image-resizer@git+https://x-access-token:ghs_8PQEjyZWh8R24PKZfkS4NG3cYo50JL497ogD@github.com/misskey-dev/browser-image-resizer#v2.2.1":
+"browser-image-resizer@git+https://github.com/misskey-dev/browser-image-resizer#v2.2.1":
   version "2.2.1"
-  uid "26a5c839f8a23da5ced4b9084ec9b872e04876d8"
-  resolved "git+https://x-access-token:ghs_8PQEjyZWh8R24PKZfkS4NG3cYo50JL497ogD@github.com/misskey-dev/browser-image-resizer#26a5c839f8a23da5ced4b9084ec9b872e04876d8"
+  resolved "git+https://github.com/misskey-dev/browser-image-resizer#26a5c839f8a23da5ced4b9084ec9b872e04876d8"
   dependencies:
     exifreader "^3.1.0"
 
