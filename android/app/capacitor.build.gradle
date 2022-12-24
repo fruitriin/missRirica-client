@@ -12,7 +12,7 @@ dependencies {
     implementation project(':capacitor-device')
     implementation project(':capacitor-preferences')
     implementation project(':capacitor-push-notifications')
-    implementation "com.onesignal:OneSignal:4.8.2"
+    implementation "com.onesignal:OneSignal:4.8.3"
 }
 apply from: "../../node_modules/onesignal-cordova-plugin/build-extras-onesignal.gradle"
 
