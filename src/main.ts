@@ -45,7 +45,7 @@ import { reloadChannel } from "@/scripts/unison-reload";
 import { reactionPicker } from "@/scripts/reaction-picker";
 import { getUrlWithoutLoginId } from "@/scripts/login-id";
 import { getAccountFromId } from "@/scripts/get-account-from-id";
-
+import {Device} from "@capacitor/device";
 (async () => {
   console.info(`Misskey v${version}`);
 
@@ -103,6 +103,9 @@ import { getAccountFromId } from "@/scripts/get-account-from-id";
   //#region Set lang attr
   const html = document.documentElement;
   html.setAttribute("lang", lang);
+  const res = await Device.getInfo()
+  html.setAttribute("class", res.platform)
+
   //#endregion
 
   //#region loginId

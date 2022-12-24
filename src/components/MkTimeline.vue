@@ -159,8 +159,8 @@ const timetravel = (date?: Date) => {
 */
 
 App.addListener('appStateChange', async ({ isActive }) => {
-  console.log("appStateChange: isActive:", isActive)
   if(isActive){
+    dissconect()
     connect()
      tlComponent.pagingComponent.reload()
   }else {
