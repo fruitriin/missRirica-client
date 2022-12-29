@@ -1,7 +1,7 @@
 <template>
   <div class="note" :class="{ renote: isRenote }">
     <div v-if="appearNote.pinned" class="info">
-      <i class="ti ti-pin"></i> i18n.ts.pinnedNote
+      <PinIcon /> i18n.ts.pinnedNote
     </div>
     <div v-if="appearNote._prId_" class="info">
       <i class="fas fa-bullhorn"></i> i18n.ts.promotion
@@ -10,19 +10,19 @@
       </button>
     </div>
     <div v-if="appearNote._featuredId_" class="info">
-      <i class="ti ti-bolt"></i> i18n.ts.featured
+      <BoltIcon /> i18n.ts.featured
     </div>
     <div v-if="isRenote" class="renote">
       <avater class="avatar" :user="note.user" />
-      <i class="ti ti-repeat" />
+      <RepeatIcon />
       i18n.ts.renotedBy
 
       <nuxt-link>
-        <UserName :user="appearNote.user"></UserName>
+        <UserName :user="appearNote.user" />
       </nuxt-link>
       <div class="info">
         <button ref="renoteTime" class="_button time" @click="showRenoteMenu()">
-          <i v-if="isMyRenote" class="ti ti-dots dropdownIcon"></i>
+          <DotsIcon v-if="isMyRenote" />
           {{ note.createdAt }}
           <!--          <MkTime :time="note.createdAt" />-->
         </button>
@@ -53,7 +53,7 @@
                 v-if="appearNote.replyId"
                 :href="`/notes/${appearNote.replyId}`"
               >
-                <i class="ti ti-arrow-back-up"></i>
+                <ArrowBackIcon />
               </nuxt-link>
               <p>{{ appearNote.text }}</p>
               <p>{{ appearNote.emojis }}</p>
@@ -81,7 +81,7 @@
               添付ファイルあり
               <!--              <XMediaList :media-list="appearNote.files"/>-->
             </div>
-            <div>投票あり</div>
+            <div v-if="appearNote.poll" class="poll">投票あり</div>
             <!--            <XPoll v-if="appearNote.poll" ref="pollViewer" :note="appearNote" class="poll"/>-->
             <!--            <MkUrlPreview v-for="url in urls" :key="url" :url="url" :compact="true" :detail="false" class="url-preview"/>-->
             <div v-if="appearNote.renote" class="renote">
@@ -109,40 +109,7 @@
             ><i class="ti ti-device-tv"></i> {{ appearNote.channel.name }}</a
           >
         </div>
-        <footer class="footer">
-          <!--          <XReactionsViewer ref="reactionsViewer" :note="appearNote" />-->
-          <button class="button _button" @click="reply()">
-            <i class="ti ti-arrow-back-up"></i>
-            <p v-if="appearNote.repliesCount > 0" class="count">
-              {{ appearNote.repliesCount }}
-            </p>
-          </button>
-          <!--          <XRenoteButton-->
-          <!--            ref="renoteButton"-->
-          <!--            class="button"-->
-          <!--            :note="appearNote"-->
-          <!--            :count="appearNote.renoteCount"-->
-          <!--          />-->
-          <button
-            v-if="appearNote.myReaction == null"
-            ref="reactButton"
-            class="button _button"
-            @click="react()"
-          >
-            <i class="ti ti-plus"></i>
-          </button>
-          <button
-            v-if="appearNote.myReaction != null"
-            ref="reactButton"
-            class="button _button reacted"
-            @click="undoReact(appearNote)"
-          >
-            <i class="ti ti-minus"></i>
-          </button>
-          <button class="button _button" @click="menu()">
-            <i class="ti ti-dots"></i>
-          </button>
-        </footer>
+        <TimelineNoteFooter :note="appearNote" />
       </div>
     </article>
   </div>
@@ -150,10 +117,27 @@
 
 <script lang="ts">
 import { entities } from "misskey-js";
-import { computed, PropType } from "vue";
+import { PropType } from "vue";
 import { useNoteController } from "~/composable/noteController";
+import footer from "~/components/timeline/note/footer.vue";
+import {
+  PinIcon,
+  ArrowBackIcon,
+  RepeatIcon,
+  BoltIcon,
+  DotsIcon,
+} from "vue-tabler-icons";
 
 export default {
+  inheritAttrs: false,
+  components: {
+    footer,
+    PinIcon,
+    ArrowBackIcon,
+    RepeatIcon,
+    BoltIcon,
+    DotsIcon,
+  },
   setup(props: Props) {
     const { isRenote, appearNote, isMyRenote } = useNoteController(props.note);
     return {
@@ -163,7 +147,7 @@ export default {
     };
   },
   name: "note",
-  components: {},
+
   props: {
     note: {
       type: Object as PropType<entities.Note>,
@@ -426,32 +410,6 @@ export default {
         > .channel {
           opacity: 0.7;
           font-size: 80%;
-        }
-      }
-
-      > .footer {
-        > .button {
-          margin: 0;
-          padding: 8px;
-          opacity: 0.7;
-
-          &:not(:last-child) {
-            margin-right: 28px;
-          }
-
-          &:hover {
-            color: var(--fgHighlighted);
-          }
-
-          > .count {
-            display: inline;
-            margin: 0 0 0 8px;
-            opacity: 0.7;
-          }
-
-          &.reacted {
-            color: var(--accent);
-          }
         }
       }
     }

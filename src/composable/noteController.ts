@@ -12,7 +12,11 @@ export function useNoteController(note: entities.Note) {
 
   const isMyRenote = note.userId === $i.id;
 
-  const appearNote = isRenote ? note.renote : note;
+  const canRenote = ["public", "home"].includes(note.visibility) || isMyRenote;
+
+  const appearNote = isRenote
+    ? note.renote
+    : Object.assign(note, { isMyRenote, canRenote });
   // TODO
   function reply(text: string) {
     api
@@ -28,6 +32,7 @@ export function useNoteController(note: entities.Note) {
   function undoReact() {}
 
   return {
+    canRenote,
     isRenote,
     appearNote,
     isMyRenote,

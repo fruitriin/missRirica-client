@@ -36,7 +36,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .statusbar {
   height: 20px;
   position: sticky;
@@ -45,10 +45,14 @@ export default {
 .container {
   width: 100%;
   min-width: 0;
-  background: rgb(249, 249, 249);
+  background: black;
+  padding: 24px;
+  height: 100%;
 
   .content {
-    padding: 24px;
+    overflow-y: auto;
+    height: calc(100% - 24px);
+    border-radius: 15px;
     background: #fff;
   }
 }
