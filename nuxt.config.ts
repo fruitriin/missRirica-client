@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
+  experimental: {
+    noScripts: true,
+  },
 
   srcDir: "src/",
   alias: {
