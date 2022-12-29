@@ -1,5 +1,6 @@
 <template>
   <TimelineNote v-for="note in timeline" :key="note.id" :note="note" />
+  <TabMenu />
 </template>
 
 <script>

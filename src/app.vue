@@ -59,9 +59,6 @@ export default {
 </style>
 
 <style>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 html,
 #__nuxt,
 body {
@@ -69,5 +66,9 @@ body {
   padding: 0;
   font-size: 16px;
   height: 100dvh;
+}
+
+:root {
+  --header: white;
 }
 </style>

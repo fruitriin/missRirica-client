@@ -106,8 +106,9 @@
             v-if="appearNote.channel && !inChannel"
             class="channel"
             :to="`/channels/${appearNote.channel.id}`"
-            ><i class="ti ti-device-tv"></i> {{ appearNote.channel.name }}</a
           >
+            <i class="ti ti-device-tv"></i> {{ appearNote.channel.name }}
+          </a>
         </div>
         <TimelineNoteFooter :note="appearNote" />
       </div>

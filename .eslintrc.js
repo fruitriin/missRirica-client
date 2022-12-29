@@ -42,5 +42,13 @@ export default {
         },
       },
     ],
+    "prettier/prettier": [
+      "error",
+      {
+        semi: false,
+        trailingComma: "es5",
+        htmlWhitespaceSensitivity: "ignore",
+      },
+    ],
   },
 };
