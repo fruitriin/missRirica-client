@@ -33,7 +33,7 @@
 import { noCredential } from "~/utils/apiClient";
 import { userStore } from "~/store/UserStore";
 
-export default {
+export default defineComponent({
   setup() {
     const { $state: state, setToken } = userStore();
     return {
@@ -59,7 +59,7 @@ export default {
       this.$emit("login");
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

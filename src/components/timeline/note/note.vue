@@ -120,7 +120,6 @@
 import { entities } from "misskey-js";
 import { PropType } from "vue";
 import { useNoteController } from "~/composable/noteController";
-import footer from "~/components/timeline/note/footer.vue";
 import {
   PinIcon,
   ArrowBackIcon,
@@ -129,10 +128,9 @@ import {
   DotsIcon,
 } from "vue-tabler-icons";
 
-export default {
+export default defineComponent({
   inheritAttrs: false,
   components: {
-    footer,
     PinIcon,
     ArrowBackIcon,
     RepeatIcon,
@@ -159,7 +157,7 @@ export default {
     readPromo() {},
   },
   computed: {},
-};
+});
 </script>
 
 <style scoped lang="scss">

@@ -12,7 +12,7 @@
 import Login from "~/pages/login.vue";
 import { userStore } from "~/store/UserStore";
 
-export default {
+export default defineComponent({
   setup() {
     const { $state: state, init } = userStore();
     return {
@@ -33,7 +33,7 @@ export default {
       return this.state.account.accessToken;
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

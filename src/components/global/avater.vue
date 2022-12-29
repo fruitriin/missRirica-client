@@ -8,11 +8,11 @@
 import { entities } from "misskey-js";
 import { PropType } from "nuxt/dist/app/compat/capi";
 
-export default {
+export default defineComponent({
   props: {
     user: Object as PropType<entities.User>,
   },
-};
+});
 </script>
 
 <style lang="scss">
