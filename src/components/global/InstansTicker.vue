@@ -5,10 +5,11 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 /**
  * TODO 全体見直しが必要
  */
+/**
 import {} from "vue";
 import { instanceName } from "@/config";
 import { instance as Instance } from "@/instance";
@@ -43,6 +44,7 @@ const themeColor = instance.themeColor ?? "#777777";
 const bg = {
   background: `linear-gradient(90deg, ${themeColor}, ${themeColor}00)`,
 };
+ **/
 </script>
 
 <style lang="scss" module>
