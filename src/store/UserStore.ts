@@ -3,33 +3,40 @@ import { defineStore } from "pinia";
 import { Pref } from "~/store/Preferences";
 import { MisskeyClient } from "~/utils/apiClient";
 import { APIClient } from "misskey-js/built/api";
+import { entities, Stream } from "misskey-js";
 
-export const useUser = defineStore("users", {
+export const userStore = defineStore("users", {
   state: () => ({
     account: {
       origin: "",
       accessToken: "",
     },
-    api: {} as APIClient,
-    stream: {} as MisskeyClient["stream"],
+    $i: {} as entities.User,
+    client: {} as MisskeyClient,
   }),
-  getters: {},
+  getters: {
+    api(): APIClient {
+      return this.client.api;
+    },
+    stream(): MisskeyClient["stream"] {
+      return this.client.stream;
+    },
+  },
   actions: {
     async init() {
       // ストレージからデータを復旧する処理
       this.account = Object.assign(this.account, await Pref.get("account"));
-      const client = new MisskeyClient(
+      this.client = new MisskeyClient(
         this.account.accessToken,
         this.account.origin
       );
-      this.api = client.api;
-      this.stream = client.stream;
       console.info("init end");
+      return true;
     },
     // アカウントの実在を確認したい
     async verifyAccount(token: string, origin: string) {
       this.api = new MisskeyClient(token, origin).api;
-      await this.api.request("i").catch(() => {
+      this.$i = await this.api.request("i").catch(() => {
         throw new Error("アクセストークンが正しくありません");
       });
     },

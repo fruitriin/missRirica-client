@@ -31,11 +31,11 @@
 
 <script lang="ts">
 import { noCredential } from "~/utils/apiClient";
-import { useUser } from "~/store/useUser";
+import { userStore } from "~/store/UserStore";
 
 export default {
   setup() {
-    const { $state: state, setToken } = useUser();
+    const { $state: state, setToken } = userStore();
     return {
       state,
       setToken,

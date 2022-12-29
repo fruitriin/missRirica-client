@@ -1,21 +1,17 @@
 <template>
-  <div>
-    <div v-for="note in timeline">
-      <Note :note="note" />
-    </div>
-  </div>
+  <Note v-for="note in timeline" :key="note.id" :note="note" />
 </template>
 
 <script>
-import { useUser } from "~/store/useUser";
+import { userStore } from "~/store/UserStore";
 import Note from "~/components/timeline/note.vue";
 
 export default {
   components: { Note },
   async setup() {
-    const { $state: state, init } = useUser();
+    const { $state: state, init, api, stream } = userStore();
 
-    const res = await state.api.request("notes/hybrid-timeline");
+    const res = await api.request("notes/hybrid-timeline");
 
     const timeline = ref(res);
     function prepend(res) {
@@ -23,11 +19,10 @@ export default {
       timeline.value.unshift(res);
     }
 
-    const connection = state.stream.useChannel("hybridTimeline");
+    const connection = stream.useChannel("hybridTimeline");
     connection.on("note", prepend);
 
     return {
-      state,
       timeline,
     };
   },
