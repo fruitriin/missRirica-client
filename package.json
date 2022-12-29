@@ -22,8 +22,7 @@
     "mdi": "^2.2.43",
     "mfm-js": "0.23.0",
     "misskey-js": "0.0.14",
-    "vuetify": "^3.0.6",
-    "@fortawesome/fontawesome-free": "latest"
+    "vuetify": "^3.0.6"
   },
   "devDependencies": {
     "@capacitor/assets": "^2.0.4",

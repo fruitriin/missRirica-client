@@ -31,8 +31,10 @@
     <article class="article">
       <Avater :user="appearNote.user" />
       <div class="main">
+        <UserName :user="appearNote.user" />
         <!--        <XNoteHeader class="header" :note="appearNote" :mini="true"/>-->
         <InstanceTicker class="ticker" :instance="appearNote.user.instance" />
+
         <div class="body">
           <p v-if="appearNote.cw != null" class="cw">
             {{ appearNote.cw }}
@@ -46,31 +48,44 @@
               <span v-if="appearNote.isHidden" style="opacity: 0.5"
                 >( i18n.ts.private
               </span>
+              <!--              todo -->
               <nuxt-link
                 v-if="appearNote.replyId"
                 :href="`/notes/${appearNote.replyId}`"
               >
                 <i class="ti ti-arrow-back-up"></i>
               </nuxt-link>
-              {{ appearNote.text }} {{ appearNote.emojis }}
+              <p>{{ appearNote.text }}</p>
+              <p>{{ appearNote.emojis }}</p>
 
-              <!--              -->
-              <!--              <a v-if="appearNote.renote != null" class="rp">RN:</a>-->
-              <!--              <div v-if="translating || translation" class="translation">-->
-              <!--                <MkLoading v-if="translating" mini/>-->
-              <!--                <div v-else class="translated">-->
-              <!--                  <b>{{ $t('translatedFrom', { x: translation.sourceLang }) }}: </b>-->
-              <!--                  <Mfm :text="translation.text" :author="appearNote.user" :i="$i" :custom-emojis="appearNote.emojis"/>-->
-              <!--                </div>-->
-              <!--              </div>-->
+              <a v-if="appearNote.renote != null" class="rp">RN:</a>
+              <div v-if="translating || translation" class="translation">
+                <MkLoading v-if="translating" mini />
+                <div v-else class="translated">
+                  <b
+                    >{{ $t("translatedFrom", { x: translation.sourceLang }) }}:
+                  </b>
+                  <p>
+                    {{ translat }}
+                  </p>
+                  <Mfm
+                    :text="translation.text"
+                    :author="appearNote.user"
+                    :i="$i"
+                    :custom-emojis="appearNote.emojis"
+                  />
+                </div>
+              </div>
             </div>
             <div v-if="appearNote.files.length > 0" class="files">
+              添付ファイルあり
               <!--              <XMediaList :media-list="appearNote.files"/>-->
             </div>
+            <div>投票あり</div>
             <!--            <XPoll v-if="appearNote.poll" ref="pollViewer" :note="appearNote" class="poll"/>-->
             <!--            <MkUrlPreview v-for="url in urls" :key="url" :url="url" :compact="true" :detail="false" class="url-preview"/>-->
             <div v-if="appearNote.renote" class="renote">
-              <XNoteSimple :note="appearNote.renote" />
+              {{ appearNote.renote.text }}
             </div>
             <button
               v-if="isLong && collapsed"
@@ -95,19 +110,19 @@
           >
         </div>
         <footer class="footer">
-          <XReactionsViewer ref="reactionsViewer" :note="appearNote" />
+          <!--          <XReactionsViewer ref="reactionsViewer" :note="appearNote" />-->
           <button class="button _button" @click="reply()">
             <i class="ti ti-arrow-back-up"></i>
             <p v-if="appearNote.repliesCount > 0" class="count">
               {{ appearNote.repliesCount }}
             </p>
           </button>
-          <XRenoteButton
-            ref="renoteButton"
-            class="button"
-            :note="appearNote"
-            :count="appearNote.renoteCount"
-          />
+          <!--          <XRenoteButton-->
+          <!--            ref="renoteButton"-->
+          <!--            class="button"-->
+          <!--            :note="appearNote"-->
+          <!--            :count="appearNote.renoteCount"-->
+          <!--          />-->
           <button
             v-if="appearNote.myReaction == null"
             ref="reactButton"
@@ -124,7 +139,7 @@
           >
             <i class="ti ti-minus"></i>
           </button>
-          <button ref="menuButton" class="button _button" @click="menu()">
+          <button class="button _button" @click="menu()">
             <i class="ti ti-dots"></i>
           </button>
         </footer>

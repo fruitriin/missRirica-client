@@ -1,11 +1,10 @@
 <template>
-  <div :class="{ cat: user.isCat }" class="eiwwqkts">
+  <div :class="{ cat: user.isCat }" class="avatar">
     <img class="inner" :src="user.avatarUrl" decoding="async" />
   </div>
 </template>
 
 <script lang="ts">
-import { getStaticImageUrl } from "@/scripts/get-static-image-url";
 import { entities } from "misskey-js";
 import { PropType } from "nuxt/dist/app/compat/capi";
 
@@ -17,7 +16,7 @@ export default {
 </script>
 
 <style lang="scss">
-@keyframes earwiggleleft {
+@keyframes cat_left {
   from {
     transform: rotate(37.6deg) skew(30deg);
   }
@@ -35,7 +34,7 @@ export default {
   }
 }
 
-@keyframes earwiggleright {
+@keyframes cat_right {
   from {
     transform: rotate(-37.6deg) skew(-30deg);
   }
@@ -53,7 +52,7 @@ export default {
   }
 }
 
-.eiwwqkts {
+.avatar {
   position: relative;
   display: inline-block;
   vertical-align: bottom;
@@ -122,11 +121,11 @@ export default {
 
     &:hover {
       &:before {
-        animation: earwiggleleft 1s infinite;
+        animation: cat_left 1s infinite;
       }
 
       &:after {
-        animation: earwiggleright 1s infinite;
+        animation: cat_right 1s infinite;
       }
     }
   }
