@@ -35,7 +35,7 @@ export const userStore = defineStore("users", {
     },
     // アカウントの実在を確認したい
     async verifyAccount(token: string, origin: string) {
-      this.api = new MisskeyClient(token, origin).api;
+      this.client = new MisskeyClient(token, origin);
       this.$i = await this.api.request("i").catch(() => {
         throw new Error("アクセストークンが正しくありません");
       });
