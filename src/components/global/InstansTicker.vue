@@ -6,6 +6,7 @@
 </template>
 
 <script lang="ts">
+export default {};
 /**
  * TODO 全体見直しが必要
  */
