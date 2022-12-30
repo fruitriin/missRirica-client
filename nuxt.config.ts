@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
+import {} from "twemoji";
 export default defineNuxtConfig({
   ssr: false,
   experimental: {

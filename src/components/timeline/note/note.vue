@@ -55,26 +55,32 @@
               >
                 <ArrowBackIcon />
               </nuxt-link>
-              <p>{{ appearNote.text }}</p>
-              <p>{{ appearNote.emojis }}</p>
+              <MfmComponent
+                :text="appearNote.text"
+                :plain="false"
+                :custom-emojis="appearNote.emojis"
+              />
+
+              <!--              <p>{{ appearNote.text }}</p>-->
+              <!--              <p>{{ appearNote.emojis }}</p>-->
 
               <a v-if="appearNote.renote != null" class="rp">RN:</a>
               <div v-if="translating || translation" class="translation">
-                <MkLoading v-if="translating" mini />
-                <div v-else class="translated">
-                  <b
-                    >{{ $t("translatedFrom", { x: translation.sourceLang }) }}:
-                  </b>
-                  <p>
-                    {{ translat }}
-                  </p>
-                  <Mfm
-                    :text="translation.text"
-                    :author="appearNote.user"
-                    :i="$i"
-                    :custom-emojis="appearNote.emojis"
-                  />
-                </div>
+                <!--                <MkLoading v-if="translating" mini />-->
+                <!--                <div v-else class="translated">-->
+                <!--                  <b-->
+                <!--                    >{{ $t("translatedFrom", { x: translation.sourceLang }) }}:-->
+                <!--                  </b>-->
+                <!--                  <p>-->
+                <!--                    {{ translat }}-->
+                <!--                  </p>-->
+                <!--                  &lt;!&ndash;                  <Mfm&ndash;&gt;-->
+                <!--                  &lt;!&ndash;                    :text="translation.text"&ndash;&gt;-->
+                <!--                  &lt;!&ndash;                    :author="appearNote.user"&ndash;&gt;-->
+                <!--                  &lt;!&ndash;                    :i="$i"&ndash;&gt;-->
+                <!--                  &lt;!&ndash;                    :custom-emojis="appearNote.emojis"&ndash;&gt;-->
+                <!--                  &lt;!&ndash;                  />&ndash;&gt;-->
+                <!--                </div>-->
               </div>
             </div>
             <div v-if="appearNote.files.length > 0" class="files">
@@ -152,6 +158,11 @@ export default defineComponent({
       type: Object as PropType<entities.Note>,
       required: true,
     },
+    isLong: Boolean,
+    translation: Boolean,
+    translating: Boolean,
+    collapsed: Boolean,
+    menuIndicated: Boolean,
   },
   methods: {
     readPromo() {},

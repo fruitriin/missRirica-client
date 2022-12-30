@@ -1,16 +1,25 @@
 <template>
-  <div :class="$style.root" :style="bg">
-    <img v-if="faviconUrl" :class="$style.icon" :src="faviconUrl" />
-    <div :class="$style.name">{{ instance.name }}</div>
+  <div v-if="instance">
+    <div>{{ instance.name }}</div>
   </div>
 </template>
 
 <script lang="ts">
-export default {};
+import { entities } from "misskey-js";
+import { PropType } from "vue";
+
+export default defineComponent({
+  props: {
+    instance: Object as PropType<entities.Instance>,
+  },
+});
+
 /**
  * TODO 全体見直しが必要
  */
 /**
+export default {};
+
 import {} from "vue";
 import { instanceName } from "@/config";
 import { instance as Instance } from "@/instance";

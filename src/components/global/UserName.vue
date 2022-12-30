@@ -1,13 +1,10 @@
 <template>
-  <div>
-    {{ user.name || user.username }}
-  </div>
-  <!--  <Mfm-->
-  <!--    :text="user.name || user.username"-->
-  <!--    :plain="true"-->
-  <!--    :nowrap="nowrap"-->
-  <!--    :custom-emojis="user.emojis"-->
-  <!--  />-->
+  <MfmComponent
+    :text="user.name || user.username"
+    :plain="true"
+    :nowrap="nowrap"
+    :custom-emojis="user.emojis"
+  />
 </template>
 
 <script lang="ts" setup>
