@@ -11,7 +11,7 @@ export default defineComponent({
       required: true,
     },
     note: {
-      type: Object as PropType<{ emojis: { name: string; url: string }[] }>,
+      type: Object,
       required: true,
     },
   },

@@ -3,9 +3,6 @@
 import {} from "twemoji";
 export default defineNuxtConfig({
   ssr: false,
-  experimental: {
-    noScripts: true,
-  },
 
   srcDir: "src/",
   alias: {

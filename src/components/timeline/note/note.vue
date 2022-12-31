@@ -58,7 +58,7 @@
               <MfmComponent
                 :text="appearNote.text"
                 :plain="false"
-                :custom-emojis="appearNote.emojis"
+                :note="appearNote"
               />
 
               <!--              <p>{{ appearNote.text }}</p>-->

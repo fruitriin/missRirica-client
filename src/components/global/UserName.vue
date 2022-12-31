@@ -3,7 +3,7 @@
     :text="user.name || user.username"
     :plain="true"
     :nowrap="nowrap"
-    :custom-emojis="user.emojis"
+    :note="user"
   />
 </template>
 

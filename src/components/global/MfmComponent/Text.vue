@@ -22,7 +22,7 @@ export default {
   computed: {
     parsedText() {
       if (!this.plain) return this.token.text.split(/\r\n|\n|\r/);
-      return [this.token.text.replace.replace(/\n/g, " ")];
+      return [this.token.text.replace(/\n/g, " ")];
     },
   },
 };

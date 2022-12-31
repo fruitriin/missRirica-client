@@ -1,6 +1,7 @@
 <template>
   <component
-    v-for="token in mfm"
+    v-if="note"
+    v-for="token in parsedMfm"
     :is="`MfmComponent${getComponent(token.type)}`"
     :token="token.props"
     :note="note"
@@ -17,12 +18,20 @@ export default defineComponent({
   props: {
     note: Object,
     text: String,
+    plain: Boolean,
   },
   methods: {
     getComponent,
     mfm,
   },
-  computed: {},
+  computed: {
+    parsedMfm() {
+      if (!this.note) {
+        debugger;
+      }
+      return mfm(this.text, false);
+    },
+  },
 });
 
 function genEl(ast: MfmNode[], plain): Array<String> {
