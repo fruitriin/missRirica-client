@@ -9,6 +9,8 @@ export default {
     token: Object,
     customEmojis: Array,
     normal: Boolean,
+    plain: true,
+    note: Object,
   },
 };
 </script>

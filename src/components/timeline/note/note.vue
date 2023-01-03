@@ -91,7 +91,10 @@
             <!--            <XPoll v-if="appearNote.poll" ref="pollViewer" :note="appearNote" class="poll"/>-->
             <!--            <MkUrlPreview v-for="url in urls" :key="url" :url="url" :compact="true" :detail="false" class="url-preview"/>-->
             <div v-if="appearNote.renote" class="renote">
-              {{ appearNote.renote.text }}
+              <MfmComponent
+                :text="appearNote.renote.text"
+                :note="appearNote.renote"
+              />
             </div>
             <button
               v-if="isLong && collapsed"
