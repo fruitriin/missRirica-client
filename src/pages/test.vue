@@ -9,12 +9,7 @@
     <div v-for="token in parsedMfm" v-text="token" />
 
     <h2>Result</h2>
-    <component
-      v-for="token in parsedMfm"
-      :is="`MfmComponent${getComponent(token.type)}`"
-      :token="token.props"
-      :note="note"
-    />
+    <TimelineNote :key="Math.random()" :note="note" />
   </div>
 </template>
 

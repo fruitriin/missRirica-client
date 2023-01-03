@@ -1,4 +1,4 @@
-<template><img :src="emoji()" /></template>
+<template><img class="emoji" :src="emoji()" /></template>
 
 <script lang="ts">
 import { entities } from "misskey-js";
@@ -25,4 +25,9 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.emoji {
+  height: 1.25em;
+  vertical-align: -0.25em;
+}
+</style>

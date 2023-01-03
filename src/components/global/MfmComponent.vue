@@ -18,7 +18,10 @@ export default defineComponent({
   props: {
     note: Object,
     text: String,
-    plain: Boolean,
+    plain: {
+      type: Boolean,
+      default: true,
+    },
   },
   methods: {
     getComponent,

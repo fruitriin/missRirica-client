@@ -18,7 +18,7 @@
       i18n.ts.renotedBy
 
       <nuxt-link>
-        <UserName :user="appearNote.user" />
+        <UserName :user="appearNote.user" :note="appearNote" />
       </nuxt-link>
       <div class="info">
         <button ref="renoteTime" class="_button time" @click="showRenoteMenu()">
@@ -31,7 +31,7 @@
     <article class="article">
       <Avater :user="appearNote.user" />
       <div class="main">
-        <UserName :user="appearNote.user" />
+        <UserName :user="appearNote.user" :note="appearNote" />
         <!--        <XNoteHeader class="header" :note="appearNote" :mini="true"/>-->
         <InstanceTicker class="ticker" :instance="appearNote.user.instance" />
 
@@ -158,11 +158,15 @@ export default defineComponent({
       type: Object as PropType<entities.Note>,
       required: true,
     },
-    isLong: Boolean,
-    translation: Boolean,
-    translating: Boolean,
-    collapsed: Boolean,
-    menuIndicated: Boolean,
+  },
+  data() {
+    return {
+      isLong: false,
+      translation: false,
+      translating: false,
+      collapsed: false,
+      menuIndicated: false,
+    };
   },
   methods: {
     readPromo() {},

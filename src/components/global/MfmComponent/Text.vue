@@ -1,7 +1,7 @@
 <template>
   <template v-for="(t, i) in parsedText">
     <span>{{ t }}</span>
-    <br v-if="i !== parsedText.length" />
+    <br v-if="showBr(t, i)" />
   </template>
 </template>
 
@@ -17,6 +17,21 @@ export default {
     plain: {
       type: Boolean,
       default: false,
+    },
+    nowrap: {
+      type: Boolean,
+      default: false,
+    },
+    note: Object,
+  },
+  methods: {
+    showBr(text, index) {
+      // 行末では改行しない
+      if (index + 1 === this.parsedText.length) {
+        return false;
+      }
+
+      return true;
     },
   },
   computed: {

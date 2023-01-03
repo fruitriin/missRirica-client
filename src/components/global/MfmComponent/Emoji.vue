@@ -1,6 +1,5 @@
 <template>
-  Emoji
-  {{ token }}
+  <span class="emoji">{{ token }}</span>
   <!--  <span v-html="token"></span>-->
 </template>
 
@@ -13,4 +12,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.emoji {
+  height: 1.25em;
+  vertical-align: -0.25em;
+}
+</style>

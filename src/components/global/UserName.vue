@@ -1,22 +1,23 @@
 <template>
-  <MfmComponent
-    :text="user.name || user.username"
-    :plain="true"
-    :nowrap="nowrap"
-    :note="user"
-  />
+  <MfmComponent :text="user.name || user.username" :plain="true" :note="user" />
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import * as misskey from "misskey-js";
 
-const props = withDefaults(
-  defineProps<{
-    user: misskey.entities.User;
-    nowrap?: boolean;
-  }>(),
-  {
-    nowrap: true,
-  }
-);
+export default defineComponent({
+  props: {
+    user: Object,
+    nowrap: {
+      // 今の所つかってない
+      type: Boolean,
+      default: true,
+    },
+    plain: {
+      type: Boolean,
+      default: false,
+    },
+    note: Object,
+  },
+});
 </script>
