@@ -20,6 +20,18 @@
                   padding-top: calc(env(safe-area-inset-top) );
               }
           }
+
+          .ios .qzhlnise.dialog > .content {
+              padding-top: calc(20px + 16px) !important;
+
+          }
+          @supports (bottom: env(safe-area-inset-bottom)) {
+              .ios .qzhlnise.dialog > .content {
+                  padding-top: calc(env(safe-area-inset-top) + 16px) !important;
+              }
+          }
+
+
       </style>
   </head>
   <body>
