@@ -25,13 +25,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>アプリはカメラで撮影した写真を添付します。</string>
-    <key>NSCameraUsageDescription</key>
-    <string>アプリはPhotoLibraryで選択した写真を添付します。</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>位置情報を使用します。</string>
+	<string>アプリはカメラで撮影した写真をアップロードします。</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>マイクを使用します。</string>
+	<string>アプリは動画の撮影にマイクを使用します。動画はアップロードされます。</string>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>通知を使用します。</string>
 	<key>UILaunchStoryboardName</key>
