@@ -1413,10 +1413,10 @@ broadcast-channel@4.18.1:
     rimraf "3.0.2"
     unload "2.3.1"
 
-"browser-image-resizer@git+https://x-access-token:ghs_8PQEjyZWh8R24PKZfkS4NG3cYo50JL497ogD@github.com/misskey-dev/browser-image-resizer#v2.2.1":
+"browser-image-resizer@git+https://github.com/misskey-dev/browser-image-resizer#v2.2.1":
   version "2.2.1"
   uid "26a5c839f8a23da5ced4b9084ec9b872e04876d8"
-  resolved "git+https://x-access-token:ghs_8PQEjyZWh8R24PKZfkS4NG3cYo50JL497ogD@github.com/misskey-dev/browser-image-resizer#26a5c839f8a23da5ced4b9084ec9b872e04876d8"
+  resolved "git+https://github.com/misskey-dev/browser-image-resizer#26a5c839f8a23da5ced4b9084ec9b872e04876d8"
   dependencies:
     exifreader "^3.1.0"
 
@@ -1507,10 +1507,10 @@ chart.js@4.1.1:
   dependencies:
     "@kurkle/color" "^0.3.0"
 
-chartjs-adapter-date-fns@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/chartjs-adapter-date-fns/-/chartjs-adapter-date-fns-2.0.1.tgz#3d007d4985391362fb15c96310fff8376a434bae"
-  integrity sha512-v3WV9rdnQ05ce3A0ZCjzUekJCAbfm6+3HqSoeY2BIkdMYZoYr/4T+ril1tZyDl869lz6xdNVMXejUFT9YKpw4A==
+chartjs-adapter-date-fns@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/chartjs-adapter-date-fns/-/chartjs-adapter-date-fns-3.0.0.tgz#c25f63c7f317c1f96f9a7c44bd45eeedb8a478e5"
+  integrity sha512-Rs3iEB3Q5pJ973J93OBTpnP7qoGwvq3nUnoMdtxO+9aoJof7UFcRbWcIDteXuYd1fgAvct/32T9qaLyLuZVwCg==
 
 chartjs-plugin-gradient@0.6.1:
   version "0.6.1"
