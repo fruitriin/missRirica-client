@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import tinycolor from "tinycolor2";
 import { globalEvents } from "@/events";
+import { StatusBar, Style } from "@capacitor/status-bar";
 
 export type Theme = {
   id: string;
@@ -65,6 +66,7 @@ export function applyTheme(theme: Theme, persist = true) {
   }, 1000);
 
   const colorSchema = theme.base === "dark" ? "dark" : "light";
+  StatusBar.setStyle({ style: theme.base ===  "dark" ? Style.Dark  : Style.Light  })
 
   // Deep copy
   const _theme = deepClone(theme);

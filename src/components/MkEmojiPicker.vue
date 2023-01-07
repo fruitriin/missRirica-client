@@ -448,6 +448,7 @@ defineExpose({
 <style lang="scss" scoped>
 .omfetrab {
   $pad: 8px;
+  padding-bottom:  env(safe-area-inset-bottom);
 
   display: flex;
   flex-direction: column;

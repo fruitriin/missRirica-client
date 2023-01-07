@@ -8,12 +8,6 @@
         <div class="body">
           <div v-if="!narrow || currentPage?.route.name == null" class="nav">
             <div class="baaadecd">
-              <MkInfo v-if="emailNotConfigured" warn class="info"
-                >{{ i18n.ts.emailNotConfiguredWarning }}
-                <MkA to="/settings/email" class="_link">{{
-                  i18n.ts.configure
-                }}</MkA></MkInfo
-              >
               <MkSuperMenu
                 :def="menuDef"
                 :grid="currentPage?.route.name == null"
@@ -114,24 +108,6 @@ const menuDef = computed(() => [
         to: "/settings/notifications",
         active: currentPage?.route.name === "notifications",
       },
-      {
-        icon: "fas fa-envelope",
-        text: i18n.ts.email,
-        to: "/settings/email",
-        active: currentPage?.route.name === "email",
-      },
-      {
-        icon: "fas fa-share-alt",
-        text: i18n.ts.integration,
-        to: "/settings/integration",
-        active: currentPage?.route.name === "integration",
-      },
-      {
-        icon: "fas fa-lock",
-        text: i18n.ts.security,
-        to: "/settings/security",
-        active: currentPage?.route.name === "security",
-      },
     ],
   },
   {
@@ -214,22 +190,10 @@ const menuDef = computed(() => [
         to: "/settings/webhook",
         active: currentPage?.route.name === "webhook",
       },
-      {
-        icon: "fas fa-ellipsis-h",
-        text: i18n.ts.other,
-        to: "/settings/other",
-        active: currentPage?.route.name === "other",
-      },
     ],
   },
   {
     items: [
-      {
-        icon: "fas fa-floppy-disk",
-        text: i18n.ts.preferencesBackups,
-        to: "/settings/preferences-backups",
-        active: currentPage?.route.name === "preferences-backups",
-      },
       {
         type: "button",
         icon: "fas fa-trash",
