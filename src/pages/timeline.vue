@@ -53,6 +53,7 @@ import { definePageMetadata } from "@/scripts/page-metadata";
 import OneSignal from "onesignal-cordova-plugin";
 import {Device} from "@capacitor/device";
 
+
 const XTutorial = defineAsyncComponent(() => import("./timeline.tutorial.vue"));
 
 const isLocalTimelineAvailable =
