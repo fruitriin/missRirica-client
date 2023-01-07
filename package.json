@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "cp capacitor.config.dev.json capacitor.config.json;npx cap sync; vite --host;",
+    "dev": "cp capacitor.config.dev.json capacitor.config.json;npx cap copy; vite --host;",
     "build": "cp capacitor.config.prod.json capacitor.config.json; rm -rf dist/; vite build; npx cap sync",
     "lint": "vue-tsc",
     "preview": "vite preview",
@@ -48,7 +48,7 @@
     "katex": "0.16.4",
     "matter-js": "0.18.0",
     "mfm-js": "0.23.0",
-    "misskey-js": "0.0.14",
+    "misskey-js": "^0.0.14",
     "onesignal-cordova-plugin": "^3.2.0",
     "photoswipe": "5.3.4",
     "prismjs": "1.29.0",
