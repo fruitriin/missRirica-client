@@ -1,30 +1,17 @@
 <template>
+  <MkImageViewer :image="{ url: '/client-assets/img/howto1.jpg'}" v-if="howto1" @close="howto1 = false" />
+  <MkImageViewer :image="{ url: '/client-assets/img/howto2.jpg'}" v-if="howto2" @close="howto2 = false" />
   <form
     class="eppvobhk _monolithic_"
     :class="{ signing, totpLogin }"
     @submit.prevent="onSubmit"
   >
     <div class="auth _section _formRoot">
-      <div
-        v-show="withAvatar"
-        class="avatar"
-        :style="{
-          backgroundImage: user ? `url('${user.avatarUrl}')` : null,
-          marginBottom: message ? '1.5em' : null,
-        }"
-      ></div>
-      <MkInfo v-if="message">
-        {{ message }}
-      </MkInfo>
+      アクセストークン
+
+
       <div v-if="!totpLogin" class="normal-signin">
-        <!--			<MkInput v-model="username" class="_formBlock" :placeholder="i18n.ts.username" type="text" pattern="^[a-zA-Z0-9_]+$" :spellcheck="false" autofocus required data-cy-signin-username @update:modelValue="onUsernameChange">-->
-        <!--				<template #prefix>@</template>-->
-        <!--				<template #suffix>@{{ host }}</template>-->
-        <!--			</MkInput>-->
-        <!--			<MkInput v-if="!user || user && !user.usePasswordLessLogin" v-model="password" class="_formBlock" :placeholder="i18n.ts.password" type="password" :with-password-toggle="true" required data-cy-signin-password>-->
-        <!--				<template #prefix><i class="fas fa-lock"></i></template>-->
-        <!--				<template #caption><button class="_textButton" type="button" @click="resetPassword">{{ i18n.ts.forgotPassword }}</button></template>-->
-        <!--			</MkInput>-->
+
         <MkInput
           v-model="token"
           :spellcheck="false"
@@ -41,51 +28,11 @@
           >{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}</MkButton
         >
       </div>
-      <div
-        v-if="totpLogin"
-        class="2fa-signin"
-        :class="{ securityKeys: user && user.securityKeys }"
-      >
-        <div v-if="user && user.securityKeys" class="twofa-group tap-group">
-          <p>{{ i18n.ts.tapSecurityKey }}</p>
-          <MkButton v-if="!queryingKey" @click="queryKey">
-            {{ i18n.ts.retry }}
-          </MkButton>
-        </div>
-        <div v-if="user && user.securityKeys" class="or-hr">
-          <p class="or-msg">{{ i18n.ts.or }}</p>
-        </div>
-        <div class="twofa-group totp-group">
-          <p style="margin-bottom: 0">{{ i18n.ts.twoStepAuthentication }}</p>
-          <MkInput
-            v-if="user && user.usePasswordLessLogin"
-            v-model="password"
-            type="password"
-            :with-password-toggle="true"
-            required
-          >
-            <template #label>{{ i18n.ts.password }}</template>
-            <template #prefix><i class="fas fa-lock"></i></template>
-          </MkInput>
-          <MkInput
-            v-model="token"
-            type="text"
-            pattern="^[0-9]{6}$"
-            autocomplete="off"
-            :spellcheck="false"
-            required
-          >
-            <template #label>{{ i18n.ts.token }}</template>
-            <template #prefix><i class="fas fa-gavel"></i></template>
-          </MkInput>
-          <MkButton
-            type="submit"
-            :disabled="signing"
-            primary
-            style="margin: 0 auto"
-            >{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}</MkButton
-          >
-        </div>
+
+      <div style="display: flex; justify-content: center;">
+
+        <a href="https://misskey.io/notes/99l9jqqun2" target="_blank" style="color: var(--link); text-align: center">アクセストークンの作り方</a>
+
       </div>
     </div>
     <div class="social _section">
@@ -102,6 +49,8 @@ import { toUnicode } from "punycode/";
 import MkButton from "@/components/MkButton.vue";
 import MkInput from "@/components/form/input.vue";
 import MkInfo from "@/components/MkInfo.vue";
+import MkMediaImage from "@/components/MkMediaImage.vue";
+import MkImageViewer from "@/components/MkImageViewer.vue";
 import { apiUrl, host as configHost } from "@/config";
 import { byteify, hexify } from "@/scripts/2fa";
 import * as os from "@/os";
@@ -125,6 +74,9 @@ let hCaptchaResponse = $ref(null);
 let reCaptchaResponse = $ref(null);
 
 const meta = $computed(() => instance);
+
+const howto1 = $ref(false)
+const howto2 = $ref(false)
 
 const emit = defineEmits<{
   (ev: "login", v: any): void;
