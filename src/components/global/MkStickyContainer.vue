@@ -24,12 +24,12 @@ const bodyEl = $ref<HTMLElement>();
 
 let headerHeight = $ref<string | undefined>();
 let childStickyTop = $ref(0);
-const parentStickyTop = inject<Ref<number>>(CURRENT_STICKY_TOP, ref(0));
+const parentStickyTop = inject<Ref<number>>(CURRENT_STICKY_TOP, ref(document.querySelector<HTMLElement>("#header")?.offsetHeight));
 provide(CURRENT_STICKY_TOP, $$(childStickyTop));
 
 const calc = () => {
 
-  childStickyTop = parentStickyTop.value + headerEl.offsetHeight + document.querySelector<HTMLElement>("#header")?.offsetHeight;
+  childStickyTop = parentStickyTop.value + headerEl.offsetHeight;
   headerHeight = headerEl.offsetHeight.toString();
 };
 

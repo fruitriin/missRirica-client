@@ -19,6 +19,7 @@ const apiClient = new Misskey.api.APIClient({
   credential: JSON.parse(localStorage.getItem("account"))?.token,
 });
 
+
 export const noCredentialApi = new Misskey.api.APIClient({
   origin: url,
 });
@@ -27,7 +28,6 @@ export const api = ((
   endpoint: keyof Endpoints,
   data: Record<string, any> = {}
 ) => {
-  console.info(apiClient);
   return apiClient.request(endpoint, data);
 }) as typeof apiClient.request;
 
@@ -46,17 +46,10 @@ export const apiGet = ((
   const promise = new Promise((resolve, reject) => {
     // Send request
     apiClient
-      .request(endpoint, { data })
+      .request(endpoint, { ...data })
       .then(async (res) => {
-        const body = res.status === 204 ? null : await res.json();
+        resolve(res);
 
-        if (res.status === 200) {
-          resolve(body);
-        } else if (res.status === 204) {
-          resolve();
-        } else {
-          reject(body.error);
-        }
       })
       .catch(reject);
   });
