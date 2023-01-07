@@ -7,7 +7,7 @@
     :to="url"
     :style="{ background: bgCss }"
   >
-    <img class="icon" :src="`/avatar/@${username}@${host}`" alt="" />
+    <img class="icon" :src="`${uri}/avatar/@${avatarSite}`" alt="" />
     <span class="main">
       <span class="username">@{{ username }}</span>
       <span v-if="host != localHost || $store.state.showFullAcct" class="host"
@@ -41,11 +41,16 @@ const props = defineProps<{
   username: string;
   host: string;
 }>();
+const uri = JSON.parse(localStorage.getItem("instance")).uri
 
 const canonical =
   props.host === localHost
     ? `@${props.username}`
     : `@${props.username}@${toUnicode(props.host)}`;
+
+const avatarSite = props.host === localHost
+  ? `@${props.username}@${toUnicode(uri.replace("https://", ""))}`
+  : `@${props.username}@${toUnicode(props.host)}`;
 
 const url = `/${canonical}`;
 
