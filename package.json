@@ -4,13 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "rm -rf dist/; vite build; npx cap sync",
+    "dev": "cp capacitor.config.dev.json capacitor.config.json;npx cap sync; vite --host;",
+    "build": "cp capacitor.config.prod.json capacitor.config.json; rm -rf dist/; vite build; npx cap sync",
     "lint": "vue-tsc",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "ios": "npx cap open ios",
+    "android": "studio android"
   },
   "dependencies": {
     "@capacitor/android": "^4.5.0",
+    "@capacitor/app": "^4.1.1",
     "@capacitor/core": "^4.5.0",
     "@capacitor/device": "^4.1.0",
     "@capacitor/ios": "^4.5.0",
