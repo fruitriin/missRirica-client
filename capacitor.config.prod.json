@@ -1,0 +1,12 @@
+{
+  "appId": "space.riinswork.missririca",
+  "appName": "MissRirica",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  }
+}
+

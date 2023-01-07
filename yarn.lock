@@ -40,6 +40,11 @@
   resolved "https://registry.yarnpkg.com/@capacitor/android/-/android-4.5.0.tgz#081ca5025aa7df467281b032961c34d2c5b88a02"
   integrity sha512-GRoQ0Q1XOupU4pK3aipWfwCGXRuAq32IHpOoNSZm3Enu1/FhoOlIvHMlnnIQTpq6sBye/cqBIuYsOpPBMi3VNg==
 
+"@capacitor/app@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@capacitor/app/-/app-4.1.1.tgz#47329e19ecc080bc2934be86566a7673e0f94e5c"
+  integrity sha512-SJcJA1rhFQyeH6eLfUEbdKkHzAwzahJNVPNXmU88fdmXpMgM2dJGzZj1vrm6e21aQq+Z4aBVLJ2RCdj92zD7wg==
+
 "@capacitor/assets@^2.0.4":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@capacitor/assets/-/assets-2.0.4.tgz#6a9e8d3bd9d6cc39d8f484cdc9bc0492c6c83c5a"
@@ -1413,10 +1418,9 @@ broadcast-channel@4.18.1:
     rimraf "3.0.2"
     unload "2.3.1"
 
-"browser-image-resizer@git+https://x-access-token:ghs_8PQEjyZWh8R24PKZfkS4NG3cYo50JL497ogD@github.com/misskey-dev/browser-image-resizer#v2.2.1":
+"browser-image-resizer@git+https://github.com/misskey-dev/browser-image-resizer#v2.2.1":
   version "2.2.1"
-  uid "26a5c839f8a23da5ced4b9084ec9b872e04876d8"
-  resolved "git+https://x-access-token:ghs_8PQEjyZWh8R24PKZfkS4NG3cYo50JL497ogD@github.com/misskey-dev/browser-image-resizer#26a5c839f8a23da5ced4b9084ec9b872e04876d8"
+  resolved "git+https://github.com/misskey-dev/browser-image-resizer#26a5c839f8a23da5ced4b9084ec9b872e04876d8"
   dependencies:
     exifreader "^3.1.0"
 

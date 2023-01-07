@@ -254,6 +254,15 @@ function top() {
 const wallpaper = localStorage.getItem("wallpaper") != null;
 </script>
 
+<style lang="scss">
+.ios .efzpzdvf.widgetsDrawer {
+  padding-top: calc(env(safe-area-inset-top) + var(--margin) ) !important;
+  @supports (bottom: env(safe-area-inset-bottom)) {
+    padding-top: calc(20px + var(--margin) ) !important;
+  }
+}
+</style>
+
 <style lang="scss" scoped>
 .widgetsDrawer-enter-active,
 .widgetsDrawer-leave-active {
@@ -304,6 +313,7 @@ const wallpaper = localStorage.getItem("wallpaper") != null;
 .dkgtipfy {
   $ui-font-size: 1em; // TODO: どこかに集約したい
   $widgets-hide-threshold: 1090px;
+
 
   min-height: 100dvh;
   box-sizing: border-box;
@@ -360,11 +370,14 @@ const wallpaper = localStorage.getItem("wallpaper") != null;
     z-index: 1001;
     height: 100dvh;
     padding: var(--margin);
+
     box-sizing: border-box;
     overflow: auto;
     overscroll-behavior: contain;
     background: var(--bg);
+
   }
+
 
   > .buttons {
     position: fixed;
