@@ -106,6 +106,14 @@ import {Device} from "@capacitor/device";
   const res = await Device.getInfo()
   html.setAttribute("class", res.platform)
 
+  const css = localStorage.getItem("customCss") || ""
+  if(css){
+    const cssNode = document.createElement("style")
+    const cssTextNode = document.createTextNode(css)
+    cssNode.appendChild(cssTextNode)
+    document.body.appendChild(cssNode)
+  }
+
   //#endregion
 
   //#region loginId
