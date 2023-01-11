@@ -7,11 +7,16 @@
     @submit.prevent="onSubmit"
   >
     <div class="auth _section _formRoot">
-      アクセストークン
+      <div  class="normal-signin">
+        インスタンス
+        <MkInput
+          v-model="instanceUrl"
+          :spellcheck="false"
+          autofocus
+          required
+        ></MkInput>
 
-
-      <div v-if="!totpLogin" class="normal-signin">
-
+        アクセストークン
         <MkInput
           v-model="token"
           :spellcheck="false"
@@ -72,6 +77,7 @@ let challengeData = $ref(null);
 let queryingKey = $ref(false);
 let hCaptchaResponse = $ref(null);
 let reCaptchaResponse = $ref(null);
+const instanceUrl = $ref("")
 
 const meta = $computed(() => instance);
 
@@ -113,9 +119,9 @@ function onUsernameChange() {
   );
 }
 
-function onLogin(res) {
+function onLogin(res: any) {
   if (props.autoSet) {
-    return login(res.i);
+    return login(res.i, res.instance);
   }
 }
 
@@ -153,8 +159,8 @@ function queryKey() {
       });
     })
     .then((res) => {
-      emit("login", res);
-      return onLogin(res);
+      emit("login", {...res, instance: instanceUrl});
+      return onLogin({...res, instance: instanceUrl});
     })
     .catch((err) => {
       if (err === null) return;
@@ -165,12 +171,11 @@ function queryKey() {
       signing = false;
     });
 }
-
 function onSubmit() {
   signing = true;
   console.log("submit");
   if (!token.value) {
-    login(token);
+    login(token, new URL(instanceUrl).origin);
     signing = false;
   }
 }

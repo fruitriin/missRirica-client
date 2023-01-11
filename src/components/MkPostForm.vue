@@ -787,7 +787,7 @@ async function post() {
     replyId: props.reply ? props.reply.id : undefined,
     renoteId: props.renote ? props.renote.id : quoteId ? quoteId : undefined,
     channelId: props.channel ? props.channel.id : undefined,
-    poll: poll,
+    poll: poll || undefined,
     cw: useCw ? cw || "" : undefined,
     localOnly: localOnly,
     visibility: visibility,
