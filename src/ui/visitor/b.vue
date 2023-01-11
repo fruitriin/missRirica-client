@@ -45,8 +45,6 @@
       <div class="contents">
         <XHeader v-if="!root" class="header" :info="pageInfo" />
         <main>
-          aaaa
-          {{ root }}
           <RouterView v-if="root" />
           <div v-if="!meta" style="text-align: center">
             <p>
@@ -155,7 +153,7 @@ const keymap = $computed(() => {
 
 const root = $computed(() => mainRouter.currentRoute.value.name === "index");
 
-os.api("meta", { detail: true }).then((res) => {
+os.noCredentialApi.request("meta", { detail: true }).then((res) => {
   meta = res;
 });
 

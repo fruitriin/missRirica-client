@@ -15,7 +15,7 @@ import { get } from "@/scripts/idb-proxy";
 export const pendingApiRequestsCount = ref(0);
 
 const apiClient = new Misskey.api.APIClient({
-  origin: url,
+  origin: $i?.instanceUrl,
   credential: JSON.parse(localStorage.getItem("account"))?.token,
 });
 

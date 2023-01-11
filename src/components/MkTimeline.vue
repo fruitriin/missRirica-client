@@ -162,7 +162,6 @@ App.addListener('appStateChange', async ({ isActive }) => {
   if(isActive){
     dissconect()
     connect()
-     tlComponent.pagingComponent.reload()
   }else {
     dissconect()
   }

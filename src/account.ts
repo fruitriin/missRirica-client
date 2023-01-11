@@ -3,11 +3,11 @@ import * as misskey from "misskey-js";
 import { showSuspendedDialog } from "./scripts/show-suspended-dialog";
 import { i18n } from "./i18n";
 import { del, get, set } from "@/scripts/idb-proxy";
-import { apiUrl, url } from "@/config";
 import { waiting, api, popup, popupMenu, success, alert } from "@/os";
 import { unisonReload, reloadChannel } from "@/scripts/unison-reload";
-import { APIClient } from "misskey-js/built/api";
 import * as Misskey from "misskey-js";
+import { instance } from "@/instance";
+import Api from "@/pages/settings/api.vue";
 
 // TODO: 他のタブと永続化されたstateを同期
 
@@ -31,51 +31,22 @@ export async function signout() {
 
   const accounts = await getAccounts();
 
-  //#region Remove service worker registration
-  try {
-    if (navigator.serviceWorker.controller) {
-      const registration = await navigator.serviceWorker.ready;
-      const push = await registration.pushManager.getSubscription();
-      if (push) {
-        await window.fetch(`${apiUrl}/sw/unregister`, {
-          method: "POST",
-          body: JSON.stringify({
-            i: $i.token,
-            endpoint: push.endpoint,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      }
-    }
-
-    if (accounts.length === 0) {
-      await navigator.serviceWorker.getRegistrations().then((registrations) => {
-        return Promise.all(
-          registrations.map((registration) => registration.unregister())
-        );
-      });
-    }
-  } catch (err) {}
-  //#endregion
-
   document.cookie = "igi=; path=/";
 
-  if (accounts.length > 0) login(accounts[0].token);
+  if (accounts.length > 0) login(accounts[0].token, accounts[0].instanceUrl);
   else unisonReload("/");
 }
 
 export async function getAccounts(): Promise<
-  { id: Account["id"]; token: Account["token"] }[]
+  { id: Account["id"]; token: Account["token"] , instanceUrl: string}[]
 > {
   return (await get("accounts")) || [];
 }
 
-export async function addAccount(id: Account["id"], token: Account["token"]) {
+export async function addAccount(id: Account["id"], token: Account["token"], instanceUrl: string) {
   const accounts = await getAccounts();
   if (!accounts.some((x) => x.id === id)) {
-    await set("accounts", accounts.concat([{ id, token }]));
+    await set("accounts", accounts.concat([{ id, token , instanceUrl}]));
   }
 }
 
@@ -90,16 +61,17 @@ export async function removeAccount(id: Account["id"]) {
   else await del("accounts");
 }
 
-function fetchAccount(token: string): Promise<Account> {
+function fetchAccount(token: string, instanceUrl: string): Promise<Account & {instanceUrl: string}> {
+
   const apiClient = new Misskey.api.APIClient({
-    origin: url,
+    origin: instanceUrl,
     credential: token,
   });
   return apiClient
     .request("i")
     .then((res) => {
       res.token = token;
-      return res as Account;
+      return {...res as Account, instanceUrl};
     })
     .catch((err) => {
       if (err.id === "a8c724b3-6e9c-4b46-b1a8-bc3ed6258370") {
@@ -125,16 +97,16 @@ export function updateAccount(accountData) {
 }
 
 export function refreshAccount() {
-  return fetchAccount($i.token).then(updateAccount);
+  return fetchAccount($i.token, $i.instanceUrl).then(updateAccount);
 }
 
-export async function login(token: Account["token"], redirect?: string) {
+export async function login(token: Account["token"], instanceUrl: string,  redirect?: string) {
   waiting();
-  if (_DEV_) console.log("logging as token ", token);
-  const me = await fetchAccount(token);
+  if (_DEV_) console.log("logging as token ", token, instanceUrl);
+  const me = await fetchAccount(token, instanceUrl);
   localStorage.setItem("account", JSON.stringify(me));
   document.cookie = `token=${token}; path=/; max-age=31536000`; // bull dashboardの認証とかで使う
-  await addAccount(me.id, token);
+  await addAccount(me.id, token, instanceUrl);
 
   if (redirect) {
     // 他のタブは再読み込みするだけ
@@ -162,7 +134,7 @@ export async function openAccountMenu(
       {},
       {
         done: (res) => {
-          addAccount(res.id, res.i);
+          addAccount(res.id, res.i, res.instanceUrl);
           success();
         },
       },
@@ -170,36 +142,23 @@ export async function openAccountMenu(
     );
   }
 
-  function createAccount() {
-    popup(
-      defineAsyncComponent(() => import("@/components/MkSignupDialog.vue")),
-      {},
-      {
-        done: (res) => {
-          addAccount(res.id, res.i);
-          switchAccountWithToken(res.i);
-        },
-      },
-      "closed"
-    );
-  }
+
 
   async function switchAccount(account: misskey.entities.UserDetailed) {
     const storedAccounts = await getAccounts();
-    const token = storedAccounts.find((x) => x.id === account.id).token;
-    switchAccountWithToken(token);
+    const acc = storedAccounts.find((x) => x.id === account.id);
+     const{ token, instanceUrl } = acc
+    switchAccountWithToken(token, instanceUrl);
   }
 
-  function switchAccountWithToken(token: string) {
-    login(token);
+  function switchAccountWithToken(token: string, instanceUrl: string) {
+    login(token, instanceUrl);
   }
 
   const storedAccounts = await getAccounts().then((accounts) =>
     accounts.filter((x) => x.id !== $i.id)
   );
-  const accountsPromise = api("users/show", {
-    userIds: storedAccounts.map((x) => x.id),
-  });
+
 
   function createItem(account: misskey.entities.UserDetailed) {
     return {
@@ -219,7 +178,10 @@ export async function openAccountMenu(
   const accountItemPromises = storedAccounts.map(
     (a) =>
       new Promise((res) => {
-        accountsPromise.then((accounts) => {
+        new Misskey.api.APIClient({origin: a.instanceUrl, credential: a.token})
+          .request("users/show", {
+          userIds: [a.id]
+        }).then((accounts) => {
           const account = accounts.find((x) => x.id === a.id);
           if (account == null) return res(null);
           res(createItem(account));
@@ -240,25 +202,6 @@ export async function openAccountMenu(
           null,
           ...(opts.includeCurrentAccount ? [createItem($i)] : []),
           ...accountItemPromises,
-          {
-            type: "parent",
-            icon: "fas fa-plus",
-            text: i18n.ts.addAccount,
-            children: [
-              {
-                text: i18n.ts.existingAccount,
-                action: () => {
-                  showSigninDialog();
-                },
-              },
-              {
-                text: i18n.ts.createAccount,
-                action: () => {
-                  createAccount();
-                },
-              },
-            ],
-          },
           {
             type: "link",
             icon: "fas fa-users",

@@ -19,7 +19,7 @@
             <MkUserName :user="account" />
           </div>
           <div class="acct">
-            <MkAcct :user="account" />
+            <MkAcct :user="account" :detail="true" />
           </div>
         </div>
       </div>
@@ -41,25 +41,28 @@ import {
 } from "@/account";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
+import { apiGet } from "@/os";
+import  * as Misskey from "misskey-js"
 
 const storedAccounts = ref<any>(null);
-const accounts = ref<any>(null);
+const accounts = ref<any>([]);
 
 const init = async () => {
-  getAccounts()
-    .then((accounts) => {
-      storedAccounts.value = accounts.filter((x) => x.id !== $i!.id);
-
-      console.log(storedAccounts.value);
-
-      return os.api("users/show", {
-        userIds: storedAccounts.value.map((x) => x.id),
-      });
+   await getAccounts()
+    .then(async ( ac) => {
+      return  ac.filter((x) => x.id !== $i!.id).forEach(async a => {
+        accounts.value.push(
+          {
+            ...await new Misskey.api.APIClient({ origin: a.instanceUrl, credential: a.token }).request("users/show", {
+              userId: a.id
+            }),
+            host: a.instanceUrl
+          }
+        )
     })
-    .then((response) => {
-      accounts.value = response;
-      console.log(accounts.value);
-    });
+  });
+
+  return Promise.resolve()
 };
 
 function menu(account, ev) {
@@ -90,12 +93,6 @@ function addAccount(ev) {
           addExistingAccount();
         },
       },
-      {
-        text: i18n.ts.createAccount,
-        action: () => {
-          createAccount();
-        },
-      },
     ],
     ev.currentTarget ?? ev.target
   );
@@ -111,22 +108,8 @@ function addExistingAccount() {
     {},
     {
       done: (res) => {
-        addAccounts(res.id, res.i);
+        addAccounts(res.id, res.i, res.instanceUrl);
         os.success();
-      },
-    },
-    "closed"
-  );
-}
-
-function createAccount() {
-  os.popup(
-    defineAsyncComponent(() => import("@/components/MkSignupDialog.vue")),
-    {},
-    {
-      done: (res) => {
-        addAccounts(res.id, res.i);
-        switchAccountWithToken(res.i);
       },
     },
     "closed"
@@ -135,12 +118,12 @@ function createAccount() {
 
 async function switchAccount(account: any) {
   const fetchedAccounts: any[] = await getAccounts();
-  const token = fetchedAccounts.find((x) => x.id === account.id).token;
-  switchAccountWithToken(token);
+  const { token, instanceUrl } = fetchedAccounts.find((x) => x.id === account.id);
+  switchAccountWithToken(token, instanceUrl);
 }
 
-function switchAccountWithToken(token: string) {
-  login(token);
+function switchAccountWithToken(token: string, instanceUrl: string) {
+  login(token, instanceUrl);
 }
 
 const headerActions = $computed(() => []);
