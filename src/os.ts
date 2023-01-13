@@ -21,7 +21,7 @@ const apiClient = new Misskey.api.APIClient({
 
 
 export const noCredentialApi = new Misskey.api.APIClient({
-  origin: url,
+  origin: $i?.instanceUrl || window.location.origin,
 });
 
 export const api = ((

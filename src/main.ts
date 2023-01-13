@@ -46,6 +46,9 @@ import { reactionPicker } from "@/scripts/reaction-picker";
 import { getUrlWithoutLoginId } from "@/scripts/login-id";
 import { getAccountFromId } from "@/scripts/get-account-from-id";
 import {Device} from "@capacitor/device";
+
+export let instanceLightMeta
+
 (async () => {
   console.info(`Misskey v${version}`);
 
@@ -174,6 +177,7 @@ import {Device} from "@capacitor/device";
   const fetchInstanceMetaPromise = fetchInstance();
 
   fetchInstanceMetaPromise.then(() => {
+    instanceLightMeta = instance
     localStorage.setItem("v", instance.version);
   });
 
