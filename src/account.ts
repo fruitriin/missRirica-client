@@ -178,13 +178,17 @@ export async function openAccountMenu(
   const accountItemPromises = storedAccounts.map(
     (a) =>
       new Promise((res) => {
-        new Misskey.api.APIClient({origin: a.instanceUrl, credential: a.token})
-          .request("users/show", {
+        const client = new Misskey.api.APIClient({origin: a.instanceUrl, credential: a.token})
+
+        client.request("users/show", {
           userIds: [a.id]
         }).then((accounts) => {
           const account = accounts.find((x) => x.id === a.id);
           if (account == null) return res(null);
-          res(createItem(account));
+
+          client.request("meta").then(meta => {
+            res(createItem({ ...account, host: meta.name}))
+          })
         });
       })
   );

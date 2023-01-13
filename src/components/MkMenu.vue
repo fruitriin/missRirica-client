@@ -69,6 +69,7 @@
           <MkAvatar :user="item.user" class="avatar" /><MkUserName
             :user="item.user"
           />
+          [{{ item.user.host }}]
           <span v-if="item.indicate" class="indicator"
             ><i class="fas fa-circle"></i
           ></span>
@@ -188,6 +189,7 @@ watch(
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
+
 
       if (item && "then" in item) {
         // if item is Promise
