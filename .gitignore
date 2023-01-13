@@ -25,4 +25,4 @@ dist-ssr
 *.sw?
 .env
 
-src/missRirica-Web
+src/missRirica-Web!/capacitor.config.json
