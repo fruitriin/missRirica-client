@@ -1,51 +1,59 @@
 <template>
-  <MkImageViewer :image="{ url: '/client-assets/img/howto1.jpg'}" v-if="howto1" @close="howto1 = false" />
-  <MkImageViewer :image="{ url: '/client-assets/img/howto2.jpg'}" v-if="howto2" @close="howto2 = false" />
-  <form
-    class="eppvobhk _monolithic_"
-    :class="{ signing, totpLogin }"
-    @submit.prevent="onSubmit"
-  >
-    <div class="auth _section _formRoot">
-      <div  class="normal-signin">
-        インスタンス
-        <MkInput
-          v-model="instanceUrl"
-          :spellcheck="false"
-          autofocus
-          required
-        ></MkInput>
+<MkImageViewer v-if="howto1" :image="{ url: '/client-assets/img/howto1.jpg'}" @close="howto1 = false"/>
+<MkImageViewer v-if="howto2" :image="{ url: '/client-assets/img/howto2.jpg'}" @close="howto2 = false"/>
+<form
+	class="eppvobhk _monolithic_"
+	:class="{ signing, totpLogin }"
+	@submit.prevent="onSubmit"
+>
+	<div class="auth _section _formRoot">
+		<div class="normal-signin">
+			インスタンス
+			<Select v-model="instanceUrl" large :model-value="instances[0]?.url">
+				<option value="other">自分で入力する</option>
+				<option
+					v-for="(instance, i) in instances" :key="instance.url" :value="instance.url"
+					:selected="i === 0"
+				>
+					{{ instance.name }}
+				</option>
+			</Select>
+			<template v-if="instanceUrl === 'other'">
+				URL
+				<MkInput
 
-        アクセストークン
-        <MkInput
-          v-model="token"
-          :spellcheck="false"
-          autofocus
-          required
-          data-cy-signin-username
-        ></MkInput>
-        <MkButton
-          class="_formBlock"
-          type="submit"
-          primary
-          :disabled="signing"
-          style="margin: 0 auto"
-          >{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}</MkButton
-        >
-      </div>
+					v-model="instanceUrlOther"
+					:spellcheck="false"
+					autofocus
+					required
+				/>
+			</template>
 
-      <div style="display: flex; justify-content: center;">
 
-        <a href="https://misskey.io/notes/99l9jqqun2" target="_blank" style="color: var(--link); text-align: center">アクセストークンの作り方</a>
+			アクセストークン
+			<MkInput
+				v-model="token"
+				:spellcheck="false"
+				autofocus
+				required
+				data-cy-signin-username
+			></MkInput>
+			<MkButton
+				class="_formBlock"
+				type="submit"
+				primary
+				:disabled="signing"
+				style="margin: 0 auto"
+			>
+				{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}
+			</MkButton>
+		</div>
 
-      </div>
-    </div>
-    <div class="social _section">
-      <!--		<a v-if="meta && meta.enableTwitterIntegration" class="_borderButton _gap" :href="`${apiUrl}/signin/twitter`"><i class="fab fa-twitter" style="margin-right: 4px;"></i>{{ $t('signinWith', { x: 'Twitter' }) }}</a>-->
-      <!--		<a v-if="meta && meta.enableGithubIntegration" class="_borderButton _gap" :href="`${apiUrl}/signin/github`"><i class="fab fa-github" style="margin-right: 4px;"></i>{{ $t('signinWith', { x: 'GitHub' }) }}</a>-->
-      <!--		<a v-if="meta && meta.enableDiscordIntegration" class="_borderButton _gap" :href="`${apiUrl}/signin/discord`"><i class="fab fa-discord" style="margin-right: 4px;"></i>{{ $t('signinWith', { x: 'Discord' }) }}</a>-->
-    </div>
-  </form>
+		<div style="display: flex; justify-content: center;">
+			<a href="https://misskey.io/notes/99l9jqqun2" target="_blank" style="color: var(--link); text-align: center">アクセストークンの作り方</a>
+		</div>
+	</div>
+</form>
 </template>
 
 <script lang="ts" setup>
@@ -64,6 +72,7 @@ import { showSuspendedDialog } from "../scripts/show-suspended-dialog";
 import { instance } from "@/instance";
 import { i18n } from "@/i18n";
 import { sign } from "chart.js/helpers";
+import Select from "@/components/form/select.vue";
 
 let signing = $ref(false);
 let user = $ref(null);
@@ -78,6 +87,7 @@ let queryingKey = $ref(false);
 let hCaptchaResponse = $ref(null);
 let reCaptchaResponse = $ref(null);
 const instanceUrl = $ref("")
+const instanceUrlOther = $ref("")
 
 const meta = $computed(() => instance);
 
@@ -125,6 +135,15 @@ function onLogin(res: any) {
   }
 }
 
+const instanceUrlResult = $computed(() => {
+  if(instanceUrl === 'other'){
+    // うっかりhttps://を入れてもreplaceされるから大丈夫
+    // new URL.origin
+    return new URL("https://" + instanceUrl.replace("https://", "")).origin
+  }
+  return "https://" + instanceUrl
+})
+
 function queryKey() {
   queryingKey = true;
   return navigator.credentials
@@ -159,8 +178,8 @@ function queryKey() {
       });
     })
     .then((res) => {
-      emit("login", {...res, instance: instanceUrl});
-      return onLogin({...res, instance: instanceUrl});
+      emit("login", {...res, instance: instanceUrlResult});
+      return onLogin({...res, instance: instanceUrlResult});
     })
     .catch((err) => {
       if (err === null) return;
@@ -175,7 +194,7 @@ function onSubmit() {
   signing = true;
   console.log("submit");
   if (!token.value) {
-    login(token, new URL(instanceUrl).origin);
+    login(token, instanceUrlResult);
     signing = false;
   }
 }
@@ -233,6 +252,15 @@ function resetPassword() {
     "closed"
   );
 }
+
+let instances = $ref([])
+
+fetch("https://instanceapp.misskey.page/instances.json").then(res => {
+  res.json().then(data => {
+    instances = data.instancesInfos
+  })
+})
+
 </script>
 
 <style lang="scss" scoped>
