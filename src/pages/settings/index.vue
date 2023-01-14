@@ -1,28 +1,28 @@
 <template>
-  <MkStickyContainer>
-    <template #header
-      ><MkPageHeader :actions="headerActions" :tabs="headerTabs"
-    /></template>
-    <MkSpacer :content-max="900" :margin-min="20" :margin-max="32">
-      <div ref="el" class="vvcocwet" :class="{ wide: !narrow }">
-        <div class="body">
-          <div v-if="!narrow || currentPage?.route.name == null" class="nav">
-            <div class="baaadecd">
-              <MkSuperMenu
-                :def="menuDef"
-                :grid="currentPage?.route.name == null"
-              ></MkSuperMenu>
-            </div>
-          </div>
-          <div v-if="!(narrow && currentPage?.route.name == null)" class="main">
-            <div class="bkzroven">
-              <RouterView />
-            </div>
-          </div>
-        </div>
-      </div>
-    </MkSpacer>
-  </MkStickyContainer>
+<MkStickyContainer>
+	<template #header>
+		<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+	</template>
+	<MkSpacer :content-max="900" :margin-min="20" :margin-max="32">
+		<div ref="el" class="vvcocwet" :class="{ wide: !narrow }">
+			<div class="body">
+				<div v-if="!narrow || currentPage?.route.name == null" class="nav">
+					<div class="baaadecd">
+						<MkSuperMenu
+							:def="menuDef"
+							:grid="currentPage?.route.name == null"
+						></MkSuperMenu>
+					</div>
+				</div>
+				<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
+					<div class="bkzroven">
+						<RouterView/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</MkSpacer>
+</MkStickyContainer>
 </template>
 
 <script setup lang="ts">
@@ -177,18 +177,6 @@ const menuDef = computed(() => [
         text: i18n.ts.wordMute,
         to: "/settings/word-mute",
         active: currentPage?.route.name === "word-mute",
-      },
-      {
-        icon: "fas fa-key",
-        text: "API",
-        to: "/settings/api",
-        active: currentPage?.route.name === "api",
-      },
-      {
-        icon: "fas fa-bolt",
-        text: "Webhook",
-        to: "/settings/webhook",
-        active: currentPage?.route.name === "webhook",
       },
     ],
   },
