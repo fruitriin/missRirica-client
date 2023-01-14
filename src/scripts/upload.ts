@@ -1,6 +1,7 @@
 import { reactive, ref } from "vue";
 import * as Misskey from "misskey-js";
 import { readAndCompressImage } from "browser-image-resizer";
+import * as loadImage from "blueimp-load-image"
 import { defaultStore } from "@/store";
 import { apiUrl } from "@/config";
 import { $i } from "@/account";
@@ -63,7 +64,7 @@ export function uploadFile(
         };
 
         try {
-          resizedImage = await readAndCompressImage(file, config);
+          resizedImage = await loadImage.scale(file, config);
           ctx.name =
             file.type !== imgConfig.mimeType
               ? `${ctx.name}.${
@@ -83,7 +84,7 @@ export function uploadFile(
       if (folder) formData.append("folderId", folder);
 
       const xhr = new XMLHttpRequest();
-      xhr.open("POST", apiUrl + "/drive/files/create", true);
+      xhr.open("POST", $i.instanceUrl + "/api/drive/files/create", true);
       xhr.onload = (ev) => {
         if (
           xhr.status !== 200 ||
