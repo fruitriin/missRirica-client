@@ -16,7 +16,7 @@ type Account = misskey.entities.MeDetailed;
 const accountData = localStorage.getItem("account");
 
 const parsedAccountData = JSON.parse(accountData)
-if(parsedAccountData?.instanceUrl) parsedAccountData.instanceUrl = "https://misskey.io"
+if(!parsedAccountData?.instanceUrl) parsedAccountData.instanceUrl = "https://misskey.io"
 
 // TODO: 外部からはreadonlyに
 export const $i = accountData
