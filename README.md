@@ -1,8 +1,7 @@
 # MissRirica
 
 MissRiricaはMisskey用iOSクライアントです。
-今の所misskey.io にのみ対応しています。
 ログインにはアクセストークンを使います
 Push通知が届きます
 
-その他はもろもろ不完全ながらmisskey-devのクローンです
+基本的な作りとしては、misskey-devのclient(frontend)に比較的小さめの変更でモバイルアプリとしての望ましい修正を加えています。
