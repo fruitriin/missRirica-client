@@ -3,7 +3,7 @@ import * as misskey from "misskey-js";
 import { showSuspendedDialog } from "./scripts/show-suspended-dialog";
 import { i18n } from "./i18n";
 import { del, get, set } from "@/scripts/idb-proxy";
-import { waiting, api, popup, popupMenu, success, alert } from "@/os";
+import { waiting, api, popup, popupMenu, success, alert, apiGet } from "@/os";
 import { unisonReload, reloadChannel } from "@/scripts/unison-reload";
 import * as Misskey from "misskey-js";
 import { instance } from "@/instance";
@@ -70,8 +70,7 @@ function fetchAccount(token: string, instanceUrl: string): Promise<Account & {in
   return apiClient
     .request("i")
     .then((res) => {
-      res.token = token;
-      return {...res as Account, instanceUrl};
+      return {...res as Account, token,  instanceUrl};
     })
     .catch((err) => {
       if (err.id === "a8c724b3-6e9c-4b46-b1a8-bc3ed6258370") {
@@ -105,6 +104,7 @@ export async function login(token: Account["token"], instanceUrl: string,  redir
   if (_DEV_) console.log("logging as token ", token, instanceUrl);
   const me = await fetchAccount(token, instanceUrl);
   localStorage.setItem("account", JSON.stringify(me));
+  localStorage.setItem("instance", JSON.stringify(await new Misskey.api.APIClient({origin: instanceUrl, credential: token}).request("meta")))
   document.cookie = `token=${token}; path=/; max-age=31536000`; // bull dashboardの認証とかで使う
   await addAccount(me.id, token, instanceUrl);
 

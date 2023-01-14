@@ -1,55 +1,57 @@
 <template>
-  <div v-if="meta" class="rsqzvsbo">
-    <div class="top">
-      <MkFeaturedPhotos class="bg" />
-      <XTimeline class="tl" />
-      <div class="shape"></div>
-      <div class="main">
-        <h1>
-          <img
-            v-if="meta.logoImageUrl"
-            class="logo"
-            :src="meta.logoImageUrl"
-          /><span v-else class="text">{{ instanceName }}</span>
-        </h1>
-        <div class="about">
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <div
-            class="desc"
-            v-html="meta.description || $ts.headlineMisskey"
-          ></div>
-        </div>
-        <div class="action">
-          <MkButton class="signup" inline gradate @click="signup()">{{
-            $ts.signup
-          }}</MkButton>
-          <MkButton class="signin" inline @click="signin()">{{
-            $ts.login
-          }}</MkButton>
-        </div>
-        <div v-if="onlineUsersCount && stats" class="status">
-          <div>
-            <I18n :src="$ts.nUsers" text-tag="span" class="users">
-              <template #n
-                ><b>{{ number(stats.originalUsersCount) }}</b></template
-              >
-            </I18n>
-            <I18n :src="$ts.nNotes" text-tag="span" class="notes">
-              <template #n
-                ><b>{{ number(stats.originalNotesCount) }}</b></template
-              >
-            </I18n>
-          </div>
-          <I18n :src="$ts.onlineUsersCount" text-tag="span" class="online">
-            <template #n
-              ><b>{{ onlineUsersCount }}</b></template
-            >
-          </I18n>
-        </div>
-      </div>
-      <img src="/client-assets/misskey.svg" class="misskey" />
-    </div>
-  </div>
+<div v-if="meta" class="rsqzvsbo">
+	<div class="top">
+		<div class="shape"></div>
+		<div class="main">
+			<h1>
+				<img
+					v-if="meta.logoImageUrl"
+					class="logo"
+					:src="meta.logoImageUrl"
+				/><span v-else class="text">{{ instanceName }}</span>
+			</h1>
+			<div class="about">
+				<!-- eslint-disable-next-line vue/no-v-html -->
+				<div
+					class="desc"
+					v-html="meta.description || $ts.headlineMisskey"
+				></div>
+			</div>
+			<div class="action">
+				<MkButton class="signup" inline gradate @click="signup()">
+					{{
+						$ts.signup
+					}}
+				</MkButton>
+				<MkButton class="signin" inline @click="signin()">
+					{{
+						$ts.login
+					}}
+				</MkButton>
+			</div>
+			<div v-if="onlineUsersCount && stats" class="status">
+				<div>
+					<I18n :src="$ts.nUsers" text-tag="span" class="users">
+						<template #n>
+							<b>{{ number(stats.originalUsersCount) }}</b>
+						</template>
+					</I18n>
+					<I18n :src="$ts.nNotes" text-tag="span" class="notes">
+						<template #n>
+							<b>{{ number(stats.originalNotesCount) }}</b>
+						</template>
+					</I18n>
+				</div>
+				<I18n :src="$ts.onlineUsersCount" text-tag="span" class="online">
+					<template #n>
+						<b>{{ onlineUsersCount }}</b>
+					</template>
+				</I18n>
+			</div>
+		</div>
+		<img src="/client-assets/misskey.svg" class="misskey"/>
+	</div>
+</div>
 </template>
 
 <script lang="ts">
@@ -60,7 +62,6 @@ import XSignupDialog from "@/components/MkSignupDialog.vue";
 import MkButton from "@/components/MkButton.vue";
 import XNote from "@/components/MkNote.vue";
 import MkFeaturedPhotos from "@/components/MkFeaturedPhotos.vue";
-import XTimeline from "./welcome.timeline.vue";
 import { host, instanceName } from "@/config";
 import * as os from "@/os";
 import number from "@/filters/number";
@@ -69,7 +70,6 @@ export default defineComponent({
   components: {
     MkButton,
     XNote,
-    XTimeline,
     MkFeaturedPhotos,
   },
 
@@ -85,24 +85,7 @@ export default defineComponent({
   },
 
   created() {
-    os.api("meta", { detail: true }).then((meta) => {
-      this.meta = meta;
-    });
 
-    os.api("stats").then((stats) => {
-      this.stats = stats;
-    });
-
-    os.api("get-online-users-count").then((res) => {
-      this.onlineUsersCount = res.count;
-    });
-
-    os.api("hashtags/list", {
-      sort: "+mentionedLocalUsers",
-      limit: 8,
-    }).then((tags) => {
-      this.tags = tags;
-    });
   },
 
   methods: {

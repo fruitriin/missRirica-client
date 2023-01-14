@@ -1,19 +1,18 @@
 <template>
-  <component
-    :is="popup.component"
-    v-for="popup in popups"
-    :key="popup.id"
-    v-bind="popup.props"
-    v-on="popup.events"
-  />
+<component
+	:is="popup.component"
+	v-for="popup in popups"
+	:key="popup.id"
+	v-bind="popup.props"
+	v-on="popup.events"
+/>
 
-  <XUpload v-if="uploads.length > 0" />
+<XUpload v-if="uploads.length > 0"/>
 
-  <XStreamIndicator />
 
-  <div v-if="pendingApiRequestsCount > 0" id="wait"></div>
+<div v-if="pendingApiRequestsCount > 0" id="wait"></div>
 
-  <div v-if="dev" id="devTicker"><span>DEV BUILD</span></div>
+<div v-if="dev" id="devTicker"><span>DEV BUILD</span></div>
 </template>
 
 <script lang="ts" setup>

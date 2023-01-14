@@ -4,7 +4,7 @@ import { $i } from "@/account";
 
 export const stream = markRaw(
   new Misskey.Stream(
-    $i.instanceUrl,
+    $i ? $i.instanceUrl : "https://misskey.io",
     $i
       ? {
           token: $i.token,
