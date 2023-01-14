@@ -46,7 +46,7 @@ import { reactionPicker } from "@/scripts/reaction-picker";
 import { getUrlWithoutLoginId } from "@/scripts/login-id";
 import { getAccountFromId } from "@/scripts/get-account-from-id";
 import {Device} from "@capacitor/device";
-
+import lightTheme from "@/themes/_light.json5";
 export let instanceLightMeta
 
 (async () => {
@@ -132,8 +132,11 @@ export let instanceLightMeta
         await login(account.token, target);
       }
     }
-
+    fetchInstanceAtLogin()
+    setStream()
     history.replaceState({ misskey: "loginId" }, "", target);
+
+
   }
 
   //#endregion
@@ -173,13 +176,56 @@ export let instanceLightMeta
     }
   }
   //#endregion
+  applyTheme(lightTheme);
 
+function fetchInstanceAtLogin(){
   const fetchInstanceMetaPromise = fetchInstance();
 
-  fetchInstanceMetaPromise.then(() => {
+  fetchInstanceMetaPromise.then((instance) => {
     instanceLightMeta = instance
     localStorage.setItem("v", instance.version);
   });
+
+  fetchInstanceMetaPromise.then(() => {
+    applyTheme(
+      defaultStore.reactiveState.darkMode.value
+        ? ColdDeviceStorage.get("darkTheme")
+        : ColdDeviceStorage.get("lightTheme")
+    );
+
+    if (defaultStore.state.themeInitial) {
+      if (instance.defaultLightTheme != null)
+        ColdDeviceStorage.set(
+          "lightTheme",
+          JSON5.parse(instance.defaultLightTheme)
+        );
+      if (instance.defaultDarkTheme != null)
+        ColdDeviceStorage.set(
+          "darkTheme",
+          JSON5.parse(instance.defaultDarkTheme)
+        );
+      defaultStore.set("themeInitial", false);
+    }
+
+
+    const darkTheme = computed(ColdDeviceStorage.makeGetterSetter("darkTheme"));
+    const lightTheme = computed(ColdDeviceStorage.makeGetterSetter("lightTheme"));
+
+
+    watch(darkTheme, (theme) => {
+
+      if (defaultStore.state.darkMode) {
+        applyTheme(theme);
+      }
+    });
+
+    watch(lightTheme, (theme) => {
+      if (!defaultStore.state.darkMode) {
+        applyTheme(theme);
+      }
+    });
+  });
+}
 
   const app = createApp(
     window.location.search === "?zen"
@@ -286,22 +332,6 @@ export let instanceLightMeta
 
 
 
-  const darkTheme = computed(ColdDeviceStorage.makeGetterSetter("darkTheme"));
-  const lightTheme = computed(ColdDeviceStorage.makeGetterSetter("lightTheme"));
-
-
-  watch(darkTheme, (theme) => {
-
-    if (defaultStore.state.darkMode) {
-      applyTheme(theme);
-    }
-  });
-
-  watch(lightTheme, (theme) => {
-    if (!defaultStore.state.darkMode) {
-      applyTheme(theme);
-    }
-  });
 
   //#region Sync dark mode
   if (ColdDeviceStorage.get("syncDeviceDarkMode")) {
@@ -315,27 +345,7 @@ export let instanceLightMeta
   });
   //#endregion
 
-  fetchInstanceMetaPromise.then(() => {
-    applyTheme(
-        defaultStore.reactiveState.darkMode.value
-            ? ColdDeviceStorage.get("darkTheme")
-            : ColdDeviceStorage.get("lightTheme")
-    );
 
-    if (defaultStore.state.themeInitial) {
-      if (instance.defaultLightTheme != null)
-        ColdDeviceStorage.set(
-          "lightTheme",
-          JSON5.parse(instance.defaultLightTheme)
-        );
-      if (instance.defaultDarkTheme != null)
-        ColdDeviceStorage.set(
-          "darkTheme",
-          JSON5.parse(instance.defaultDarkTheme)
-        );
-      defaultStore.set("themeInitial", false);
-    }
-  });
 
   watch(
     defaultStore.reactiveState.useBlurEffectForModal,
@@ -360,77 +370,27 @@ export let instanceLightMeta
     { immediate: true }
   );
 
-  let reloadDialogShowing = false;
-  stream.on("_disconnected_", async () => {
-    location.reload();
-    if (defaultStore.state.serverDisconnectedBehavior === "reload") {
+  function setStream(){
+    let reloadDialogShowing = false;
+    stream.on("_disconnected_", async () => {
       location.reload();
-    } else if (defaultStore.state.serverDisconnectedBehavior === "dialog") {
-      if (reloadDialogShowing) return;
-      reloadDialogShowing = true;
-      const { canceled } = await confirm({
-        type: "warning",
-        title: i18n.ts.disconnectedFromServer,
-        text: i18n.ts.reloadConfirm,
-      });
-      reloadDialogShowing = false;
-      if (!canceled) {
+      if (defaultStore.state.serverDisconnectedBehavior === "reload") {
         location.reload();
+      } else if (defaultStore.state.serverDisconnectedBehavior === "dialog") {
+        if (reloadDialogShowing) return;
+        reloadDialogShowing = true;
+        const { canceled } = await confirm({
+          type: "warning",
+          title: i18n.ts.disconnectedFromServer,
+          text: i18n.ts.reloadConfirm,
+        });
+        reloadDialogShowing = false;
+        if (!canceled) {
+          location.reload();
+        }
       }
-    }
-  });
-
-  stream.on("emojiAdded", (emojiData) => {
-    // TODO
-    //store.commit('instance/set', );
-  });
-
-  for (const plugin of ColdDeviceStorage.get("plugins").filter(
-    (p) => p.active
-  )) {
-    import("./plugin").then(({ install }) => {
-      install(plugin);
     });
-  }
 
-  const hotkeys = {
-    d: (): void => {
-      defaultStore.set("darkMode", !defaultStore.state.darkMode);
-    },
-    s: search,
-  };
-
-  if ($i) {
-    // only add post shortcuts if logged in
-    hotkeys["p|n"] = post;
-
-    if ($i.isDeleted) {
-      alert({
-        type: "warning",
-        text: i18n.ts.accountDeletionInProgress,
-      });
-    }
-
-    const lastUsed = localStorage.getItem("lastUsed");
-    if (lastUsed) {
-      const lastUsedDate = parseInt(lastUsed, 10);
-      // 二時間以上前なら
-      if (Date.now() - lastUsedDate > 1000 * 60 * 60 * 2) {
-        toast(
-          i18n.t("welcomeBackWithName", {
-            name: $i.name || $i.username,
-          })
-        );
-      }
-    }
-    localStorage.setItem("lastUsed", Date.now().toString());
-
-    if ("Notification" in window) {
-      // 許可を得ていなかったらリクエスト
-      if (Notification.permission === "default") {
-        Notification.requestPermission();
-      }
-    }
 
     const main = markRaw(stream.useChannel("main", null, "System"));
 
@@ -499,6 +459,56 @@ export let instanceLightMeta
     main.on("myTokenRegenerated", () => {
       signout();
     });
+  }
+
+
+  for (const plugin of ColdDeviceStorage.get("plugins").filter(
+    (p) => p.active
+  )) {
+    import("./plugin").then(({ install }) => {
+      install(plugin);
+    });
+  }
+
+  const hotkeys = {
+    d: (): void => {
+      defaultStore.set("darkMode", !defaultStore.state.darkMode);
+    },
+    s: search,
+  };
+
+  if ($i) {
+    // only add post shortcuts if logged in
+    hotkeys["p|n"] = post;
+
+    if ($i.isDeleted) {
+      alert({
+        type: "warning",
+        text: i18n.ts.accountDeletionInProgress,
+      });
+    }
+
+    const lastUsed = localStorage.getItem("lastUsed");
+    if (lastUsed) {
+      const lastUsedDate = parseInt(lastUsed, 10);
+      // 二時間以上前なら
+      if (Date.now() - lastUsedDate > 1000 * 60 * 60 * 2) {
+        toast(
+          i18n.t("welcomeBackWithName", {
+            name: $i.name || $i.username,
+          })
+        );
+      }
+    }
+    localStorage.setItem("lastUsed", Date.now().toString());
+
+    if ("Notification" in window) {
+      // 許可を得ていなかったらリクエスト
+      if (Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+    }
+
   }
 
   // shortcut

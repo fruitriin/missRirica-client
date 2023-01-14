@@ -1,75 +1,76 @@
 <template>
-  <div v-if="meta" class="rsqzvsbo">
-    <div class="top">
-      <MkFeaturedPhotos class="bg" />
-      <div class="fade"></div>
-      <div class="emojis">
-        <MkEmoji :normal="true" :no-style="true" emoji="👍" />
-        <MkEmoji :normal="true" :no-style="true" emoji="❤" />
-        <MkEmoji :normal="true" :no-style="true" emoji="😆" />
-        <MkEmoji :normal="true" :no-style="true" emoji="🎉" />
-        <MkEmoji :normal="true" :no-style="true" emoji="🍮" />
-      </div>
-      <div class="main">
-        <img src="/client-assets/misskey.svg" class="misskey" />
-        <div class="form _panel">
-          <div class="bg">
-            <div class="fade"></div>
-          </div>
-          <div class="fg">
-            <h1>
-              <img
-                v-if="meta.logoImageUrl"
-                class="logo"
-                :src="meta.logoImageUrl"
-              /><span v-else class="text">{{ instanceName }}</span>
-            </h1>
-            <div class="about">
-              <!-- eslint-disable-next-line vue/no-v-html -->
-              <div
-                class="desc"
-                v-html="meta.description || $ts.headlineMisskey"
-              ></div>
-            </div>
-            <div class="action">
-              <MkButton inline gradate @click="signup()">{{
-                $ts.signup
-              }}</MkButton>
-              <MkButton inline @click="signin()">{{ $ts.login }}</MkButton>
-            </div>
-            <div v-if="onlineUsersCount && stats" class="status">
-              <div>
-                <I18n :src="$ts.nUsers" text-tag="span" class="users">
-                  <template #n
-                    ><b>{{ number(stats.originalUsersCount) }}</b></template
-                  >
-                </I18n>
-                <I18n :src="$ts.nNotes" text-tag="span" class="notes">
-                  <template #n
-                    ><b>{{ number(stats.originalNotesCount) }}</b></template
-                  >
-                </I18n>
-              </div>
-              <I18n :src="$ts.onlineUsersCount" text-tag="span" class="online">
-                <template #n
-                  ><b>{{ onlineUsersCount }}</b></template
-                >
-              </I18n>
-            </div>
-            <button class="_button _acrylic menu" @click="showMenu">
-              <i class="fas fa-ellipsis-h"></i>
-            </button>
-          </div>
-        </div>
-        <nav class="nav">
-          <MkA to="/announcements">{{ $ts.announcements }}</MkA>
-          <MkA to="/explore">{{ $ts.explore }}</MkA>
-          <MkA to="/channels">{{ $ts.channel }}</MkA>
-          <MkA to="/featured">{{ $ts.featured }}</MkA>
-        </nav>
-      </div>
-    </div>
-  </div>
+<div v-if="meta" class="rsqzvsbo">
+	<div class="top">
+		<div class="fade"></div>
+		<div class="emojis">
+			<MkEmoji :normal="true" :no-style="true" emoji="👍"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="❤"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="😆"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="🎉"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="🍮"/>
+		</div>
+		<div class="main">
+			<img src="/client-assets/misskey.svg" class="misskey"/>
+			<div class="form _panel">
+				<div class="bg">
+					<div class="fade"></div>
+				</div>
+				<div class="fg">
+					<h1>
+						<img
+							v-if="meta.logoImageUrl"
+							class="logo"
+							:src="meta.logoImageUrl"
+						/><span v-else class="text">{{ instanceName }}</span>
+					</h1>
+					<div class="about">
+						<!-- eslint-disable-next-line vue/no-v-html -->
+						<div
+							class="desc"
+							v-html="meta.description || $ts.headlineMisskey"
+						></div>
+					</div>
+					<div class="action">
+						<MkButton inline gradate @click="signup()">
+							{{
+								$ts.signup
+							}}
+						</MkButton>
+						<MkButton inline @click="signin()">{{ $ts.login }}</MkButton>
+					</div>
+					<div v-if="onlineUsersCount && stats" class="status">
+						<div>
+							<I18n :src="$ts.nUsers" text-tag="span" class="users">
+								<template #n>
+									<b>{{ number(stats.originalUsersCount) }}</b>
+								</template>
+							</I18n>
+							<I18n :src="$ts.nNotes" text-tag="span" class="notes">
+								<template #n>
+									<b>{{ number(stats.originalNotesCount) }}</b>
+								</template>
+							</I18n>
+						</div>
+						<I18n :src="$ts.onlineUsersCount" text-tag="span" class="online">
+							<template #n>
+								<b>{{ onlineUsersCount }}</b>
+							</template>
+						</I18n>
+					</div>
+					<button class="_button _acrylic menu" @click="showMenu">
+						<i class="fas fa-ellipsis-h"></i>
+					</button>
+				</div>
+			</div>
+			<nav class="nav">
+				<MkA to="/announcements">{{ $ts.announcements }}</MkA>
+				<MkA to="/explore">{{ $ts.explore }}</MkA>
+				<MkA to="/channels">{{ $ts.channel }}</MkA>
+				<MkA to="/featured">{{ $ts.featured }}</MkA>
+			</nav>
+		</div>
+	</div>
+</div>
 </template>
 
 <script lang="ts">

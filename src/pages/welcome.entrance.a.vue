@@ -1,82 +1,54 @@
 <template>
-  <div v-if="meta" class="rsqzvsbo">
-    <div class="top">
-      <MkFeaturedPhotos class="bg" />
-      <XTimeline class="tl" />
-      <div class="shape1"></div>
-      <div class="shape2"></div>
-      <img src="/client-assets/misskey.svg" class="misskey" />
-      <div class="emojis">
-        <MkEmoji :normal="true" :no-style="true" emoji="👍" />
-        <MkEmoji :normal="true" :no-style="true" emoji="❤" />
-        <MkEmoji :normal="true" :no-style="true" emoji="😆" />
-        <MkEmoji :normal="true" :no-style="true" emoji="🎉" />
-        <MkEmoji :normal="true" :no-style="true" emoji="🍮" />
-      </div>
-      <div class="main">
-        <img
-          :src="$instance.iconUrl || $instance.faviconUrl || '/favicon.ico'"
-          alt=""
-          class="icon"
-        />
-        <button class="_button _acrylic menu" @click="showMenu">
-          <i class="fas fa-ellipsis-h"></i>
-        </button>
-        <div class="fg">
-          <h1>
-            <!-- 背景色によってはロゴが見えなくなるのでとりあえず無効に -->
-            <!-- <img class="logo" v-if="meta.logoImageUrl" :src="meta.logoImageUrl"><span v-else class="text">{{ instanceName }}</span> -->
-            <span class="text">{{ instanceName }}</span>
-          </h1>
-          <div class="about">
-            <!-- eslint-disable-next-line vue/no-v-html -->
-            MissRiricaはMiskeyClientです。今の所 misskey.io
-            専用です。アクセストークンを用意してログインしてください
-          </div>
-          <div class="action">
-            <div>
-              <input type="checkbox" id="term" v-model="isTerm"><label for="term">MissRiricaクライアント<br />
-              プライバシーポリシー及び利用規約に同意する</label><br>
-              <a href="https://riinswork.space/missRirica/privacy/"
-              >プライバシーポリシー及び利用規約を読む</a
-              >
-            </div>
+<div class="rsqzvsbo">
+	<div class="top">
+		<div class="shape1"></div>
+		<div class="shape2"></div>
+		<img src="/client-assets/misskey.svg" class="misskey"/>
+		<div class="emojis">
+			<MkEmoji :normal="true" :no-style="true" emoji="👍"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="❤"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="😆"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="🎉"/>
+			<MkEmoji :normal="true" :no-style="true" emoji="🍮"/>
+		</div>
+		<div class="main">
+			<button class="_button _acrylic menu" @click="showMenu">
+				<i class="fas fa-ellipsis-h"></i>
+			</button>
+			<div class="fg">
+				<h1>
+					<!-- 背景色によってはロゴが見えなくなるのでとりあえず無効に -->
+					<!-- <img class="logo" v-if="meta.logoImageUrl" :src="meta.logoImageUrl"><span v-else class="text">{{ instanceName }}</span> -->
+					<span class="text">MissRirica</span>
+				</h1>
+				<div class="about">
+					<!-- eslint-disable-next-line vue/no-v-html -->
+					MissRiricaはMiskeyClientです。今の所 misskey.io
+					専用です。アクセストークンを用意してログインしてください
+				</div>
+				<div class="action">
+					<div>
+						<input id="term" v-model="isTerm" type="checkbox"><label for="term">MissRiricaクライアント<br/>
+							プライバシーポリシー及び利用規約に同意する</label><br>
+						<a href="https://riinswork.space/missRirica/privacy/">プライバシーポリシー及び利用規約を読む</a>
+					</div>
 
-            <!--					<MkButton inline rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.signup }}</MkButton>-->
-            <MkButton inline rounded data-cy-signin @click="signin()" :disabled="!isTerm">{{
-              i18n.ts.login
-            }}</MkButton>
-          </div>
-        </div>
-      </div>
-      <div v-if="instances" class="federation">
-        <MarqueeText :duration="40">
-          <MkA
-            v-for="instance in instances"
-            :key="instance.id"
-            :class="$style.federationInstance"
-            :to="`/instance-info/${instance.host}`"
-            behavior="window"
-          >
-            <!--<MkInstanceCardMini :instance="instance"/>-->
-            <img
-              v-if="instance.iconUrl"
-              class="icon"
-              :src="instance.iconUrl"
-              alt=""
-            />
-            <span class="name _monospace">{{ instance.host }}</span>
-          </MkA>
-        </MarqueeText>
-      </div>
-    </div>
-  </div>
+					<!--					<MkButton inline rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.signup }}</MkButton>-->
+					<MkButton inline rounded data-cy-signin :disabled="!isTerm" @click="signin()">
+						{{
+							i18n.ts.login
+						}}
+					</MkButton>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 </template>
 
 <script lang="ts" setup>
 import {} from "vue";
 import { toUnicode } from "punycode/";
-import XTimeline from "./welcome.timeline.vue";
 import MarqueeText from "@/components/MkMarquee.vue";
 import XSigninDialog from "@/components/MkSigninDialog.vue";
 import XSignupDialog from "@/components/MkSignupDialog.vue";
@@ -96,35 +68,6 @@ let onlineUsersCount = $ref();
 let instances = $ref();
 let isTerm = $ref()
 
-noCredentialApi.request("meta", { detail: true }).then((_meta) => {
-  meta = _meta;
-});
-
-noCredentialApi.request("stats").then((_stats) => {
-  stats = _stats;
-});
-
-noCredentialApi.request("get-online-users-count").then((res) => {
-  onlineUsersCount = res.count;
-});
-
-noCredentialApi
-  .request("hashtags/list", {
-    sort: "+mentionedLocalUsers",
-    limit: 8,
-  })
-  .then((_tags) => {
-    tags = _tags;
-  });
-
-noCredentialApi
-  .request("federation/instances", {
-    sort: "+pubSub",
-    limit: 20,
-  })
-  .then((_instances) => {
-    instances = _instances;
-  });
 
 function signin() {
   os.popup(
