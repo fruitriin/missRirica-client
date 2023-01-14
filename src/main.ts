@@ -47,7 +47,8 @@ import { getUrlWithoutLoginId } from "@/scripts/login-id";
 import { getAccountFromId } from "@/scripts/get-account-from-id";
 import {Device} from "@capacitor/device";
 import lightTheme from "@/themes/_light.json5";
-export let instanceLightMeta
+
+export let storedDeviceInfo: Object
 
 (async () => {
   console.info(`Misskey v${version}`);
@@ -107,6 +108,7 @@ export let instanceLightMeta
   const html = document.documentElement;
   html.setAttribute("lang", lang);
   const res = await Device.getInfo()
+  storedDeviceInfo = res
   html.setAttribute("class", res.platform)
 
   const css = localStorage.getItem("customCss") || ""

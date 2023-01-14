@@ -49,6 +49,7 @@ import { $i } from "@/account";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import OneSignal from "onesignal-cordova-plugin";
 import {Device} from "@capacitor/device";
+import { storedDeviceInfo } from "@/main";
 
 
 const XTutorial = defineAsyncComponent(() => import("./timeline.tutorial.vue"));
@@ -205,6 +206,7 @@ definePageMetadata(
 
 
 (async function addListeners() {
+  if (storedDeviceInfo.platform == "web") return
 
   OneSignal.setAppId(import.meta.env.VITE_ONE_SIGNAL_APP_ID);
   const deviceId = await Device.getId()

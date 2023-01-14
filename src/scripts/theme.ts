@@ -15,6 +15,7 @@ export type Theme = {
 import lightTheme from "@/themes/_light.json5";
 import darkTheme from "@/themes/_dark.json5";
 import { deepClone } from "./clone";
+import { storedDeviceInfo } from "@/main";
 
 export const themeProps = Object.keys(lightTheme.props).filter(
   (key) => !key.startsWith("X")
@@ -66,7 +67,9 @@ export function applyTheme(theme: Theme, persist = true) {
   }, 1000);
 
   const colorSchema = theme.base === "dark" ? "dark" : "light";
-  StatusBar.setStyle({ style: theme.base ===  "dark" ? Style.Dark  : Style.Light  })
+  if (storedDeviceInfo.platform == "ios") {
+    StatusBar.setStyle({ style: theme.base ===  "dark" ? Style.Dark  : Style.Light  })
+  }
 
   // Deep copy
   const _theme = deepClone(theme);
