@@ -139,57 +139,11 @@ const instanceUrlResult = $computed(() => {
   if(instanceUrl === 'other'){
     // うっかりhttps://を入れてもreplaceされるから大丈夫
     // new URL.origin
-    return new URL("https://" + instanceUrl.replace("https://", "")).origin
+    return new URL("https://" + instanceUrlOther.replace("https://", "")).origin
   }
   return "https://" + instanceUrl
 })
 
-function queryKey() {
-  queryingKey = true;
-  return navigator.credentials
-    .get({
-      publicKey: {
-        challenge: byteify(challengeData.challenge, "base64"),
-        allowCredentials: challengeData.securityKeys.map((key) => ({
-          id: byteify(key.id, "hex"),
-          type: "public-key",
-          transports: ["usb", "nfc", "ble", "internal"],
-        })),
-        timeout: 60 * 1000,
-      },
-    })
-    .catch(() => {
-      queryingKey = false;
-      return Promise.reject(null);
-    })
-    .then((credential) => {
-      queryingKey = false;
-      signing = true;
-      return os.api("signin", {
-        username,
-        password,
-        signature: hexify(credential.response.signature),
-        authenticatorData: hexify(credential.response.authenticatorData),
-        clientDataJSON: hexify(credential.response.clientDataJSON),
-        credentialId: credential.id,
-        challengeId: challengeData.challengeId,
-        "hcaptcha-response": hCaptchaResponse,
-        "g-recaptcha-response": reCaptchaResponse,
-      });
-    })
-    .then((res) => {
-      emit("login", {...res, instance: instanceUrlResult});
-      return onLogin({...res, instance: instanceUrlResult});
-    })
-    .catch((err) => {
-      if (err === null) return;
-      os.alert({
-        type: "error",
-        text: i18n.ts.signinFailed,
-      });
-      signing = false;
-    });
-}
 function onSubmit() {
   signing = true;
   console.log("submit");
