@@ -82,9 +82,9 @@ function fetchAccount(token: string, instanceUrl: string): Promise<Account & {in
           type: "error",
           title: i18n.ts.failedToFetchAccountInformation,
           text: JSON.stringify(err),
-        });
+        })
       }
-      return Promise.reject();
+      return Promise.reject(err)
     });
 }
 
@@ -100,9 +100,8 @@ export function refreshAccount() {
 }
 
 export async function login(token: Account["token"], instanceUrl: string,  redirect?: string) {
-  waiting();
   if (_DEV_) console.log("logging as token ", token, instanceUrl);
-  const me = await fetchAccount(token, instanceUrl);
+  const me = await fetchAccount(token, instanceUrl)
   localStorage.setItem("account", JSON.stringify(me));
   localStorage.setItem("instance", JSON.stringify(await new Misskey.api.APIClient({origin: instanceUrl, credential: token}).request("meta")))
   document.cookie = `token=${token}; path=/; max-age=31536000`; // bull dashboardの認証とかで使う
