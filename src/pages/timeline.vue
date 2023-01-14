@@ -1,38 +1,39 @@
 <template>
-  <MkStickyContainer>
-    <template #header
-      ><MkPageHeader
-        v-model:tab="src"
-        :actions="headerActions"
-        :tabs="headerTabs"
-        :display-my-avatar="true"
-    /></template>
-    <MkSpacer :content-max="800">
-      <div ref="rootEl" v-hotkey.global="keymap" class="cmuxhskf">
-        <XPostForm
-          v-if="$store.reactiveState.showFixedPostForm.value"
-          class="post-form _block"
-          fixed
-        />
+<MkStickyContainer>
+	<template #header>
+		<MkPageHeader
+			v-model:tab="src"
+			:actions="headerActions"
+			:tabs="headerTabs"
+			:display-my-avatar="true"
+		/>
+	</template>
+	<MkSpacer :content-max="800">
+		<div ref="rootEl" v-hotkey.global="keymap" class="cmuxhskf">
+			<XPostForm
+				v-if="$store.reactiveState.showFixedPostForm.value"
+				class="post-form _block"
+				fixed
+			/>
 
-        <div v-if="queue > 0" class="new">
-          <button class="_buttonPrimary" @click="top()">
-            {{ i18n.ts.newNoteRecived }}
-          </button>
-        </div>
-        <div class="tl _block">
-          <XTimeline
-            ref="tl"
-            :key="src"
-            class="tl"
-            :src="src"
-            :sound="true"
-            @queue="queueUpdated"
-          />
-        </div>
-      </div>
-    </MkSpacer>
-  </MkStickyContainer>
+			<div v-if="queue > 0" class="new">
+				<button class="_buttonPrimary" @click="top()">
+					{{ i18n.ts.newNoteRecived }}
+				</button>
+			</div>
+			<div class="tl _block">
+				<XTimeline
+					ref="tl"
+					:key="src"
+					class="tl"
+					:src="src"
+					:sound="true"
+					@queue="queueUpdated"
+				/>
+			</div>
+		</div>
+	</MkSpacer>
+</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -202,14 +203,15 @@ definePageMetadata(
   }))
 );
 
+
 (async function addListeners() {
-  OneSignal.setAppId("26c23e85-1fc8-4115-8cf3-f81338427bf3");
+
+  OneSignal.setAppId(import.meta.env.VITE_ONE_SIGNAL_APP_ID);
   const deviceId = await Device.getId()
   OneSignal.setExternalUserId(deviceId.uuid);
 
   const res = await fetch(
-    "https://miss-ririca.herokuapp.com/api/setToken",
-
+    import.meta.env.VITE_NOTIFICATION_TOKEN_ENDPOINT,
     {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "cors", // no-cors, *cors, same-origin
@@ -223,6 +225,7 @@ definePageMetadata(
       body: JSON.stringify({
         misskey_token: $i.token,
         device_id: deviceId.uuid,
+        instance_url: $i.instanceUrl
       }), // 本体のデータ型は "Content-Type" ヘッダーと一致させる必要があります
     }
   ).catch((err) => {
