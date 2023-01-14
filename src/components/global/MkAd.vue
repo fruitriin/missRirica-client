@@ -1,30 +1,31 @@
 <template>
-  <div v-if="chosen" class="qiivuoyo">
-    <div v-if="!showMenu" class="main" :class="chosen.place">
-      <a :href="chosen.url" target="_blank">
-        <img :src="chosen.imageUrl" />
-        <button class="_button menu" @click.prevent.stop="toggleMenu">
-          <span class="fas fa-info-circle info-circle"></span>
-        </button>
-      </a>
-    </div>
-    <div v-else class="menu">
-      <div class="body">
-        <div>Ads by {{ host }}</div>
-        <!--<MkButton class="button" primary>{{ $ts._ad.like }}</MkButton>-->
-        <MkButton
-          v-if="chosen.ratio !== 0"
-          class="button"
-          @click="reduceFrequency"
-          >{{ $ts._ad.reduceFrequencyOfThisAd }}</MkButton
-        >
-        <button class="_textButton" @click="toggleMenu">
-          {{ $ts._ad.back }}
-        </button>
-      </div>
-    </div>
-  </div>
-  <div v-else></div>
+<div v-if="chosen" class="qiivuoyo">
+	<div v-if="!showMenu" class="main" :class="chosen.place">
+		<a :href="chosen.url" target="_blank">
+			<img :src="chosen.imageUrl"/>
+			<button class="_button menu" @click.prevent.stop="toggleMenu">
+				<span class="fas fa-info-circle info-circle"></span>
+			</button>
+		</a>
+	</div>
+	<div v-else class="menu">
+		<div class="body">
+			<div>Ads by {{ host }}</div>
+			<!--<MkButton class="button" primary>{{ $ts._ad.like }}</MkButton>-->
+			<MkButton
+				v-if="chosen.ratio !== 0"
+				class="button"
+				@click="reduceFrequency"
+			>
+				{{ $ts._ad.reduceFrequencyOfThisAd }}
+			</MkButton>
+			<button class="_textButton" @click="toggleMenu">
+				{{ $ts._ad.back }}
+			</button>
+		</div>
+	</div>
+</div>
+<div v-else></div>
 </template>
 
 <script lang="ts" setup>
@@ -52,14 +53,14 @@ const choseAd = (): Ad | null => {
     return props.specify;
   }
 
-  const allAds = instance.ads.map((ad) =>
+  const allAds = instance.ads?.map((ad) =>
     defaultStore.state.mutedAds.includes(ad.id)
       ? {
           ...ad,
           ratio: 0,
         }
       : ad
-  );
+  ) ?? [];
 
   let ads = allAds.filter((ad) => props.prefer.includes(ad.place));
 
