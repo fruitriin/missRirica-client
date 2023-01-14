@@ -11,7 +11,6 @@ module.exports = {
 		extraFileExtensions: ['.vue'],
 	},
 	extends: [
-		'../shared/.eslintrc.js',
 		'plugin:vue/vue3-recommended',
 	],
 	rules: {
