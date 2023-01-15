@@ -134,8 +134,6 @@ export let storedDeviceInfo: Object
         await login(account.token, target);
       }
     }
-    fetchInstanceAtLogin()
-    setStream()
     history.replaceState({ misskey: "loginId" }, "", target);
 
 
@@ -150,6 +148,10 @@ export let storedDeviceInfo: Object
     }
 
     refreshAccount();
+
+    fetchInstanceAtLogin()
+    setStream()
+
   } else {
     if (_DEV_) {
       console.log("no account cache found.");
@@ -171,6 +173,8 @@ export let storedDeviceInfo: Object
         // TODO: ちゃんとしたコンポーネントをレンダリングする(v10とかのトラブルシューティングゲーム付きのやつみたいな)
         document.body.innerHTML = '<div id="err">Oops!</div>';
       }
+
+
     } else {
       if (_DEV_) {
         console.log("not signed in");
@@ -184,7 +188,6 @@ function fetchInstanceAtLogin(){
   const fetchInstanceMetaPromise = fetchInstance();
 
   fetchInstanceMetaPromise.then((instance) => {
-    instanceLightMeta = instance
     localStorage.setItem("v", instance.version);
   });
 

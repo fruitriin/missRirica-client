@@ -20,7 +20,7 @@ try {
   window.location.reload()
 }
 
-if(accountData && accountData?.instanceUrl) accountData.instanceUrl = "https://misskey.io"
+if(accountData && !accountData?.instanceUrl) accountData.instanceUrl = "https://misskey.io"
 
 // TODO: 外部からはreadonlyに
 export const $i = accountData
@@ -69,7 +69,6 @@ export async function removeAccount(id: Account["id"]) {
 }
 
 function fetchAccount(token: string, instanceUrl: string): Promise<Account & {instanceUrl: string}> {
-
   const apiClient = new Misskey.api.APIClient({
     origin: instanceUrl,
     credential: token,
@@ -103,6 +102,7 @@ export function updateAccount(accountData: Object) {
 }
 
 export function refreshAccount() {
+  console.debug($i)
   return fetchAccount($i.token, $i.instanceUrl).then(updateAccount);
 }
 
