@@ -1,32 +1,32 @@
 <template>
-  <div class="efzpzdvf">
-    <XWidgets
-      :edit="editMode"
-      :widgets="defaultStore.reactiveState.widgets.value"
-      @add-widget="addWidget"
-      @remove-widget="removeWidget"
-      @update-widget="updateWidget"
-      @update-widgets="updateWidgets"
-      @exit="editMode = false"
-    />
+<div class="efzpzdvf">
+	<XWidgets
+		:edit="editMode"
+		:widgets="defaultStore.reactiveState.widgets.value"
+		@add-widget="addWidget"
+		@remove-widget="removeWidget"
+		@update-widget="updateWidget"
+		@update-widgets="updateWidgets"
+		@exit="editMode = false"
+	/>
 
-    <button
-      v-if="editMode"
-      class="_textButton"
-      style="font-size: 0.9em"
-      @click="editMode = false"
-    >
-      <i class="fas fa-check"></i> {{ i18n.ts.editWidgetsExit }}
-    </button>
-    <button
-      v-else
-      class="_textButton mk-widget-edit"
-      style="font-size: 0.9em"
-      @click="editMode = true"
-    >
-      <i class="fas fa-pencil-alt"></i> {{ i18n.ts.editWidgets }}
-    </button>
-  </div>
+	<button
+		v-if="editMode"
+		class="_textButton"
+		style="font-size: 0.9em"
+		@click="editMode = false"
+	>
+		<i class="fas fa-check"></i> {{ i18n.ts.editWidgetsExit }}
+	</button>
+	<button
+		v-else
+		class="_textButton mk-widget-edit"
+		style="font-size: 0.9em"
+		@click="editMode = true"
+	>
+		<i class="fas fa-pencil-alt"></i> {{ i18n.ts.editWidgets }}
+	</button>
+</div>
 </template>
 
 <script lang="ts" setup>
@@ -93,6 +93,9 @@ function updateWidgets(widgets) {
   > * {
     margin: var(--margin) 0;
     width: 300px;
+    @media screen and (max-width:350px){
+      width: 250px;
+    }
 
     &:first-child {
       margin-top: 0;
