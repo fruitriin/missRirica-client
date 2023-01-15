@@ -7,20 +7,24 @@ import { waiting, api, popup, popupMenu, success, alert, apiGet } from "@/os";
 import { unisonReload, reloadChannel } from "@/scripts/unison-reload";
 import * as Misskey from "misskey-js";
 import { instance } from "@/instance";
-import Api from "@/pages/settings/api.vue";
 
-// TODO: 他のタブと永続化されたstateを同期
+
+// アカウントデータがJSONでパースできないほど壊れてたら諦めて再設定
 
 type Account = misskey.entities.MeDetailed;
+let accountData = null
+try {
+   accountData = JSON.parse(localStorage.getItem("account"))
+}catch (e) {
+  localStorage.removeItem("account")
+  window.location.reload()
+}
 
-const accountData = localStorage.getItem("account");
-
-const parsedAccountData = JSON.parse(accountData)
-if(!parsedAccountData?.instanceUrl) parsedAccountData.instanceUrl = "https://misskey.io"
+if(accountData && accountData?.instanceUrl) accountData.instanceUrl = "https://misskey.io"
 
 // TODO: 外部からはreadonlyに
 export const $i = accountData
-  ? reactive(parsedAccountData as Account)
+  ? reactive(accountData as Account)
   : null;
 
 export const iAmModerator = $i != null && ($i.isAdmin || $i.isModerator);
@@ -91,7 +95,7 @@ function fetchAccount(token: string, instanceUrl: string): Promise<Account & {in
     });
 }
 
-export function updateAccount(accountData) {
+export function updateAccount(accountData: Object) {
   for (const [key, value] of Object.entries(accountData)) {
     $i[key] = value;
   }
