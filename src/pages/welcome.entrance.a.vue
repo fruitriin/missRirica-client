@@ -55,7 +55,6 @@ import XSignupDialog from "@/components/MkSignupDialog.vue";
 import MkButton from "@/components/MkButton.vue";
 import XNote from "@/components/MkNote.vue";
 import MkFeaturedPhotos from "@/components/MkFeaturedPhotos.vue";
-import { host, instanceName } from "@/config";
 import * as os from "@/os";
 import number from "@/filters/number";
 import { i18n } from "@/i18n";
