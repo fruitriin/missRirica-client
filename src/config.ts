@@ -1,11 +1,13 @@
-const address = new URL(location.href);
+import { $i } from "@/account";
+
+const address = new URL($i.instanceUrl);
 const siteName = (
   document.querySelector('meta[property="og:site_name"]') as HTMLMetaElement
 )?.content;
 
 export const host = address.host;
 export const hostname = address.hostname;
-export const url = "https://misskey.io";
+export const url = $i?.instanceUrl;
 export const apiUrl = url + "/api";
 export const wsUrl =
   url.replace("http://", "ws://").replace("https://", "wss://") + "/streaming";
