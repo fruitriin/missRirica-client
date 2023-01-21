@@ -28,10 +28,10 @@ import JSON5 from "json5";
 import widgets from "@/widgets";
 import directives from "@/directives";
 import components from "@/components";
-import { version, ui, lang, host } from "@/config";
+import { version, ui, lang } from "@/config";
 import { applyTheme } from "@/scripts/theme";
 import { isDeviceDarkmode } from "@/scripts/is-device-darkmode";
-import { i18n } from "@/i18n";
+import { i18n, setLanguage } from "@/i18n";
 import {confirm, alert, post, popup, toast} from "@/os";
 import { stream } from "@/stream";
 import * as sound from "@/scripts/sound";
@@ -50,9 +50,12 @@ import lightTheme from "@/themes/_light.json5";
 
 export let storedDeviceInfo: Object
 
+
+
 (async () => {
   console.info(`Misskey v${version}`);
 
+  await setLanguage(localStorage.getItem("lang") || "ja-JP")
   if (_DEV_) {
     console.warn("Development mode!!!");
 
@@ -106,6 +109,7 @@ export let storedDeviceInfo: Object
 
   //#region Set lang attr
   const html = document.documentElement;
+
   html.setAttribute("lang", lang);
   const res = await Device.getInfo()
   storedDeviceInfo = res
@@ -187,9 +191,9 @@ export let storedDeviceInfo: Object
 function fetchInstanceAtLogin(){
   const fetchInstanceMetaPromise = fetchInstance();
 
-  fetchInstanceMetaPromise.then((instance) => {
-    localStorage.setItem("v", instance.version);
-  });
+  // fetchInstanceMetaPromise.then((instance) => {
+  //   localStorage.setItem("v", instance.version);
+  // });
 
   fetchInstanceMetaPromise.then(() => {
     applyTheme(
@@ -247,6 +251,8 @@ function fetchInstanceAtLogin(){
   if (_DEV_) {
     app.config.performance = true;
   }
+
+  // await setLanguage("ja-JP")
 
   app.config.globalProperties = {
     $i,
