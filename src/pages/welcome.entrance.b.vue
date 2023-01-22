@@ -4,11 +4,6 @@
 		<div class="shape"></div>
 		<div class="main">
 			<h1>
-				<img
-					v-if="meta.logoImageUrl"
-					class="logo"
-					:src="meta.logoImageUrl"
-				/><span v-else class="text">{{ instanceName }}</span>
 			</h1>
 			<div class="about">
 				<!-- eslint-disable-next-line vue/no-v-html -->
@@ -62,7 +57,6 @@ import XSignupDialog from "@/components/MkSignupDialog.vue";
 import MkButton from "@/components/MkButton.vue";
 import XNote from "@/components/MkNote.vue";
 import MkFeaturedPhotos from "@/components/MkFeaturedPhotos.vue";
-import { host, instanceName } from "@/config";
 import * as os from "@/os";
 import number from "@/filters/number";
 
@@ -75,8 +69,6 @@ export default defineComponent({
 
   data() {
     return {
-      host: toUnicode(host),
-      instanceName,
       meta: null,
       stats: null,
       tags: [],

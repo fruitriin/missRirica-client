@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import vue from "@vitejs/plugin-vue";
-import locales from "./locales/index.cjs";
 import pluginJson5 from "./vite.json5";
 import meta from "./package.json";
 // https://vitejs.dev/config/
@@ -37,9 +36,6 @@ export default defineConfig({
 
   define: {
     _VERSION_: JSON.stringify(meta.version),
-    _LANGS_: JSON.stringify(
-      Object.entries(locales).map(([k, v]) => [k, v._lang_])
-    ),
     _ENV_: JSON.stringify(process.env.NODE_ENV),
     _DEV_: process.env.NODE_ENV !== "production",
     _PERF_PREFIX_: JSON.stringify("Misskey:"),
