@@ -4,7 +4,6 @@ import { Component, markRaw, Ref, ref, defineAsyncComponent } from "vue";
 import { EventEmitter } from "eventemitter3";
 import insertTextAtCursor from "insert-text-at-cursor";
 import * as Misskey from "misskey-js";
-import { apiUrl, url } from "@/config";
 import MkPostFormDialog from "@/components/MkPostFormDialog.vue";
 import MkWaitingDialog from "@/components/MkWaitingDialog.vue";
 import { MenuItem } from "@/types/menu";
@@ -16,7 +15,7 @@ export const pendingApiRequestsCount = ref(0);
 
 const apiClient = new Misskey.api.APIClient({
   origin: $i?.instanceUrl,
-  credential: JSON.parse(localStorage.getItem("account"))?.token,
+  credential: $i?.token,
 });
 
 
