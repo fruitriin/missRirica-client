@@ -55,6 +55,7 @@
     "notification": "Bildirim"
   },
   "_widgets": {
+    "profile": "Profil",
     "notifications": "Bildirim",
     "timeline": "Zaman çizelgesi"
   },
@@ -66,17 +67,5 @@
       "notifications": "Bildirim",
       "tl": "Zaman çizelgesi"
     }
-  },
-  "ririca" : {
-    "name": "MissRirica",
-    "description": "MissRirica is Misskey Client for iOS/Android.  Please prepare access token for login",
-    "term": "Agree Privacy Policy and Term of Uses ",
-    "termLink": "Link: Privacy Policy and Term of Uses",
-    "login": "login",
-    "instance": "Instance",
-    "makeToken" : "How to make access token (JP)",
-    "selectInstanceYourself": "Input instance url instead select one",
-    "accessToken": "AccessToken",
-    "howToCreateToken" : "How to make access token (JP)"
   }
 }

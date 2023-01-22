@@ -80,7 +80,11 @@
     "write:account": "Ẓreg talɣut n umiḍan-ik·im"
   },
   "_widgets": {
-    "notifications": "Ilɣuyen"
+    "profile": "Amaɣnu",
+    "notifications": "Ilɣuyen",
+    "_userList": {
+      "chooseList": "Fren tabdart"
+    }
   },
   "_cw": {
     "show": "Wali ugar"
@@ -106,35 +110,7 @@
     "selectType": "Fren anaw",
     "contentBlocks": "Agbur",
     "inputBlocks": "Anekcum",
-    "specialBlocks": "Uzzig",
-    "script": {
-      "categories": {
-        "list": "Tibdarin"
-      },
-      "blocks": {
-        "_join": {
-          "arg1": "Tibdarin"
-        },
-        "_randomPick": {
-          "arg1": "Tibdarin"
-        },
-        "_dailyRandomPick": {
-          "arg1": "Tibdarin"
-        },
-        "_seedRandomPick": {
-          "arg2": "Tibdarin"
-        },
-        "_pick": {
-          "arg1": "Tibdarin"
-        },
-        "_listLen": {
-          "arg1": "Tibdarin"
-        }
-      },
-      "types": {
-        "array": "Tibdarin"
-      }
-    }
+    "specialBlocks": "Uzzig"
   },
   "_notification": {
     "youWereFollowed": "Yeṭṭafaṛ-ik·em-id",
@@ -151,17 +127,5 @@
       "notifications": "Ilɣuyen",
       "list": "Tibdarin"
     }
-  },
-  "ririca" : {
-    "name": "MissRirica",
-    "description": "MissRirica is Misskey Client for iOS/Android.  Please prepare access token for login",
-    "term": "Agree Privacy Policy and Term of Uses ",
-    "termLink": "Link: Privacy Policy and Term of Uses",
-    "login": "login",
-    "instance": "Instance",
-    "makeToken" : "How to make access token (JP)",
-    "selectInstanceYourself": "Input instance url instead select one",
-    "accessToken": "AccessToken",
-    "howToCreateToken" : "How to make access token (JP)"
   }
 }

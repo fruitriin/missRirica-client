@@ -8,6 +8,8 @@ pnpm-debug.log*
 lerna-debug.log*
 capacitor.config.json
 
+misskey
+
 node_modules
 dist
 dist-ssr

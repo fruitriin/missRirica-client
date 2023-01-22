@@ -2,40 +2,41 @@
 // ここに含まれないものは application/octet-stream としてレスポンスされる
 // SVGはXSSを生むので許可しない
 export const FILE_TYPE_BROWSERSAFE = [
-  // Images
-  "image/png",
-  "image/gif",
-  "image/jpeg",
-  "image/webp",
-  "image/apng",
-  "image/bmp",
-  "image/tiff",
-  "image/x-icon",
+	// Images
+	'image/png',
+	'image/gif',
+	'image/jpeg',
+	'image/webp',
+	'image/avif',
+	'image/apng',
+	'image/bmp',
+	'image/tiff',
+	'image/x-icon',
 
-  // OggS
-  "audio/opus",
-  "video/ogg",
-  "audio/ogg",
-  "application/ogg",
+	// OggS
+	'audio/opus',
+	'video/ogg',
+	'audio/ogg',
+	'application/ogg',
 
-  // ISO/IEC base media file format
-  "video/quicktime",
-  "video/mp4",
-  "audio/mp4",
-  "video/x-m4v",
-  "audio/x-m4a",
-  "video/3gpp",
-  "video/3gpp2",
+	// ISO/IEC base media file format
+	'video/quicktime',
+	'video/mp4',
+	'audio/mp4',
+	'video/x-m4v',
+	'audio/x-m4a',
+	'video/3gpp',
+	'video/3gpp2',
 
-  "video/mpeg",
-  "audio/mpeg",
+	'video/mpeg',
+	'audio/mpeg',
 
-  "video/webm",
-  "audio/webm",
+	'video/webm',
+	'audio/webm',
 
-  "audio/aac",
-  "audio/x-flac",
-  "audio/vnd.wave",
+	'audio/aac',
+	'audio/x-flac',
+	'audio/vnd.wave',
 ];
 /*
 https://github.com/sindresorhus/file-type/blob/main/supported.js

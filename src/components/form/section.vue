@@ -1,42 +1,43 @@
 <template>
-  <div class="vrtktovh _formBlock">
-    <div class="label"><slot name="label"></slot></div>
-    <div class="main _formRoot">
-      <slot></slot>
-    </div>
-  </div>
+<div class="vrtktovh" :class="{ first }">
+	<div class="label"><slot name="label"></slot></div>
+	<div class="main">
+		<slot></slot>
+	</div>
+</div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+defineProps<{
+	first?: boolean;
+}>();
+</script>
 
 <style lang="scss" scoped>
 .vrtktovh {
-  border-top: solid 0.5px var(--divider);
-  border-bottom: solid 0.5px var(--divider);
+	border-top: solid 0.5px var(--divider);
+	//border-bottom: solid 0.5px var(--divider);
 
-  & + .vrtktovh {
-    border-top: none;
-  }
+	> .label {
+		font-weight: bold;
+		padding: 1.5em 0 0 0;
+		margin: 0 0 16px 0;
 
-  &:first-child {
-    border-top: none;
-  }
+		&:empty {
+			display: none;
+		}
+	}
 
-  &:last-child {
-    border-bottom: none;
-  }
+	> .main {
+		margin: 1.5em 0 0 0;
+	}
 
-  > .label {
-    font-weight: bold;
-    margin: 1.5em 0 16px 0;
+	&.first {
+		border-top: none;
 
-    &:empty {
-      display: none;
-    }
-  }
-
-  > .main {
-    margin: 1.5em 0;
-  }
+		> .label {
+			padding-top: 0;
+		}
+	}
 }
 </style>
