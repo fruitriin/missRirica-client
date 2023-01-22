@@ -1,86 +1,72 @@
 <template>
-  <div class="_formRoot">
-    <FormTextarea v-model="installThemeCode" class="_formBlock">
-      <template #label>{{ i18n.ts._theme.code }}</template>
-    </FormTextarea>
+<div class="_gaps_m">
+	<MkTextarea v-model="installThemeCode">
+		<template #label>{{ i18n.ts._theme.code }}</template>
+	</MkTextarea>
 
-    <div
-      class="_formBlock"
-      style="display: flex; gap: var(--margin); flex-wrap: wrap"
-    >
-      <FormButton
-        :disabled="installThemeCode == null"
-        inline
-        @click="() => preview(installThemeCode)"
-        ><i class="fas fa-eye"></i> {{ i18n.ts.preview }}</FormButton
-      >
-      <FormButton
-        :disabled="installThemeCode == null"
-        primary
-        inline
-        @click="() => install(installThemeCode)"
-        ><i class="fas fa-check"></i> {{ i18n.ts.install }}</FormButton
-      >
-    </div>
-  </div>
+	<div class="_buttons">
+		<MkButton :disabled="installThemeCode == null" inline @click="() => preview(installThemeCode)"><i class="ti ti-eye"></i> {{ i18n.ts.preview }}</MkButton>
+		<MkButton :disabled="installThemeCode == null" primary inline @click="() => install(installThemeCode)"><i class="ti ti-check"></i> {{ i18n.ts.install }}</MkButton>
+	</div>
+</div>
 </template>
 
 <script lang="ts" setup>
-import {} from "vue";
-import JSON5 from "json5";
-import FormTextarea from "@/components/form/textarea.vue";
-import FormButton from "@/components/MkButton.vue";
-import { applyTheme, validateTheme } from "@/scripts/theme";
-import * as os from "@/os";
-import { addTheme, getThemes } from "@/theme-store";
-import { i18n } from "@/i18n";
-import { definePageMetadata } from "@/scripts/page-metadata";
+import { } from 'vue';
+import JSON5 from 'json5';
+import MkTextarea from '@/components/MkTextarea.vue';
+import MkButton from '@/components/MkButton.vue';
+import { applyTheme, validateTheme } from '@/scripts/theme';
+import * as os from '@/os';
+import { addTheme, getThemes } from '@/theme-store';
+import { i18n } from '@/i18n';
+import { definePageMetadata } from '@/scripts/page-metadata';
 
 let installThemeCode = $ref(null);
 
 function parseThemeCode(code: string) {
-  let theme;
+	let theme;
 
-  try {
-    theme = JSON5.parse(code);
-  } catch (err) {
-    os.alert({
-      type: "error",
-      text: i18n.ts._theme.invalid,
-    });
-    return false;
-  }
-  if (!validateTheme(theme)) {
-    os.alert({
-      type: "error",
-      text: i18n.ts._theme.invalid,
-    });
-    return false;
-  }
-  if (getThemes().some((t) => t.id === theme.id)) {
-    os.alert({
-      type: "info",
-      text: i18n.ts._theme.alreadyInstalled,
-    });
-    return false;
-  }
+	try {
+		theme = JSON5.parse(code);
+	} catch (err) {
+		os.alert({
+			type: 'error',
+			text: i18n.ts._theme.invalid,
+		});
+		return false;
+	}
+	if (!validateTheme(theme)) {
+		os.alert({
+			type: 'error',
+			text: i18n.ts._theme.invalid,
+		});
+		return false;
+	}
+	if (getThemes().some(t => t.id === theme.id)) {
+		os.alert({
+			type: 'info',
+			text: i18n.ts._theme.alreadyInstalled,
+		});
+		return false;
+	}
 
-  return theme;
+	return theme;
 }
 
 function preview(code: string): void {
-  const theme = parseThemeCode(code);
-  if (theme) applyTheme(theme, false);
+	const theme = parseThemeCode(code);
+	if (theme) applyTheme(theme, false);
 }
 
 async function install(code: string): Promise<void> {
-  const theme = parseThemeCode(code);
-  if (!theme) return;
-  await addTheme(theme);
-  os.alert({
-    type: "success",
-    text: i18n.t("_theme.installed", { name: theme.name }),
-  });
+	const theme = parseThemeCode(code);
+	if (!theme) return;
+	await addTheme(theme);
+	os.alert({
+		type: 'success',
+		text: i18n.t('_theme.installed', { name: theme.name }),
+	});
 }
 
 const headerActions = $computed(() => []);
@@ -88,7 +74,7 @@ const headerActions = $computed(() => []);
 const headerTabs = $computed(() => []);
 
 definePageMetadata({
-  title: i18n.ts._theme.install,
-  icon: "fas fa-download",
+	title: i18n.ts._theme.install,
+	icon: 'ti ti-download',
 });
 </script>

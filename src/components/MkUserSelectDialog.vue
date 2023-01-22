@@ -1,213 +1,197 @@
 <template>
-  <XModalWindow
-    ref="dialogEl"
-    :with-ok-button="true"
-    :ok-button-disabled="selected == null"
-    @click="cancel()"
-    @close="cancel()"
-    @ok="ok()"
-    @closed="$emit('closed')"
-  >
-    <template #header>{{ i18n.ts.selectUser }}</template>
-    <div class="tbhwbxda">
-      <div class="form">
-        <FormSplit :min-width="170">
-          <MkInput
-            v-model="username"
-            :autofocus="true"
-            @update:modelValue="search"
-          >
-            <template #label>{{ i18n.ts.username }}</template>
-            <template #prefix>@</template>
-          </MkInput>
-          <MkInput v-model="host" @update:modelValue="search">
-            <template #label>{{ i18n.ts.host }}</template>
-            <template #prefix>@</template>
-          </MkInput>
-        </FormSplit>
-      </div>
-      <div
-        v-if="username != '' || host != ''"
-        class="result"
-        :class="{ hit: users.length > 0 }"
-      >
-        <div v-if="users.length > 0" class="users">
-          <div
-            v-for="user in users"
-            :key="user.id"
-            class="user"
-            :class="{ selected: selected && selected.id === user.id }"
-            @click="selected = user"
-            @dblclick="ok()"
-          >
-            <MkAvatar :user="user" class="avatar" :show-indicator="true" />
-            <div class="body">
-              <MkUserName :user="user" class="name" />
-              <MkAcct :user="user" class="acct" />
-            </div>
-          </div>
-        </div>
-        <div v-else class="empty">
-          <span>{{ i18n.ts.noUsers }}</span>
-        </div>
-      </div>
-      <div v-if="username == '' && host == ''" class="recent">
-        <div class="users">
-          <div
-            v-for="user in recentUsers"
-            :key="user.id"
-            class="user"
-            :class="{ selected: selected && selected.id === user.id }"
-            @click="selected = user"
-            @dblclick="ok()"
-          >
-            <MkAvatar :user="user" class="avatar" :show-indicator="true" />
-            <div class="body">
-              <MkUserName :user="user" class="name" />
-              <MkAcct :user="user" class="acct" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </XModalWindow>
+<MkModalWindow
+	ref="dialogEl"
+	:with-ok-button="true"
+	:ok-button-disabled="selected == null"
+	@click="cancel()"
+	@close="cancel()"
+	@ok="ok()"
+	@closed="$emit('closed')"
+>
+	<template #header>{{ i18n.ts.selectUser }}</template>
+	<div :class="$style.root">
+		<div :class="$style.form">
+			<FormSplit :min-width="170">
+				<MkInput v-model="username" :autofocus="true" @update:model-value="search">
+					<template #label>{{ i18n.ts.username }}</template>
+					<template #prefix>@</template>
+				</MkInput>
+				<MkInput v-model="host" @update:model-value="search">
+					<template #label>{{ i18n.ts.host }}</template>
+					<template #prefix>@</template>
+				</MkInput>
+			</FormSplit>
+		</div>
+		<div v-if="username != '' || host != ''" :class="[$style.result, { [$style.hit]: users.length > 0 }]">
+			<div v-if="users.length > 0" :class="$style.users">
+				<div v-for="user in users" :key="user.id" class="_button" :class="[$style.user, { [$style.selected]: selected && selected.id === user.id }]" @click="selected = user" @dblclick="ok()">
+					<MkAvatar :user="user" :class="$style.avatar" indicator/>
+					<div :class="$style.userBody">
+						<MkUserName :user="user" :class="$style.userName"/>
+						<MkAcct :user="user" :class="$style.userAcct"/>
+					</div>
+				</div>
+			</div>
+			<div v-else :class="$style.empty">
+				<span>{{ i18n.ts.noUsers }}</span>
+			</div>
+		</div>
+		<div v-if="username == '' && host == ''" :class="$style.recent">
+			<div :class="$style.users">
+				<div v-for="user in recentUsers" :key="user.id" class="_button" :class="[$style.user, { [$style.selected]: selected && selected.id === user.id }]" @click="selected = user" @dblclick="ok()">
+					<MkAvatar :user="user" :class="$style.avatar" indicator/>
+					<div :class="$style.userBody">
+						<MkUserName :user="user" :class="$style.userName"/>
+						<MkAcct :user="user" :class="$style.userAcct"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</MkModalWindow>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted } from "vue";
-import * as misskey from "misskey-js";
-import MkInput from "@/components/form/input.vue";
-import FormSplit from "@/components/form/split.vue";
-import XModalWindow from "@/components/MkModalWindow.vue";
-import * as os from "@/os";
-import { defaultStore } from "@/store";
-import { i18n } from "@/i18n";
+import { nextTick, onMounted } from 'vue';
+import * as misskey from 'misskey-js';
+import MkInput from '@/components/MkInput.vue';
+import FormSplit from '@/components/form/split.vue';
+import MkModalWindow from '@/components/MkModalWindow.vue';
+import * as os from '@/os';
+import { defaultStore } from '@/store';
+import { i18n } from '@/i18n';
+import { $i } from '@/account';
 
 const emit = defineEmits<{
-  (ev: "ok", selected: misskey.entities.UserDetailed): void;
-  (ev: "cancel"): void;
-  (ev: "closed"): void;
+	(ev: 'ok', selected: misskey.entities.UserDetailed): void;
+	(ev: 'cancel'): void;
+	(ev: 'closed'): void;
 }>();
 
-let username = $ref("");
-let host = $ref("");
+const props = defineProps<{
+	includeSelf?: boolean;
+}>();
+
+let username = $ref('');
+let host = $ref('');
 let users: misskey.entities.UserDetailed[] = $ref([]);
 let recentUsers: misskey.entities.UserDetailed[] = $ref([]);
 let selected: misskey.entities.UserDetailed | null = $ref(null);
 let dialogEl = $ref();
 
 const search = () => {
-  if (username === "" && host === "") {
-    users = [];
-    return;
-  }
-  os.api("users/search-by-username-and-host", {
-    username: username,
-    host: host,
-    limit: 10,
-    detail: false,
-  }).then((_users) => {
-    users = _users;
-  });
+	if (username === '' && host === '') {
+		users = [];
+		return;
+	}
+	os.api('users/search-by-username-and-host', {
+		username: username,
+		host: host,
+		limit: 10,
+		detail: false,
+	}).then(_users => {
+		users = _users;
+	});
 };
 
 const ok = () => {
-  if (selected == null) return;
-  emit("ok", selected);
-  dialogEl.close();
+	if (selected == null) return;
+	emit('ok', selected);
+	dialogEl.close();
 
-  // 最近使ったユーザー更新
-  let recents = defaultStore.state.recentlyUsedUsers;
-  recents = recents.filter((x) => x !== selected.id);
-  recents.unshift(selected.id);
-  defaultStore.set("recentlyUsedUsers", recents.splice(0, 16));
+	// 最近使ったユーザー更新
+	let recents = defaultStore.state.recentlyUsedUsers;
+	recents = recents.filter(x => x !== selected.id);
+	recents.unshift(selected.id);
+	defaultStore.set('recentlyUsedUsers', recents.splice(0, 16));
 };
 
 const cancel = () => {
-  emit("cancel");
-  dialogEl.close();
+	emit('cancel');
+	dialogEl.close();
 };
 
 onMounted(() => {
-  os.api("users/show", {
-    userIds: defaultStore.state.recentlyUsedUsers,
-  }).then((users) => {
-    recentUsers = users;
-  });
+	os.api('users/show', {
+		userIds: defaultStore.state.recentlyUsedUsers,
+	}).then(users => {
+		if (props.includeSelf) {
+			recentUsers = [$i, ...users];
+		} else {
+			recentUsers = users;
+		}
+	});
 });
 </script>
 
-<style lang="scss" scoped>
-.tbhwbxda {
-  > .form {
-    padding: 0 var(--root-margin);
-  }
+<style lang="scss" module>
+.root {
+}
 
-  > .result,
-  > .recent {
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-    height: 100%;
+.form {
+	padding: 0 var(--root-margin);
+}
 
-    &.result.hit {
-      padding: 0;
-    }
+.result,
+.recent {
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+	height: 100%;
 
-    &.recent {
-      padding: 0;
-    }
+	&.result.hit {
+		padding: 0;
+	}
 
-    > .users {
-      flex: 1;
-      overflow: auto;
-      padding: 8px 0;
+	&.recent {
+		padding: 0;
+	}
+}
 
-      > .user {
-        display: flex;
-        align-items: center;
-        padding: 8px var(--root-margin);
-        font-size: 14px;
+.users {
+	flex: 1;
+	overflow: auto;
+	padding: 8px 0;
+}
 
-        &:hover {
-          background: var(--X7);
-        }
+.user {
+	display: flex;
+	align-items: center;
+	padding: 8px var(--root-margin);
+	font-size: 14px;
 
-        &.selected {
-          background: var(--accent);
-          color: #fff;
-        }
+	&:hover {
+		background: var(--X7);
+	}
 
-        > * {
-          pointer-events: none;
-          user-select: none;
-        }
+	&.selected {
+		background: var(--accent);
+		color: #fff;
+	}
+}
 
-        > .avatar {
-          width: 45px;
-          height: 45px;
-        }
+.userBody {
+	padding: 0 8px;
+	min-width: 0;
+}
 
-        > .body {
-          padding: 0 8px;
-          min-width: 0;
+.avatar {
+	width: 45px;
+	height: 45px;
+}
 
-          > .name {
-            display: block;
-            font-weight: bold;
-          }
+.userName {
+	display: block;
+	font-weight: bold;
+}
 
-          > .acct {
-            opacity: 0.5;
-          }
-        }
-      }
-    }
+.userAcct {
+	opacity: 0.5;
+}
 
-    > .empty {
-      opacity: 0.7;
-      text-align: center;
-    }
-  }
+.empty {
+	opacity: 0.7;
+	text-align: center;
+	padding: 16px;
 }
 </style>

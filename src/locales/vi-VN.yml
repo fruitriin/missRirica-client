@@ -64,7 +64,7 @@ import: "Nhập dữ liệu"
 export: "Xuất dữ liệu"
 files: "Tập tin"
 download: "Tải xuống"
-driveFileDeleteConfirm: 'Bạn có chắc muốn xóa tập tin "{name}"? Tút liên quan cũng sẽ bị xóa theo.'
+driveFileDeleteConfirm: "Bạn có chắc muốn xóa tập tin \"{name}\"? Tút liên quan cũng sẽ bị xóa theo."
 unfollowConfirm: "Bạn có chắc muốn ngưng theo dõi {name}?"
 exportRequested: "Đang chuẩn bị xuất tập tin. Quá trình này có thể mất ít phút. Nó sẽ được tự động thêm vào Drive sau khi hoàn thành."
 importRequested: "Bạn vừa yêu cầu nhập dữ liệu. Quá trình này có thể mất ít phút."
@@ -107,8 +107,9 @@ clickToShow: "Nhấn để xem"
 sensitive: "Nhạy cảm"
 add: "Thêm"
 reaction: "Biểu cảm"
+reactions: "Biểu cảm"
 reactionSetting: "Chọn những biểu cảm hiển thị"
-reactionSettingDescription2: 'Kéo để sắp xếp, nhấn để xóa, nhấn "+" để thêm.'
+reactionSettingDescription2: "Kéo để sắp xếp, nhấn để xóa, nhấn \"+\" để thêm."
 rememberNoteVisibility: "Lưu kiểu tút mặc định"
 attachCancel: "Gỡ tập tin đính kèm"
 markAsSensitive: "Đánh dấu là nhạy cảm"
@@ -164,7 +165,6 @@ annotation: "Bình luận"
 federation: "Liên hợp"
 instances: "Máy chủ"
 registeredAt: "Đăng ký vào"
-latestRequestSentAt: "Yêu cầu cuối gửi lúc"
 latestRequestReceivedAt: "Yêu cầu cuối nhận lúc"
 latestStatus: "Trạng thái cuối cùng"
 storageUsage: "Dung lượng lưu trữ"
@@ -233,8 +233,8 @@ announcements: "Thông báo"
 imageUrl: "URL ảnh"
 remove: "Xóa"
 removed: "Đã xóa"
-removeAreYouSure: 'Bạn có chắc muốn gỡ "{x}"?'
-deleteAreYouSure: 'Bạn có chắc muốn xóa "{x}"?'
+removeAreYouSure: "Bạn có chắc muốn gỡ \"{x}\"?"
+deleteAreYouSure: "Bạn có chắc muốn xóa \"{x}\"?"
 resetAreYouSure: "Bạn có chắc muốn đặt lại?"
 saved: "Đã lưu"
 messaging: "Trò chuyện"
@@ -335,7 +335,7 @@ bannerUrl: "URL Ảnh bìa"
 backgroundImageUrl: "URL Ảnh nền"
 basicInfo: "Thông tin cơ bản"
 pinnedUsers: "Những người thú vị"
-pinnedUsersDescription: 'Liệt kê mỗi hàng một tên người dùng xuống dòng để ghim trên tab "Khám phá".'
+pinnedUsersDescription: "Liệt kê mỗi hàng một tên người dùng xuống dòng để ghim trên tab \"Khám phá\"."
 pinnedPages: "Trang đã ghim"
 pinnedPagesDescription: "Liệt kê các trang thú vị để ghim trên máy chủ."
 pinnedClipId: "ID của clip muốn ghim"
@@ -348,6 +348,8 @@ recaptcha: "reCAPTCHA"
 enableRecaptcha: "Bật reCAPTCHA"
 recaptchaSiteKey: "Khóa của trang"
 recaptchaSecretKey: "Khóa bí mật"
+turnstileSiteKey: "Khóa của trang"
+turnstileSecretKey: "Khóa bí mật"
 avoidMultiCaptchaConfirm: "Dùng nhiều hệ thống Captcha có thể gây nhiễu giữa chúng. Bạn có muốn tắt các hệ thống Captcha khác hiện đang hoạt động không? Nếu bạn muốn chúng tiếp tục được bật, hãy nhấn hủy."
 antennas: "Trạm phát sóng"
 manageAntennas: "Quản lý trạm phát sóng"
@@ -392,7 +394,7 @@ lastUsed: "Dùng lần cuối"
 unregister: "Hủy đăng ký"
 passwordLessLogin: "Đăng nhập không mật khẩu"
 resetPassword: "Đặt lại mật khẩu"
-newPasswordIs: 'Mật khẩu mới là "{password}"'
+newPasswordIs: "Mật khẩu mới là \"{password}\""
 reduceUiAnimation: "Giảm chuyển động UI"
 share: "Chia sẻ"
 notFound: "Không tìm thấy"
@@ -450,7 +452,6 @@ language: "Ngôn ngữ"
 uiLanguage: "Ngôn ngữ giao diện"
 groupInvited: "Bạn đã được mời tham gia nhóm"
 aboutX: "Giới thiệu {x}"
-useOsNativeEmojis: "Dùng emoji hệ thống"
 disableDrawer: "Không dùng menu thanh bên"
 youHaveNoGroups: "Không có nhóm nào"
 joinOrCreateGroup: "Tham gia hoặc tạo một nhóm mới."
@@ -497,12 +498,13 @@ objectStorageUseSSL: "Dùng SSL"
 objectStorageUseSSLDesc: "Tắt nếu bạn không dùng HTTPS để kết nối API"
 objectStorageUseProxy: "Kết nối thông qua Proxy"
 objectStorageUseProxyDesc: "Tắt nếu bạn không dùng Proxy để kết nối API"
-objectStorageSetPublicRead: 'Đặt "public-read" khi tải lên'
+objectStorageSetPublicRead: "Đặt \"public-read\" khi tải lên"
 serverLogs: "Nhật ký máy chủ"
 deleteAll: "Xóa tất cả"
 showFixedPostForm: "Hiện khung soạn tút ở phía trên bảng tin"
 newNoteRecived: "Đã nhận tút mới"
 sounds: "Âm thanh"
+sound: "Âm thanh"
 listen: "Nghe"
 none: "Không"
 showInPage: "Hiện trong trang"
@@ -648,7 +650,7 @@ createNew: "Tạo mới"
 optional: "Không bắt buộc"
 createNewClip: "Tạo một ghim mới"
 unclip: "Bỏ ghim"
-confirmToUnclipAlreadyClippedNote: 'Bài đăng này là một phần của "{name}" ghim. Bạn có muốn bỏ khỏi ghim?'
+confirmToUnclipAlreadyClippedNote: "Bài đăng này là một phần của \"{name}\" ghim. Bạn có muốn bỏ khỏi ghim?"
 public: "Công khai"
 i18nInfo: "Misskey đang được các tình nguyện viên dịch sang nhiều thứ tiếng khác nhau. Bạn có thể hỗ trợ tại {link}."
 manageAccessTokens: "Tạo mã truy cập"
@@ -670,7 +672,7 @@ driveFilesCount: "Số tập tin trong Ổ đĩa"
 driveUsage: "Dung lượng ổ đĩa"
 noCrawle: "Từ chối lập chỉ mục"
 noCrawleDescription: "Không cho công cụ tìm kiếm lập chỉ mục trang hồ sơ, tút, Trang, etc."
-lockedAccountInfo: 'Ghi chú của bạn sẽ hiển thị với bất kỳ ai, trừ khi bạn đặt chế độ hiển thị tút của mình thành "Chỉ người theo dõi".'
+lockedAccountInfo: "Ghi chú của bạn sẽ hiển thị với bất kỳ ai, trừ khi bạn đặt chế độ hiển thị tút của mình thành \"Chỉ người theo dõi\"."
 alwaysMarkSensitive: "Luôn đánh dấu NSFW"
 loadRawImages: "Tải ảnh gốc thay vì ảnh thu nhỏ"
 disableShowingAnimatedImages: "Không phát ảnh động"
@@ -685,8 +687,8 @@ useSystemFont: "Dùng phông chữ mặc định của hệ thống"
 clips: "Ghim"
 experimentalFeatures: "Tính năng thử nghiệm"
 developer: "Nhà phát triển"
-makeExplorable: 'Không hiện tôi trong "Khám phá"'
-makeExplorableDescription: 'Nếu bạn tắt, tài khoản của bạn sẽ không hiện trong mục "Khám phá".'
+makeExplorable: "Không hiện tôi trong \"Khám phá\""
+makeExplorableDescription: "Nếu bạn tắt, tài khoản của bạn sẽ không hiện trong mục \"Khám phá\"."
 showGapBetweenNotesInTimeline: "Hiện dải phân cách giữa các tút trên bảng tin"
 duplicate: "Tạo bản sao"
 left: "Bên trái"
@@ -740,7 +742,7 @@ unlikeConfirm: "Bạn có chắc muốn bỏ thích ?"
 fullView: "Kích thước đầy đủ"
 quitFullView: "Thoát toàn màn hình"
 addDescription: "Thêm mô tả"
-userPagePinTip: 'Bạn có thể hiển thị các tút ở đây bằng cách chọn "Ghim vào hồ sơ" từ menu của mỗi tút.'
+userPagePinTip: "Bạn có thể hiển thị các tút ở đây bằng cách chọn \"Ghim vào hồ sơ\" từ menu của mỗi tút."
 notSpecifiedMentionWarning: "Tút này có đề cập đến những người không mong muốn"
 info: "Giới thiệu"
 userInfo: "Thông tin người dùng"
@@ -822,10 +824,10 @@ ffVisibilityDescription: "Quyết định ai có thể xem những người bạ
 continueThread: "Tiếp tục xem chuỗi tút"
 deleteAccountConfirm: "Điều này sẽ khiến tài khoản bị xóa vĩnh viễn. Vẫn tiếp tục?"
 incorrectPassword: "Sai mật khẩu."
-voteConfirm: 'Xác nhận bình chọn "{choice}"?'
+voteConfirm: "Xác nhận bình chọn \"{choice}\"?"
 hide: "Ẩn"
 leaveGroup: "Rời khỏi nhóm"
-leaveGroupConfirm: 'Bạn có chắc muốn rời khỏi nhóm "{name}"?'
+leaveGroupConfirm: "Bạn có chắc muốn rời khỏi nhóm \"{name}\"?"
 useDrawerReactionPickerForMobile: "Hiện bộ chọn biểu cảm dạng xổ ra trên điện thoại"
 welcomeBackWithName: "Chào mừng trở lại, {name}"
 clickToFinishEmailVerification: "Vui lòng nhấn [{ok}] để hoàn tất việc đăng ký."
@@ -893,6 +895,15 @@ navbar: "Thanh điều hướng"
 shuffle: "Xáo trộn"
 account: "Tài khoản của bạn"
 move: "Di chuyển"
+like: "Thích"
+show: "Hiển thị"
+color: "Màu sắc"
+_role:
+  priority: "Ưu tiên"
+  _priority:
+    low: "Thấp"
+    middle: "Vừa"
+    high: "Cao"
 _sensitiveMediaDetection:
   description: "Giảm nỗ lực kiểm duyệt máy chủ thông qua việc tự động nhận dạng media NSFW thông qua học máy. Điều này sẽ làm tăng một chút áp lực trên máy chủ."
   sensitivity: "Phát hiện nhạy cảm"
@@ -925,6 +936,7 @@ _accountDelete:
 _ad:
   back: "Quay lại"
   reduceFrequencyOfThisAd: "Hiện ít lại"
+  hide: "Không hiển thị"
 _forgotPassword:
   enterEmail: "Nhập địa chỉ email bạn đã sử dụng để đăng ký. Một liên kết mà bạn có thể đặt lại mật khẩu của mình sau đó sẽ được gửi đến nó."
   ifNoEmail: "Nếu bạn không sử dụng email lúc đăng ký, vui lòng liên hệ với quản trị viên."
@@ -951,12 +963,12 @@ _preferencesBackups:
   save: "Lưu thay đổi"
   inputName: "Nhập tên bản sao lưu"
   cannotSave: "Không thể lưu"
-  nameAlreadyExists: 'Bản sao lưu "{name}" đã tồn tại. Xin nhập tên khác.'
-  applyConfirm: 'Bạn có chắc muốn áp dụng bản sao lưu "{name}" cho thiết bị này? Thiết lập hiện tại sẽ bị ghi đè.'
+  nameAlreadyExists: "Bản sao lưu \"{name}\" đã tồn tại. Xin nhập tên khác."
+  applyConfirm: "Bạn có chắc muốn áp dụng bản sao lưu \"{name}\" cho thiết bị này? Thiết lập hiện tại sẽ bị ghi đè."
   saveConfirm: "Lưu bản sao lưu {name}?"
   deleteConfirm: "Xóa bản sao lưu {name}?"
-  renameConfirm: 'Đổi tên bản sao lưu "{old}" thành "{new}"?'
-  noBackups: 'Chưa có bản sao lưu. Bạn có thể sao lưu thiết lập trên máy chủ này bằng cách sử dụng "Tạo sao lưu".'
+  renameConfirm: "Đổi tên bản sao lưu \"{old}\" thành \"{new}\"?"
+  noBackups: "Chưa có bản sao lưu. Bạn có thể sao lưu thiết lập trên máy chủ này bằng cách sử dụng \"Tạo sao lưu\"."
   createdAt: "Tạo vào: {time} {date}"
   updatedAt: "Cập nhật: {time} {date}"
   cannotLoad: "Tải thất bại"
@@ -1017,7 +1029,7 @@ _mfm:
   jelly: "Chuyển động (Thạch rau câu)"
   jellyDescription: "Cho phép nội dung chuyển động giống như thạch rau câu."
   tada: "Chuyển động (Tada)"
-  tadaDescription: 'Cho phép nội dung chuyển động kiểu "Tada!".'
+  tadaDescription: "Cho phép nội dung chuyển động kiểu \"Tada!\"."
   jump: "Chuyển động (Nhảy múa)"
   jumpDescription: "Cho phép nội dung chuyển động nhảy nhót."
   bounce: "Chuyển động (Cà tưng)"
@@ -1183,23 +1195,23 @@ _time:
 _tutorial:
   title: "Cách dùng Misskey"
   step1_1: "Xin chào!"
-  step1_2: 'Trang này gọi là "bảng tin". Nó hiện "tút" từ những người mà bạn "theo dõi" theo thứ tự thời gian.'
+  step1_2: "Trang này gọi là \"bảng tin\". Nó hiện \"tút\" từ những người mà bạn \"theo dõi\" theo thứ tự thời gian."
   step1_3: "Bảng tin của bạn đang trống, bởi vì bạn chưa đăng tút nào hoặc chưa theo dõi ai."
   step2_1: "Hãy hoàn thành việc thiết lập hồ sơ của bạn trước khi viết tút hoặc theo dõi bất kỳ ai."
   step2_2: "Cung cấp một số thông tin giới thiệu bạn là ai sẽ giúp người khác dễ dàng biết được họ muốn đọc tút hay theo dõi bạn."
   step3_1: "Hoàn thành thiết lập hồ sơ của bạn?"
   step3_2: "Sau đó, hãy thử đăng một tút tiếp theo. Bạn có thể làm như vậy bằng cách nhấn vào nút có biểu tượng bút chì trên màn hình."
   step3_3: "Nhập nội dung vào khung soạn thảo và nhấn nút đăng ở góc trên."
-  step3_4: 'Chưa biết nói gì? Thử "Tôi mới tham gia Misskey"!'
+  step3_4: "Chưa biết nói gì? Thử \"Tôi mới tham gia Misskey\"!"
   step4_1: "Đăng xong tút đầu tiên của bạn?"
   step4_2: "De! Tút đầu tiên của bạn đã hiện trên bảng tin."
   step5_1: "Bây giờ, hãy thử làm cho bảng tin của bạn sinh động hơn bằng cách theo dõi những người khác."
   step5_2: "{feature} sẽ hiển thị cho bạn các tút nổi bật trên máy chủ này. {explore} sẽ cho phép bạn tìm thấy những người dùng thú vị. Hãy thử tìm những người bạn muốn theo dõi ở đó!"
-  step5_3: 'Để theo dõi những người dùng khác, hãy nhấn vào ảnh đại diện của họ và nhấn nút "Theo dõi" trên hồ sơ của họ.'
+  step5_3: "Để theo dõi những người dùng khác, hãy nhấn vào ảnh đại diện của họ và nhấn nút \"Theo dõi\" trên hồ sơ của họ."
   step5_4: "Nếu người dùng khác có biểu tượng ổ khóa bên cạnh tên của họ, có thể mất một khoảng thời gian để người dùng đó phê duyệt yêu cầu theo dõi của bạn theo cách thủ công."
   step6_1: "Bạn sẽ có thể xem tút của những người dùng khác trên bảng tin của mình ngay bây giờ."
-  step6_2: 'Bạn cũng có thể đặt "biểu cảm" trên tút của người khác để phản hồi nhanh chúng.'
-  step6_3: 'Để đính kèm "biểu cảm", hãy nhấn vào dấu "+" trên tút của người dùng khác rồi chọn biểu tượng cảm xúc mà bạn muốn dùng.'
+  step6_2: "Bạn cũng có thể đặt \"biểu cảm\" trên tút của người khác để phản hồi nhanh chúng."
+  step6_3: "Để đính kèm \"biểu cảm\", hãy nhấn vào dấu \"+\" trên tút của người dùng khác rồi chọn biểu tượng cảm xúc mà bạn muốn dùng."
   step7_1: "Xin chúc mừng! Bây giờ bạn đã hoàn thành phần hướng dẫn cơ bản của Misskey."
   step7_2: "Nếu bạn muốn tìm hiểu thêm về Misskey, hãy thử phần {help}."
   step7_3: "Bây giờ, chúc may mắn và vui vẻ với Misskey! 🚀"
@@ -1247,7 +1259,7 @@ _permissions:
   "read:gallery-likes": "Xem danh sách các tút đã thích trong thư viện của tôi"
   "write:gallery-likes": "Sửa danh sách các tút đã thích trong thư viện của tôi"
 _auth:
-  shareAccess: 'Bạn có muốn cho phép "{name}" truy cập vào tài khoản này không?'
+  shareAccess: "Bạn có muốn cho phép \"{name}\" truy cập vào tài khoản này không?"
   shareAccessAsk: "Bạn có chắc muốn cho phép ứng dụng này truy cập vào tài khoản của mình không?"
   permissionAsk: "Ứng dụng này yêu cầu các quyền sau"
   pleaseGoBack: "Vui lòng quay lại ứng dụng"
@@ -1268,6 +1280,8 @@ _weekday:
   friday: "Thứ Sáu"
   saturday: "Thứ Bảy"
 _widgets:
+  profile: "Trang cá nhân"
+  instanceInfo: "Thông tin máy chủ"
   memo: "Tút đã ghim"
   notifications: "Thông báo"
   timeline: "Bảng tin"
@@ -1290,6 +1304,8 @@ _widgets:
   serverMetric: "Thống kê máy chủ"
   aiscript: "AiScript console"
   aichan: "Ai"
+  _userList:
+    chooseList: "Chọn danh sách"
 _cw:
   hide: "Ẩn"
   show: "Tải thêm"
@@ -1390,6 +1406,12 @@ _timelines:
   local: "Máy chủ này"
   social: "Xã hội"
   global: "Liên hợp"
+_play:
+  viewSource: "Xem mã nguồn"
+  featured: "Nổi tiếng"
+  title: "Tựa đề"
+  script: "Kịch bản"
+  summary: "Mô tả"
 _pages:
   newPage: "Tạo Trang mới"
   editPage: "Sửa Trang này"
@@ -1425,8 +1447,6 @@ _pages:
   eyeCatchingImageRemove: "Xóa ảnh thu nhỏ"
   chooseBlock: "Thêm khối"
   selectType: "Chọn kiểu"
-  enterVariableName: "Nhập tên một biến thể"
-  variableNameIsAlreadyUsed: "Tên biến thể này đã được sử dụng"
   contentBlocks: "Nội dung"
   inputBlocks: "Nhập"
   specialBlocks: "Đặc biệt"
@@ -1436,249 +1456,11 @@ _pages:
     section: "Mục "
     image: "Hình ảnh"
     button: "Nút"
-    if: "Nếu"
-    _if:
-      variable: "Biến thể"
-    post: "Mẫu đăng"
-    _post:
-      text: "Nội dung"
-      attachCanvasImage: "Đính kèm hình canva"
-      canvasId: "ID Canva"
-    textInput: "Văn bản đầu vào"
-    _textInput:
-      name: "Tên biến thể"
-      text: "Tựa đề"
-      default: "Giá trị mặc định"
-    textareaInput: "Văn bản nhiều dòng đầu vào"
-    _textareaInput:
-      name: "Tên biến thể"
-      text: "Tựa đề"
-      default: "Giá trị mặc định"
-    numberInput: "Đầu vào số"
-    _numberInput:
-      name: "Tên biến thể"
-      text: "Tựa đề"
-      default: "Giá trị mặc định"
-    canvas: "Canva"
-    _canvas:
-      id: "ID Canva"
-      width: "Chiều rộng"
-      height: "Chiều cao"
     note: "Tút đã nhúng"
     _note:
       id: "ID tút"
       idDescription: "Ngoài ra, bạn có thể dán URL tút vào đây."
       detailed: "Xem chi tiết"
-    switch: "Chuyển đổi"
-    _switch:
-      name: "Tên biến thể"
-      text: "Tựa đề"
-      default: "Giá trị mặc định"
-    counter: "Bộ đếm"
-    _counter:
-      name: "Tên biến thể"
-      text: "Tựa đề"
-      inc: "Bước"
-    _button:
-      text: "Tựa đề"
-      colored: "Với màu"
-      action: "Thao tác khi nhấn nút"
-      _action:
-        dialog: "Hiện hộp thoại"
-        _dialog:
-          content: "Nội dung"
-        resetRandom: "Đặt lại seed ngẫu nhiên"
-        pushEvent: "Gửi một sự kiện"
-        _pushEvent:
-          event: "Tên sự kiện"
-          message: "Tin nhắn hiển thị khi kích hoạt"
-          variable: "Biển thể để gửi"
-          no-variable: "Không"
-        callAiScript: "Gọi AiScript"
-        _callAiScript:
-          functionName: "Tên tính năng"
-    radioButton: "Lựa chọn"
-    _radioButton:
-      name: "Tên biến thể"
-      title: "Tựa đề"
-      values: "Phân tách các mục bằng cách xuống dòng"
-      default: "Giá trị mặc định"
-  script:
-    categories:
-      flow: "Điều khiển"
-      logical: "Hoạt động logic"
-      operation: "Tính toán"
-      comparison: "So sánh"
-      random: "Ngẫu nhiên"
-      value: "Giá trị"
-      fn: "Tính năng"
-      text: "Tác vụ văn bản"
-      convert: "Chuyển đổi"
-      list: "Danh sách"
-    blocks:
-      text: "Văn bản"
-      multiLineText: "Văn bản (nhiều dòng)"
-      textList: "Văn bản liệt kê"
-      _textList:
-        info: "Phân tách mục bằng cách xuống dòng"
-      strLen: "Độ dài văn bản"
-      _strLen:
-        arg1: "Văn bản"
-      strPick: "Trích xuất chuỗi"
-      _strPick:
-        arg1: "Văn bản"
-        arg2: "Vị trí chuỗi"
-      strReplace: "Thay thế chuỗi"
-      _strReplace:
-        arg1: "Nội dung"
-        arg2: "Văn bản thay thế"
-        arg3: "Thay thế bằng"
-      strReverse: "Lật văn bản"
-      _strReverse:
-        arg1: "Văn bản"
-      join: "Nối văn bản"
-      _join:
-        arg1: "Danh sách"
-        arg2: "Phân cách"
-      add: "Cộng"
-      _add:
-        arg1: "A"
-        arg2: "B"
-      subtract: "Trừ"
-      _subtract:
-        arg1: "A"
-        arg2: "B"
-      multiply: "Nhân"
-      _multiply:
-        arg1: "A"
-        arg2: "B"
-      divide: "Chia"
-      _divide:
-        arg1: "A"
-        arg2: "B"
-      mod: "Phần còn lại"
-      _mod:
-        arg1: "A"
-        arg2: "B"
-      round: "Làm tròn thập phân"
-      _round:
-        arg1: "Số"
-      eq: "A và B bằng nhau"
-      _eq:
-        arg1: "A"
-        arg2: "B"
-      notEq: "A và B khác nhau"
-      _notEq:
-        arg1: "A"
-        arg2: "B"
-      and: "A VÀ B"
-      _and:
-        arg1: "A"
-        arg2: "B"
-      or: "A HOẶC B"
-      _or:
-        arg1: "A"
-        arg2: "B"
-      lt: "< A nhỏ hơn B"
-      _lt:
-        arg1: "A"
-        arg2: "B"
-      gt: "> A lớn hơn B"
-      _gt:
-        arg1: "A"
-        arg2: "B"
-      ltEq: "<= A nhỏ hơn hoặc bằng B"
-      _ltEq:
-        arg1: "A"
-        arg2: "B"
-      gtEq: ">= A lớn hơn hoặc bằng B"
-      _gtEq:
-        arg1: "A"
-        arg2: "B"
-      if: "Nhánh"
-      _if:
-        arg1: "Nếu"
-        arg2: "Sau đó"
-        arg3: "Khác"
-      not: "KHÔNG"
-      _not:
-        arg1: "KHÔNG"
-      random: "Ngẫu nhiên"
-      _random:
-        arg1: "Xác suất"
-      rannum: "Số ngẫu nhiên"
-      _rannum:
-        arg1: "Giá trị tối thiểu"
-        arg2: "Giá trị tối đa"
-      randomPick: "Chọn ngẫu nhiên từ danh sách"
-      _randomPick:
-        arg1: "Danh sách"
-      dailyRandom: "Ngẫu nhiên (Đổi mỗi người một lần mỗi ngày)"
-      _dailyRandom:
-        arg1: "Xác suất"
-      dailyRannum: "Số ngẫu nhiên (Đổi mỗi người một lần mỗi ngày)"
-      _dailyRannum:
-        arg1: "Giá trị tối thiểu"
-        arg2: "Giá trị tối đa"
-      dailyRandomPick: "Chọn ngẫu nhiên từ một danh sách (Đổi mỗi người một lần mỗi ngày)"
-      _dailyRandomPick:
-        arg1: "Danh sách"
-      seedRandom: "Ngẫu nhiên (với seed)"
-      _seedRandom:
-        arg1: "Seed"
-        arg2: "Xác suất"
-      seedRannum: "Số ngẫu nhiên (với seed)"
-      _seedRannum:
-        arg1: "Seed"
-        arg2: "Giá trị tối thiểu"
-        arg3: "Giá trị tối đa"
-      seedRandomPick: "Chọn ngẫu nhiên từ danh sách (với seed)"
-      _seedRandomPick:
-        arg1: "Seed"
-        arg2: "Danh sách"
-      DRPWPM: "Chọn ngẫu nhiên từ danh sách nặng (Đổi mỗi người một lần mỗi ngày)"
-      _DRPWPM:
-        arg1: "Văn bản liệt kê"
-      pick: "Chọn từ danh sách"
-      _pick:
-        arg1: "Danh sách"
-        arg2: "Vị trí"
-      listLen: "Lấy độ dài danh sách"
-      _listLen:
-        arg1: "Danh sách"
-      number: "Số"
-      stringToNumber: "Chữ thành số"
-      _stringToNumber:
-        arg1: "Văn bản"
-      numberToString: "Số thành chữ"
-      _numberToString:
-        arg1: "Số"
-      splitStrByLine: "Phân cách văn bản bằng cách xuống dòng"
-      _splitStrByLine:
-        arg1: "Văn bản"
-      ref: "Biến thể"
-      aiScriptVar: "Biển thể AiScript"
-      fn: "Tính năng"
-      _fn:
-        slots: "Chỗ"
-        slots-info: "Phân cách chỗ bằng cách xuống dòng"
-        arg1: "Đầu ra"
-      for: "để-Lặp lại"
-      _for:
-        arg1: "Số lần lặp lại"
-        arg2: "Hành động"
-    typeError: 'Chỗ {slot} chấp nhận các giá trị thuộc loại "{expect}", nhưng giá trị được cung cấp thuộc loại "{actual}"!'
-    thereIsEmptySlot: "Chỗ {slot} đang trống!"
-    types:
-      string: "Văn bản"
-      number: "Số"
-      boolean: "Cờ"
-      array: "Danh sách"
-      stringArray: "Văn bản liệt kê"
-    emptySlot: "Chỗ trống"
-    enviromentVariables: "Biến môi trường"
-    pageVariables: "Biến trang"
-    argVariables: "Đầu vào chỗ"
 _relayStatus:
   requesting: "Đang chờ"
   accepted: "Đã duyệt"
@@ -1689,7 +1471,6 @@ _notification:
   youGotReply: "{name} trả lời bạn"
   youGotQuote: "{name} trích dẫn tút của bạn"
   youRenoted: "{name} đăng lại tút của bạn"
-  youGotPoll: "{name} bình chọn tút của bạn"
   youGotMessagingMessageFromUser: "{name} nhắn tin cho bạn"
   youGotMessagingMessageFromGroup: "Một tin nhắn trong nhóm {name}"
   youWereFollowed: "đã theo dõi bạn"
@@ -1706,7 +1487,6 @@ _notification:
     renote: "Đăng lại"
     quote: "Trích dẫn"
     reaction: "Biểu cảm"
-    pollVote: "Lượt bình chọn"
     pollEnded: "Bình chọn kết thúc"
     receiveFollowRequest: "Yêu cầu theo dõi"
     followRequestAccepted: "Yêu cầu theo dõi được chấp nhận"
@@ -1732,7 +1512,7 @@ _deck:
   deleteProfile: "Xóa hồ sơ"
   introduction: "Kết hợp các cột để tạo giao diện của riêng bạn!"
   introduction2: "Bạn có thể thêm cột bất kỳ lúc nào bằng cách nhấn + ở bên phải màn hình."
-  widgetsIntroduction: 'Chọn "Sửa widget" trong menu cột và thêm một widget.'
+  widgetsIntroduction: "Chọn \"Sửa widget\" trong menu cột và thêm một widget."
   _columns:
     main: "Chính"
     widgets: "Tiện ích"

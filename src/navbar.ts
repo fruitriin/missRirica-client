@@ -1,142 +1,147 @@
-import { computed, ref, reactive } from "vue";
-import { $i } from "./account";
-import { search } from "@/scripts/search";
-import * as os from "@/os";
-import { i18n } from "@/i18n";
-import { ui } from "@/config";
-import { unisonReload } from "@/scripts/unison-reload";
+import { computed, ref, reactive } from 'vue';
+import { $i } from './account';
+import { miLocalStorage } from './local-storage';
+import { search } from '@/scripts/search';
+import * as os from '@/os';
+import { i18n } from '@/i18n';
+import { ui } from '@/config';
+import { unisonReload } from '@/scripts/unison-reload';
 
 export const navbarItemDef = reactive({
-  notifications: {
-    title: "notifications",
-    icon: "fas fa-bell",
-    show: computed(() => $i != null),
-    indicated: computed(() => $i != null && $i.hasUnreadNotification),
-    to: "/my/notifications",
-  },
-  messaging: {
-    title: "messaging",
-    icon: "fas fa-comments",
-    show: computed(() => $i != null),
-    indicated: computed(() => $i != null && $i.hasUnreadMessagingMessage),
-    to: "/my/messaging",
-  },
-  drive: {
-    title: "drive",
-    icon: "fas fa-cloud",
-    show: computed(() => $i != null),
-    to: "/my/drive",
-  },
-  followRequests: {
-    title: "followRequests",
-    icon: "fas fa-user-clock",
-    show: computed(() => $i != null && $i.isLocked),
-    indicated: computed(() => $i != null && $i.hasPendingReceivedFollowRequest),
-    to: "/my/follow-requests",
-  },
-  explore: {
-    title: "explore",
-    icon: "fas fa-hashtag",
-    to: "/explore",
-  },
-  announcements: {
-    title: "announcements",
-    icon: "fas fa-broadcast-tower",
-    indicated: computed(() => $i != null && $i.hasUnreadAnnouncement),
-    to: "/announcements",
-  },
-  search: {
-    title: "search",
-    icon: "fas fa-search",
-    action: () => search(),
-  },
-  lists: {
-    title: "lists",
-    icon: "fas fa-list-ul",
-    show: computed(() => $i != null),
-    to: "/my/lists",
-  },
-  /*
+	notifications: {
+		title: i18n.ts.notifications,
+		icon: 'ti ti-bell',
+		show: computed(() => $i != null),
+		indicated: computed(() => $i != null && $i.hasUnreadNotification),
+		to: '/my/notifications',
+	},
+	messaging: {
+		title: i18n.ts.messaging,
+		icon: 'ti ti-messages',
+		show: computed(() => $i != null),
+		indicated: computed(() => $i != null && $i.hasUnreadMessagingMessage),
+		to: '/my/messaging',
+	},
+	drive: {
+		title: i18n.ts.drive,
+		icon: 'ti ti-cloud',
+		show: computed(() => $i != null),
+		to: '/my/drive',
+	},
+	followRequests: {
+		title: i18n.ts.followRequests,
+		icon: 'ti ti-user-plus',
+		show: computed(() => $i != null && $i.isLocked),
+		indicated: computed(() => $i != null && $i.hasPendingReceivedFollowRequest),
+		to: '/my/follow-requests',
+	},
+	explore: {
+		title: i18n.ts.explore,
+		icon: 'ti ti-hash',
+		to: '/explore',
+	},
+	announcements: {
+		title: i18n.ts.announcements,
+		icon: 'ti ti-speakerphone',
+		indicated: computed(() => $i != null && $i.hasUnreadAnnouncement),
+		to: '/announcements',
+	},
+	search: {
+		title: i18n.ts.search,
+		icon: 'ti ti-search',
+		action: () => search(),
+	},
+	lists: {
+		title: i18n.ts.lists,
+		icon: 'ti ti-list',
+		show: computed(() => $i != null),
+		to: '/my/lists',
+	},
+	/*
 	groups: {
-		title: 'groups',
-		icon: 'fas fa-users',
+		title: i18n.ts.groups,
+		icon: 'ti ti-users',
 		show: computed(() => $i != null),
 		to: '/my/groups',
 	},
 	*/
-  antennas: {
-    title: "antennas",
-    icon: "fas fa-satellite",
-    show: computed(() => $i != null),
-    to: "/my/antennas",
-  },
-  favorites: {
-    title: "favorites",
-    icon: "fas fa-star",
-    show: computed(() => $i != null),
-    to: "/my/favorites",
-  },
-  pages: {
-    title: "pages",
-    icon: "fas fa-file-alt",
-    to: "/pages",
-  },
-  gallery: {
-    title: "gallery",
-    icon: "fas fa-icons",
-    to: "/gallery",
-  },
-  clips: {
-    title: "clip",
-    icon: "fas fa-paperclip",
-    show: computed(() => $i != null),
-    to: "/my/clips",
-  },
-  channels: {
-    title: "channel",
-    icon: "fas fa-satellite-dish",
-    to: "/channels",
-  },
-  ui: {
-    title: "switchUi",
-    icon: "fas fa-columns",
-    action: (ev) => {
-      os.popupMenu(
-        [
-          {
-            text: i18n.ts.default,
-            active: ui === "default" || ui === null,
-            action: () => {
-              localStorage.setItem("ui", "default");
-              unisonReload();
-            },
-          },
-          {
-            text: i18n.ts.deck,
-            active: ui === "deck",
-            action: () => {
-              localStorage.setItem("ui", "deck");
-              unisonReload();
-            },
-          },
-          {
-            text: i18n.ts.classic,
-            active: ui === "classic",
-            action: () => {
-              localStorage.setItem("ui", "classic");
-              unisonReload();
-            },
-          },
-        ],
-        ev.currentTarget ?? ev.target
-      );
-    },
-  },
-  reload: {
-    title: "reload",
-    icon: "fas fa-refresh",
-    action: (ev) => {
-      location.reload();
-    },
-  },
+	antennas: {
+		title: i18n.ts.antennas,
+		icon: 'ti ti-antenna',
+		show: computed(() => $i != null),
+		to: '/my/antennas',
+	},
+	favorites: {
+		title: i18n.ts.favorites,
+		icon: 'ti ti-star',
+		show: computed(() => $i != null),
+		to: '/my/favorites',
+	},
+	pages: {
+		title: i18n.ts.pages,
+		icon: 'ti ti-news',
+		to: '/pages',
+	},
+	play: {
+		title: 'Play',
+		icon: 'ti ti-player-play',
+		to: '/play',
+	},
+	gallery: {
+		title: i18n.ts.gallery,
+		icon: 'ti ti-icons',
+		to: '/gallery',
+	},
+	clips: {
+		title: i18n.ts.clip,
+		icon: 'ti ti-paperclip',
+		show: computed(() => $i != null),
+		to: '/my/clips',
+	},
+	channels: {
+		title: i18n.ts.channel,
+		icon: 'ti ti-device-tv',
+		to: '/channels',
+	},
+	achievements: {
+		title: i18n.ts.achievements,
+		icon: 'ti ti-military-award',
+		show: computed(() => $i != null),
+		to: '/my/achievements',
+	},
+	ui: {
+		title: i18n.ts.switchUi,
+		icon: 'ti ti-devices',
+		action: (ev) => {
+			os.popupMenu([{
+				text: i18n.ts.default,
+				active: ui === 'default' || ui === null,
+				action: () => {
+					miLocalStorage.setItem('ui', 'default');
+					unisonReload();
+				},
+			}, {
+				text: i18n.ts.deck,
+				active: ui === 'deck',
+				action: () => {
+					miLocalStorage.setItem('ui', 'deck');
+					unisonReload();
+				},
+			}, {
+				text: i18n.ts.classic,
+				active: ui === 'classic',
+				action: () => {
+					miLocalStorage.setItem('ui', 'classic');
+					unisonReload();
+				},
+			}], ev.currentTarget ?? ev.target);
+		},
+	},
+	reload: {
+		title: i18n.ts.reload,
+		icon: 'ti ti-refresh',
+		action: (ev) => {
+			location.reload();
+		},
+	},
 });

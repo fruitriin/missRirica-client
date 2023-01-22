@@ -28,44 +28,47 @@ import zhTW from "@/locales/zh-TW.json";
 import Fuse from "fuse.js";
 
 const languages = {
-  "ar-SA": arSA,
-  "cs-CZ": csCZ,
-  "da-DK": daDK,
-  "de-DE": deDE,
-  "en-US": enUS,
-  "es-ES": esES,
-  "fr-FR": frFR,
-  "id-ID": idID,
-  "it-IT": itIT,
-  "ja-JP": jaJP,
-  "ja-KS": jaKS,
-  "kab-KAB": kabKAB,
-  "kn-IN": knIN,
-  "ko-KR": koKR,
-  "nl-NL": nlNL,
-  "no-NO": noNO,
-  "pl-PL": plPL,
-  "pt-PT": ptPT,
-  "ru-RU": ruRU,
-  "sk-SK": skSK,
-  "ug-CN": ugCN,
-  "uk-UA": ukUA,
-  "vi-VN": viVN,
-  "zh-CN": zhCN,
-  "zh-TW": zhTW,
+	"ar-SA": arSA,
+	"cs-CZ": csCZ,
+	"da-DK": daDK,
+	"de-DE": deDE,
+	"en-US": enUS,
+	"es-ES": esES,
+	"fr-FR": frFR,
+	"id-ID": idID,
+	"it-IT": itIT,
+	"ja-JP": jaJP,
+	"ja-KS": jaKS,
+	"kab-KAB": kabKAB,
+	"kn-IN": knIN,
+	"ko-KR": koKR,
+	"nl-NL": nlNL,
+	"no-NO": noNO,
+	"pl-PL": plPL,
+	"pt-PT": ptPT,
+	"ru-RU": ruRU,
+	"sk-SK": skSK,
+	"ug-CN": ugCN,
+	"uk-UA": ukUA,
+	"vi-VN": viVN,
+	"zh-CN": zhCN,
+	"zh-TW": zhTW,
 } as const;
 
 export let langNames =  Object.keys(languages).map(l => {
-  return [l,  languages[l]._lang_]
+	return [l,  languages[l]._lang_]
 })
 
 export function setLanguage(lang: keyof typeof languages) {
-  if (Object.keys(languages).includes(lang)) {
-    i18n = new I18n(languages[lang]);
-  } else {
-    const fuse = new Fuse(Object.keys(languages));
-    const results = fuse.search(lang);
-    i18n = new I18n(languages[results[0].item]);
-  }
+	if (Object.keys(languages).includes(lang)) {
+		i18n = new I18n(languages[lang]);
+		return lang
+	} else {
+		const fuse = new Fuse(Object.keys(languages));
+		const results = fuse.search(lang);
+		i18n = new I18n(languages[results[0].item]);
+		return results[0].item
+	}
+
 }
 export let i18n = new I18n(languages["ja-JP"]);
