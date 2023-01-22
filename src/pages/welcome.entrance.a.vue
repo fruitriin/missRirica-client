@@ -19,18 +19,16 @@
 				<h1>
 					<!-- 背景色によってはロゴが見えなくなるのでとりあえず無効に -->
 					<!-- <img class="logo" v-if="meta.logoImageUrl" :src="meta.logoImageUrl"><span v-else class="text">{{ instanceName }}</span> -->
-					<span class="text">MissRirica</span>
+					<span class="text">{{ $ts.ririca.name }}</span>
 				</h1>
 				<div class="about">
-					<!-- eslint-disable-next-line vue/no-v-html -->
-					MissRiricaはMiskeyClientです。今の所 misskey.io
-					専用です。アクセストークンを用意してログインしてください
+					{{ $ts.ririca.description }}
 				</div>
 				<div class="action">
 					<div>
-						<input id="term" v-model="isTerm" type="checkbox"><label for="term">MissRiricaクライアント<br/>
-							プライバシーポリシー及び利用規約に同意する</label><br>
-						<a href="https://riinswork.space/missRirica/privacy/">プライバシーポリシー及び利用規約を読む</a>
+						<input id="term" v-model="isTerm" type="checkbox"><label for="term">
+							{{ $ts.ririca.term }}</label><br>
+						<a href="https://riinswork.space/missRirica/privacy/">{{ $ts.ririca.termLink }}</a>
 					</div>
 
 					<!--					<MkButton inline rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.signup }}</MkButton>-->

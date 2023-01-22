@@ -50,12 +50,10 @@ import lightTheme from "@/themes/_light.json5";
 
 export let storedDeviceInfo: Object
 
-
-
 (async () => {
   console.info(`Misskey v${version}`);
 
-  await setLanguage(localStorage.getItem("lang") || "ja-JP")
+  await setLanguage(localStorage.getItem("lang") || await Device.getLanguageCode().value || "ja")
   if (_DEV_) {
     console.warn("Development mode!!!");
 

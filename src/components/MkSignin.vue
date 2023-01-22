@@ -8,9 +8,9 @@
 >
 	<div class="auth _section _formRoot">
 		<div class="normal-signin">
-			インスタンス
+			{{ i18n.ts.ririca.instance }}
 			<Select v-model="instanceUrl" large :model-value="instances[0]?.url">
-				<option value="other">自分で入力する</option>
+				<option value="other">{{ i18n.ts.ririca.selectInstanceYourself }}</option>
 				<option
 					v-for="(instance, i) in instances" :key="instance.url" :value="instance.url"
 					:selected="i === 0"
@@ -30,7 +30,7 @@
 			</template>
 
 
-			アクセストークン
+			{{ i18n.ts.ririca.accessToken }}
 			<MkInput
 				v-model="token"
 				:spellcheck="false"
@@ -50,7 +50,7 @@
 		</div>
 
 		<div style="display: flex; justify-content: center;">
-			<a href="https://misskey.io/notes/99l9jqqun2" target="_blank" style="color: var(--link); text-align: center">アクセストークンの作り方</a>
+			<a href="https://misskey.io/notes/99l9jqqun2" target="_blank" style="color: var(--link); text-align: center">{{ i18n.ts.ririca.howToCreateToken }}</a>
 		</div>
 	</div>
 </form>

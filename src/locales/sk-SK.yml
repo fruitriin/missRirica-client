@@ -64,7 +64,7 @@ import: "Importovať"
 export: "Exportovať"
 files: "Súbor/y"
 download: "Stiahnuť"
-driveFileDeleteConfirm: "Naozaj chcete odstrániť súbor \"{name}\"? Poznámky s týmto súborom sa odstránia tiež."
+driveFileDeleteConfirm: 'Naozaj chcete odstrániť súbor "{name}"? Poznámky s týmto súborom sa odstránia tiež.'
 unfollowConfirm: "Naozaj už nechcete sledovať {name}?"
 exportRequested: "Vyžiadali ste export. Môže to chvíľu trvať. Po skončení pribudne na vašom disku."
 importRequested: "Požiadali ste o export. Môže to chvíľu trvať."
@@ -108,7 +108,7 @@ sensitive: "NSFW"
 add: "Pridať"
 reaction: "Reakcie"
 reactionSetting: "Reakcie zobrazené vo výbere reakcií"
-reactionSettingDescription2: "Ťahaním preusporiadate, kliknutím odstránite, Stlačením \"+\" pridáte"
+reactionSettingDescription2: 'Ťahaním preusporiadate, kliknutím odstránite, Stlačením "+" pridáte'
 rememberNoteVisibility: "Zapamätať nastavenia viditeľnosti poznámky"
 attachCancel: "Odstrániť prílohu"
 markAsSensitive: "Označiť ako NSFW"
@@ -233,8 +233,8 @@ announcements: "Oznamy"
 imageUrl: "URL obrázku"
 remove: "Odstrániť"
 removed: "Odstránené"
-removeAreYouSure: "Naozaj chcete odstrániť \"{x}\"?"
-deleteAreYouSure: "Naozaj chcete odstrániť \"{x}\"?"
+removeAreYouSure: 'Naozaj chcete odstrániť "{x}"?'
+deleteAreYouSure: 'Naozaj chcete odstrániť "{x}"?'
 resetAreYouSure: "Naozaj resetovať?"
 saved: "Uložené"
 messaging: "Chat"
@@ -335,7 +335,7 @@ bannerUrl: "URL obrázku bannera"
 backgroundImageUrl: "URL obrázku pozadia"
 basicInfo: "Základné informácie"
 pinnedUsers: "Pripnutí používatelia"
-pinnedUsersDescription: "Zoznam mien používateľov oddelených riadkami, ktorý budú pripnutí v záložke \"Objavovať\"."
+pinnedUsersDescription: 'Zoznam mien používateľov oddelených riadkami, ktorý budú pripnutí v záložke "Objavovať".'
 pinnedPages: "Pripnuté stránky"
 pinnedPagesDescription: "Na každý riadok zadajte cesty stránok, ktoré chcete pripnúť na vrch stránky tohoto servera."
 pinnedClipId: "ID pripnutého klipu"
@@ -392,7 +392,7 @@ lastUsed: "Naposledy použité"
 unregister: "Odregistrovať"
 passwordLessLogin: "Nastaviť bezheslové prihlásenie"
 resetPassword: "Resetovať heslo"
-newPasswordIs: "Nové heslo je \"{password}\""
+newPasswordIs: 'Nové heslo je "{password}"'
 reduceUiAnimation: "Menej UI animácií"
 share: "Zdieľať"
 notFound: "Nenájdené"
@@ -490,14 +490,14 @@ objectStorageBucketDesc: "Prosím zadajte názov bucketu od svojho poskytovateľ
 objectStoragePrefix: "Prefix"
 objectStoragePrefixDesc: "Súbory budú ukladané do priečinkov pod týmto prefixom."
 objectStorageEndpoint: "Endpoint"
-objectStorageEndpointDesc: "Nechajte prázdne ak používate AWS S3, inak zadajte endpoint ako \"<host>\" alebo \"<host>:<port>\". Záleží to od služby, ktorú používate."
+objectStorageEndpointDesc: 'Nechajte prázdne ak používate AWS S3, inak zadajte endpoint ako "<host>" alebo "<host>:<port>". Záleží to od služby, ktorú používate.'
 objectStorageRegion: "Región"
 objectStorageRegionDesc: "Zadajte región ako 'xx-east-1'. Ak vaša služba nerozlišuje regióny, nechajte prázdne alebo zadajte 'us-east-1'."
 objectStorageUseSSL: "Použiť SSL"
 objectStorageUseSSLDesc: "Vypnite to ak nechcete použiť HTTPS na API spojenia."
 objectStorageUseProxy: "Pripájať cez Proxy"
 objectStorageUseProxyDesc: "Vypnite ak nechcete, aby spojenia na API išli cez Proxy"
-objectStorageSetPublicRead: "Pri nahratí nastaviť \"public-read\""
+objectStorageSetPublicRead: 'Pri nahratí nastaviť "public-read"'
 serverLogs: "Logy servera"
 deleteAll: "Odstrániť všetko"
 showFixedPostForm: "Zobraziť formulár na nové príspevky nad časovou osou"
@@ -647,7 +647,7 @@ createNew: "Vytvoriť nový"
 optional: "Voliteľné"
 createNewClip: "Vytvoriť nový klip"
 unclip: "Odopnúť"
-confirmToUnclipAlreadyClippedNote: "Táto poznámka je už pripnutá ako \"{name}\". Naozaj ju chcete odopnúť?"
+confirmToUnclipAlreadyClippedNote: 'Táto poznámka je už pripnutá ako "{name}". Naozaj ju chcete odopnúť?'
 public: "Verejné"
 i18nInfo: "Misskey je prekladaný do rôznych jazykov dobrovoľníkmi. Pomôcť môžete na {link}."
 manageAccessTokens: "Spravovať prístupové tokeny"
@@ -669,7 +669,7 @@ driveFilesCount: "Počet súborov na disku"
 driveUsage: "Využité miesto na disku"
 noCrawle: "Odmietať indexovanie crawlerov"
 noCrawleDescription: "Požiadať vyhľadávače, aby neindexovali váš profil, poznámky, stránky, atď."
-lockedAccountInfo: "Pokým nenastavíte viditeľnosť poznámok na \"Len pre sledujúcich\", vaše príspevky bude vidieť hocikto, aj keď vyžadujete manuálne potvrdenie sledovania."
+lockedAccountInfo: 'Pokým nenastavíte viditeľnosť poznámok na "Len pre sledujúcich", vaše príspevky bude vidieť hocikto, aj keď vyžadujete manuálne potvrdenie sledovania.'
 alwaysMarkSensitive: "Predvolene označovať ako NSFW"
 loadRawImages: "Načítať originálne obrázky namiesto miniatúr"
 disableShowingAnimatedImages: "Neprehrávať animované obrázky"
@@ -678,14 +678,14 @@ notSet: "Nenastavené"
 emailVerified: "Email overený"
 noteFavoritesCount: "Počet obľúbených poznámok"
 pageLikesCount: "Počet obľúbených stránok"
-pageLikedCount: "Počet prijatých \"páči sa mi\""
+pageLikedCount: 'Počet prijatých "páči sa mi"'
 contact: "Kontakt"
 useSystemFont: "Použiť predvolené systémové písmo"
 clips: "Klip"
 experimentalFeatures: "Experimentálne funkcie"
 developer: "Vývojár"
-makeExplorable: "Spraviť účet viditeľný v \"Objavovať\""
-makeExplorableDescription: "Ak toto vypnete, váš účet sa nezobrazí v sekcii \"Objavovat\"."
+makeExplorable: 'Spraviť účet viditeľný v "Objavovať"'
+makeExplorableDescription: 'Ak toto vypnete, váš účet sa nezobrazí v sekcii "Objavovat".'
 showGapBetweenNotesInTimeline: "Zobraziť medzeru medzi príspevkami časovej osi."
 duplicate: "Duplikovať"
 left: "Naľavo"
@@ -739,7 +739,7 @@ unlikeConfirm: "Naozaj odstrániť váš like?"
 fullView: "Plný pohľad"
 quitFullView: "Zavrieť plný pohľad"
 addDescription: "Pridať popis"
-userPagePinTip: "Tu môžete zobraziť poznámky zvolením \"Pripnúť na profil\" z menu jednotlivých poznámok."
+userPagePinTip: 'Tu môžete zobraziť poznámky zvolením "Pripnúť na profil" z menu jednotlivých poznámok.'
 notSpecifiedMentionWarning: "Táto poznámka obsahuje spomenutých používateľov, ktorí nie sú medzi adresátmi."
 info: "Informácie"
 userInfo: "Informácie o používateľovi"
@@ -821,10 +821,10 @@ ffVisibilityDescription: "Umožňuje nastaviť kto vidí koho sledujete a kto v�
 continueThread: "Zobraziť pokračovanie vlákna"
 deleteAccountConfirm: "Toto nezvrátiteľne vymaže váš účet. Pokračovať?"
 incorrectPassword: "Nesprávne heslo."
-voteConfirm: "Potvrdzujete svoj hlas za \"{choice}\"?"
+voteConfirm: 'Potvrdzujete svoj hlas za "{choice}"?'
 hide: "Skryť"
 leaveGroup: "Opustiť skupiny"
-leaveGroupConfirm: "Naozaj chcete opustiť \"{name}\"?"
+leaveGroupConfirm: 'Naozaj chcete opustiť "{name}"?'
 useDrawerReactionPickerForMobile: "Zobraziť výber reakcií ako šuflík na mobile"
 welcomeBackWithName: "Vitajte späť, {name}"
 clickToFinishEmailVerification: "Kliknutím na [{ok}] dokončíte overeniu emailu."
@@ -946,12 +946,12 @@ _preferencesBackups:
   save: "Uložiť"
   inputName: "Názov zálohy"
   cannotSave: "Nedá sa uložiť"
-  nameAlreadyExists: "Záloha s názvom \"{name}\" už existuje. Zadajte iný názov."
+  nameAlreadyExists: 'Záloha s názvom "{name}" už existuje. Zadajte iný názov.'
   applyConfirm: "Chcete použiť zálohu '{name}' na aktuálne zariadenie? Aktuálne nastavenia zariadenia sa stratia."
   saveConfirm: "Chcete prepísať {name}?"
-  deleteConfirm: "Naozaj chcete odstrániť \"{name}\"?"
-  renameConfirm: "Chcete zmeniť \"{old}\" na \"{new}\"?"
-  noBackups: "Nie je k dispozícii žiadna záloha. \"Uložiť novú\" umožňuje uložiť aktuálnu konfiguráciu zariadenia na server."
+  deleteConfirm: 'Naozaj chcete odstrániť "{name}"?'
+  renameConfirm: 'Chcete zmeniť "{old}" na "{new}"?'
+  noBackups: 'Nie je k dispozícii žiadna záloha. "Uložiť novú" umožňuje uložiť aktuálnu konfiguráciu zariadenia na server.'
   createdAt: "Dátum vytvorenia: {date} {time}"
   updatedAt: "Dátum úpravy: {date} {time}"
   cannotLoad: "Nedá sa nahrať"
@@ -1178,23 +1178,23 @@ _time:
 _tutorial:
   title: "Ako používať Misskey"
   step1_1: "Vitajte!"
-  step1_2: "Táto stránka sa volá \"časová os\". Zobrazuje chronologicky zoradené \"poznámky\" od ľudí, ktorých sledujete."
+  step1_2: 'Táto stránka sa volá "časová os". Zobrazuje chronologicky zoradené "poznámky" od ľudí, ktorých sledujete.'
   step1_3: "Vaša časová os je teraz prázdna pretože ste nepridali žiadne poznámky ani nikoho zatiaľ nesledujete."
   step2_1: "Podˇme dokončiť nastavenia vášho profilu pred napísaním poznámky alebo sledovaním niekoho."
   step2_2: "Poskytnutím informácií o vás uľahčíte ostatným, či chcú vidieť alebo sledovať vaše poznámky."
   step3_1: "Dokončili ste nastavovanie svojho profilu?"
   step3_2: "Poďme vyskúšať napísať poznámku. Môžete to spraviť stlačením ikony ceruzky na vrchu obrazovky."
   step3_3: "Vyplňte polia a stlačte tlačítko vpravo hore."
-  step3_4: "Nemáte čo povedať? Skúste \"len si nastavujem môj msky\"!"
+  step3_4: 'Nemáte čo povedať? Skúste "len si nastavujem môj msky"!'
   step4_1: "Napísali ste svoju prvú poznámku?"
   step4_2: "Hurá! Teraz by vaša prvá poznámka mala byť na vašej časovej osi."
   step5_1: "Teraz skúsme oživiť časovú os sledovaním nejakých ľudí."
   step5_2: "{featured} zobrazí populárne poznámku na tomto serveri. {explore} môžete objavovať populárnych používateľov. Skúste tam nájsť ľudí, ktorých by ste radi sledovali!"
-  step5_3: "Ak chcete sledovať ďalších používateľov, kliknite na ich ikonu a stlačte tlačidlo \"Sledovať\" na ich profile."
+  step5_3: 'Ak chcete sledovať ďalších používateľov, kliknite na ich ikonu a stlačte tlačidlo "Sledovať" na ich profile.'
   step5_4: "Ak má niektorý používateľ ikonu zámku vedľa svojho mena, znamená to, že môže trvať určitý čas, kým daný používateľ schváli vašu žiadosť o sledovanie."
   step6_1: "Teraz by ste mali vidieť poznámky ďalších používateľov na svojej časovej osi."
-  step6_2: "Môžete dať \"reakcie\" na poznámky ďalších ľudí ako rýchlu odpoveď."
-  step6_3: "Reakciu pridáte kliknutím na \"+\" niekoho poznámke a vybratím emoji, ktorou chcete reagovať."
+  step6_2: 'Môžete dať "reakcie" na poznámky ďalších ľudí ako rýchlu odpoveď.'
+  step6_3: 'Reakciu pridáte kliknutím na "+" niekoho poznámke a vybratím emoji, ktorou chcete reagovať.'
   step7_1: "Gralujeme! Dokončili ste základného sprievodcu Misskey."
   step7_2: "Ak sa chcete naučiť viac o Misskey, skúste sekciu {help}."
   step7_3: "A teraz, veľa šťastia, bavte sa s Misskey! 🚀"
@@ -1242,7 +1242,7 @@ _permissions:
   "read:gallery-likes": "Vidieť zoznam obľúbených príspevkov z galérie"
   "write:gallery-likes": "Upraviť zoznam obľúbených príspevov z galérie"
 _auth:
-  shareAccess: "Prajete si povoliť \"{name}\", aby mal prístup k tomuto účtu?"
+  shareAccess: 'Prajete si povoliť "{name}", aby mal prístup k tomuto účtu?'
   shareAccessAsk: "Naozaj chcete povoliť tejto aplikácii prístup k tomuto účtu?"
   permissionAsk: "Táto aplikácia vyžaduje nasledujúce nastavenia"
   pleaseGoBack: "Prosím prejdite späť na aplikáciu"
@@ -1662,7 +1662,7 @@ _pages:
       _for:
         arg1: "Počet opakovaní"
         arg2: "Akcia"
-    typeError: "Slot {slot} akceptuje hodnoty typu \"{expect}\", ale dodaná hodnota je typu \"{actual}\"!"
+    typeError: 'Slot {slot} akceptuje hodnoty typu "{expect}", ale dodaná hodnota je typu "{actual}"!'
     thereIsEmptySlot: "Slot {slot} je prázdny!"
     types:
       string: "Text"
@@ -1727,7 +1727,7 @@ _deck:
   deleteProfile: "Odstrániť profil"
   introduction: "Kombinujte stĺpce a vytvorte si svoje vlastné rozhranie!"
   introduction2: "Stlačením tlačidla + v pravej časti obrazovky môžete kedykoľvek pridať stĺpce."
-  widgetsIntroduction: "V ponuke stĺpca vyberte možnosť \"Upraviť widget\" a pridajte widget"
+  widgetsIntroduction: 'V ponuke stĺpca vyberte možnosť "Upraviť widget" a pridajte widget'
   _columns:
     main: "Hlavný"
     widgets: "Widgety"
