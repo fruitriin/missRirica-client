@@ -57,32 +57,6 @@ let onlineUsersCount = $ref();
 let instances = $ref();
 let isTerm = $ref()
 
-os.api('meta', { detail: true }).then(_meta => {
-	meta = _meta;
-});
-
-os.api('stats').then(_stats => {
-	stats = _stats;
-});
-
-os.api('get-online-users-count').then(res => {
-	onlineUsersCount = res.count;
-});
-
-os.api('hashtags/list', {
-	sort: '+mentionedLocalUsers',
-	limit: 8,
-}).then(_tags => {
-	tags = _tags;
-});
-
-os.api('federation/instances', {
-	sort: '+pubSub',
-	limit: 20,
-}).then(_instances => {
-	instances = _instances;
-});
-
 function signin() {
 	os.popup(XSigninDialog, {
 		autoSet: true,

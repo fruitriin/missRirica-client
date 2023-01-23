@@ -1,6 +1,6 @@
 import { reactive, ref } from 'vue';
 import * as Misskey from 'misskey-js';
-import { readAndCompressImage } from 'browser-image-resizer';
+import * as loadImage from "blueimp-load-image"
 import { getCompressionConfig } from './upload/compress-config';
 import { defaultStore } from '@/store';
 import { apiUrl } from '@/config';
@@ -52,7 +52,7 @@ export function uploadFile(
 			let resizedImage: Blob | undefined;
 			if (config) {
 				try {
-					const resized = await readAndCompressImage(file, config);
+					const resized = await loadImage.scale(file, config);
 					if (resized.size < file.size || file.type === 'image/webp') {
 						// The compression may not always reduce the file size
 						// (and WebP is not browser safe yet)

@@ -13,7 +13,7 @@
 						<MkUserName :user="account"/>
 					</div>
 					<div class="acct">
-						<MkAcct :user="account"/>
+						<MkAcct :user="account" :detail="true"/>
 					</div>
 				</div>
 			</div>
@@ -30,23 +30,26 @@ import * as os from '@/os';
 import { getAccounts, addAccount as addAccounts, removeAccount as _removeAccount, login, $i } from '@/account';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
+import { api} from "misskey-js";
 
 const storedAccounts = ref<any>(null);
-const accounts = ref<any>(null);
+const accounts = ref<any>([]);
 
 const init = async () => {
-	getAccounts().then(accounts => {
-		storedAccounts.value = accounts.filter(x => x.id !== $i!.id);
-
-		console.log(storedAccounts.value);
-
-		return os.api('users/show', {
-			userIds: storedAccounts.value.map(x => x.id),
-		});
-	}).then(response => {
-		accounts.value = response;
-		console.log(accounts.value);
-	});
+  await getAccounts()
+    .then(async ( ac) => {
+      return  ac.filter((x) => x.id !== $i!.id).forEach(async a => {
+        accounts.value.push(
+          {
+            ...await new api.APIClient({ origin: a.instanceUrl, credential: a.token }).request("users/show", {
+              userId: a.id
+            }),
+            host: a.instanceUrl
+          }
+        )
+      })
+    });
+  return Promise.resolve()
 };
 
 function menu(account, ev) {

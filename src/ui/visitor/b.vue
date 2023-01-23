@@ -79,7 +79,6 @@ const announcements = {
 let showMenu = $ref(false);
 let isDesktop = $ref(window.innerWidth >= DESKTOP_THRESHOLD);
 let narrow = $ref(window.innerWidth < 1280);
-let meta = $ref();
 
 const keymap = $computed(() => {
 	return {
@@ -92,10 +91,6 @@ const keymap = $computed(() => {
 });
 
 const root = $computed(() => mainRouter.currentRoute.value.name === 'index');
-
-os.api('meta', { detail: true }).then(res => {
-	meta = res;
-});
 
 function signin() {
 	os.popup(XSigninDialog, {
