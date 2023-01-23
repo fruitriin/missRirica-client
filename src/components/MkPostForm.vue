@@ -555,7 +555,7 @@ function saveDraft() {
 			visibility: visibility,
 			localOnly: localOnly,
 			files: files,
-			poll: poll,
+			poll: poll || undefined,
 		},
 	};
 

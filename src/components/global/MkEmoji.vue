@@ -1,7 +1,7 @@
 <template>
 <span v-if="isCustom && errored">:{{ customEmojiName }}:</span>
 <img v-else-if="isCustom" :class="[$style.root, $style.custom, { [$style.normal]: normal, [$style.noStyle]: noStyle }]" :src="url" :alt="alt" :title="alt" decoding="async" @error="errored = true"/>
-<img v-else-if="char && !useOsNativeEmojis" :class="$style.root" :src="url" :alt="alt" decoding="async" @pointerenter="computeTitle"/>
+<img v-else-if="char && !useOsNativeEmojis" :class="$style.root" :src="char2path(char)" :alt="alt" decoding="async" @pointerenter="computeTitle"/>
 <span v-else-if="char && useOsNativeEmojis" :alt="alt" @pointerenter="computeTitle">{{ char }}</span>
 <span v-else>{{ emoji }}</span>
 </template>
@@ -13,6 +13,7 @@ import { char2twemojiFilePath, char2fluentEmojiFilePath } from '@/scripts/emoji-
 import { defaultStore } from '@/store';
 import { getEmojiName } from '@/scripts/emojilist';
 import { customEmojis } from '@/custom-emojis';
+import { url as instanceUrl } from "@/config"
 
 const props = defineProps<{
 	emoji: string;
@@ -30,12 +31,11 @@ const char = computed(() => isCustom.value ? undefined : props.emoji);
 const useOsNativeEmojis = computed(() => defaultStore.state.emojiStyle === 'native' && !props.isReaction);
 const url = computed(() => {
 	if (char.value) {
-		return char2path(char.value);
 	} else if (props.host == null && !customEmojiName.includes('@')) {
 		const found = customEmojis.find(x => x.name === customEmojiName);
 		return found ? found.url : null;
 	} else {
-		const rawUrl = props.host ? `/emoji/${customEmojiName}@${props.host}.webp` : `/emoji/${customEmojiName}.webp`;
+		const rawUrl = props.host ? `${instanceUrl}/emoji/${customEmojiName}@${props.host}.webp` : `${instanceUrl}/emoji/${customEmojiName}.webp`;
 		return defaultStore.state.disableShowingAnimatedImages
 			? getStaticImageUrl(rawUrl)
 			: rawUrl;

@@ -6,7 +6,7 @@ export function char2twemojiFilePath(char: string): string {
 	if (!codes.includes('200d')) codes = codes.filter(x => x !== 'fe0f');
 	codes = codes.filter(x => x && x.length);
 	const fileName = codes.join('-');
-	return `${twemojiSvgBase}/${fileName}.svg`;
+	return `https://misskey.io/${twemojiSvgBase}/${fileName}.svg`;
 }
 
 export function char2fluentEmojiFilePath(char: string): string {
@@ -16,5 +16,5 @@ export function char2fluentEmojiFilePath(char: string): string {
 	if (!codes.includes('200d')) codes = codes.filter(x => x !== 'fe0f');
 	codes = codes.filter(x => x && x.length);
 	const fileName = codes.map(x => x!.padStart(4, '0')).join('-');
-	return `${fluentEmojiPngBase}/${fileName}.png`;
+	return `https://misskey.io/${fluentEmojiPngBase}/${fileName}.png`;
 }

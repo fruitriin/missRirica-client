@@ -1,49 +1,46 @@
 <template>
 <form class="eppvobhk" :class="{ signing, totpLogin }" @submit.prevent="onSubmit">
-	<div class="auth _gaps_m">
-		<div v-show="withAvatar" class="avatar" :style="{ backgroundImage: user ? `url('${ user.avatarUrl }')` : null, marginBottom: message ? '1.5em' : null }"></div>
-		<MkInfo v-if="message">
-			{{ message }}
-		</MkInfo>
-		<div v-if="!totpLogin" class="normal-signin _gaps_m">
-			<MkInput v-model="username" :placeholder="i18n.ts.username" type="text" pattern="^[a-zA-Z0-9_]+$" :spellcheck="false" autocomplete="username" autofocus required data-cy-signin-username @update:model-value="onUsernameChange">
-				<template #prefix>@</template>
-				<template #suffix>@{{ host }}</template>
-			</MkInput>
-			<MkInput v-if="!user || user && !user.usePasswordLessLogin" v-model="password" :placeholder="i18n.ts.password" type="password" :with-password-toggle="true" required data-cy-signin-password>
-				<template #prefix><i class="ti ti-lock"></i></template>
-				<template #caption><button class="_textButton" type="button" @click="resetPassword">{{ i18n.ts.forgotPassword }}</button></template>
-			</MkInput>
-			<MkButton type="submit" large primary rounded :disabled="signing" style="margin: 0 auto;">{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}</MkButton>
-		</div>
-		<div v-if="totpLogin" class="2fa-signin" :class="{ securityKeys: user && user.securityKeys }">
-			<div v-if="user && user.securityKeys" class="twofa-group tap-group">
-				<p>{{ i18n.ts.tapSecurityKey }}</p>
-				<MkButton v-if="!queryingKey" @click="queryKey">
-					{{ i18n.ts.retry }}
-				</MkButton>
-			</div>
-			<div v-if="user && user.securityKeys" class="or-hr">
-				<p class="or-msg">{{ i18n.ts.or }}</p>
-			</div>
-			<div class="twofa-group totp-group">
-				<p style="margin-bottom:0;">{{ i18n.ts.twoStepAuthentication }}</p>
-				<MkInput v-if="user && user.usePasswordLessLogin" v-model="password" type="password" :with-password-toggle="true" required>
-					<template #label>{{ i18n.ts.password }}</template>
-					<template #prefix><i class="ti ti-lock"></i></template>
-				</MkInput>
-				<MkInput v-model="token" type="text" pattern="^[0-9]{6}$" autocomplete="off" :spellcheck="false" required>
-					<template #label>{{ i18n.ts.token }}</template>
-					<template #prefix><i class="ti ti-123"></i></template>
-				</MkInput>
-				<MkButton type="submit" :disabled="signing" large primary rounded style="margin: 0 auto;">{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}</MkButton>
-			</div>
-		</div>
+	<div class="normal-signin">
+		{{ i18n.ts.ririca.instance }}
+		<MkSelect v-model="instanceUrl" large :model-value="instances[0]?.url">
+			<option value="other">{{ i18n.ts.ririca.selectInstanceYourself }}</option>
+			<option
+				v-for="(instance, i) in instances" :key="instance.url" :value="instance.url"
+				:selected="i === 0"
+			>
+				{{ instance.name }}
+			</option>
+		</MkSelect>
+		<template v-if="instanceUrl === 'other'">
+			URL
+			<MkInput
+				v-model="instanceUrlOther"
+				:spellcheck="false"
+				autofocus
+				required
+			/>
+		</template>
+		{{ i18n.ts.ririca.accessToken }}
+		<MkInput
+			v-model="token"
+			:spellcheck="false"
+			autofocus
+			required
+			data-cy-signin-username
+		></MkInput>
+		<MkButton
+			class="_formBlock"
+			type="submit"
+			primary
+			:disabled="signing"
+			style="margin: 0 auto"
+		>
+			{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}
+		</MkButton>
 	</div>
-	<div class="social">
-		<a v-if="meta && meta.enableTwitterIntegration" class="_borderButton _margin" :href="`${apiUrl}/signin/twitter`"><i class="ti ti-brand-twitter" style="margin-right: 4px;"></i>{{ $t('signinWith', { x: 'Twitter' }) }}</a>
-		<a v-if="meta && meta.enableGithubIntegration" class="_borderButton _margin" :href="`${apiUrl}/signin/github`"><i class="ti ti-brand-github" style="margin-right: 4px;"></i>{{ $t('signinWith', { x: 'GitHub' }) }}</a>
-		<a v-if="meta && meta.enableDiscordIntegration" class="_borderButton _margin" :href="`${apiUrl}/signin/discord`"><i class="ti ti-brand-discord" style="margin-right: 4px;"></i>{{ $t('signinWith', { x: 'Discord' }) }}</a>
+
+	<div style="display: flex; justify-content: center;">
+		<a href="https://misskey.io/notes/99l9jqqun2" target="_blank" style="color: var(--link); text-align: center">{{ i18n.ts.ririca.howToCreateToken }}</a>
 	</div>
 </form>
 </template>
@@ -55,7 +52,7 @@ import { showSuspendedDialog } from '../scripts/show-suspended-dialog';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkInfo from '@/components/MkInfo.vue';
-import { apiUrl, host as configHost } from '@/config';
+import MkSelect from "@/components/MkSelect.vue";
 import { byteify, hexify } from '@/scripts/2fa';
 import * as os from '@/os';
 import { login } from '@/account';
@@ -67,13 +64,14 @@ let user = $ref(null);
 let username = $ref('');
 let password = $ref('');
 let token = $ref('');
-let host = $ref(toUnicode(configHost));
-let totpLogin = $ref(false);
 let credential = $ref(null);
 let challengeData = $ref(null);
 let queryingKey = $ref(false);
 let hCaptchaResponse = $ref(null);
 let reCaptchaResponse = $ref(null);
+
+const instanceUrl = $ref("")
+const instanceUrlOther = $ref("")
 
 const meta = $computed(() => instance);
 
@@ -109,12 +107,20 @@ function onUsernameChange() {
 	});
 }
 
-function onLogin(res) {
-	if (props.autoSet) {
-		return login(res.i);
-	}
+function onLogin(res: any) {
+  if (props.autoSet) {
+    return login(res.i, res.instance);
+  }
 }
 
+const instanceUrlResult = $computed(() => {
+  if(instanceUrl === 'other'){
+    // うっかりhttps://を入れてもreplaceされるから大丈夫
+    // new URL.origin
+    return new URL("https://" + instanceUrlOther.replace("https://", "")).origin
+  }
+  return "https://" + instanceUrl
+})
 function queryKey() {
 	queryingKey = true;
 	return navigator.credentials.get({
@@ -145,8 +151,8 @@ function queryKey() {
 			'g-recaptcha-response': reCaptchaResponse,
 		});
 	}).then(res => {
-		emit('login', res);
-		return onLogin(res);
+    emit("login", {...res, instance: instanceUrl});
+    return onLogin({...res, instance: instanceUrl});
 	}).catch(err => {
 		if (err === null) return;
 		os.alert({
@@ -159,36 +165,11 @@ function queryKey() {
 
 function onSubmit() {
 	signing = true;
-	console.log('submit');
-	if (!totpLogin && user && user.twoFactorEnabled) {
-		if (window.PublicKeyCredential && user.securityKeys) {
-			os.api('signin', {
-				username,
-				password,
-				'hcaptcha-response': hCaptchaResponse,
-				'g-recaptcha-response': reCaptchaResponse,
-			}).then(res => {
-				totpLogin = true;
-				signing = false;
-				challengeData = res;
-				return queryKey();
-			}).catch(loginFailed);
-		} else {
-			totpLogin = true;
-			signing = false;
-		}
-	} else {
-		os.api('signin', {
-			username,
-			password,
-			'hcaptcha-response': hCaptchaResponse,
-			'g-recaptcha-response': reCaptchaResponse,
-			token: user && user.twoFactorEnabled ? token : undefined,
-		}).then(res => {
-			emit('login', res);
-			onLogin(res);
-		}).catch(loginFailed);
-	}
+  console.log("submit");
+  if (!token.value) {
+    login(token, instanceUrlResult);
+    signing = false;
+  }
 }
 
 function loginFailed(err) {
@@ -240,6 +221,13 @@ function resetPassword() {
 	os.popup(defineAsyncComponent(() => import('@/components/MkForgotPassword.vue')), {}, {
 	}, 'closed');
 }
+
+let instances = $ref([])
+fetch("https://instanceapp.misskey.page/instances.json").then(res => {
+  res.json().then(data => {
+    instances = data.instancesInfos
+  })
+})
 </script>
 
 <style lang="scss" scoped>

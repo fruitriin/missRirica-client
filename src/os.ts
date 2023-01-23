@@ -1,7 +1,5 @@
 // TODO: なんでもかんでもos.tsに突っ込むのやめたいのでよしなに分割する
 
-import { pendingApiRequestsCount, api, apiGet } from '@/scripts/api';
-export { pendingApiRequestsCount, api, apiGet };
 import { Component, markRaw, Ref, ref, defineAsyncComponent } from 'vue';
 import { EventEmitter } from 'eventemitter3';
 import insertTextAtCursor from 'insert-text-at-cursor';
@@ -18,35 +16,31 @@ import MkPopupMenu from '@/components/MkPopupMenu.vue';
 import MkContextMenu from '@/components/MkContextMenu.vue';
 import { MenuItem } from '@/types/menu';
 
+import { $i } from "@/account"
 export const openingWindowsCount = ref(0);
 
-/**
+
 const apiClient = new Misskey.api.APIClient({
 	origin: $i?.instanceUrl,
 	credential: $i?.token,
 });
-
 
 export const noCredentialApi = new Misskey.api.APIClient({
 	origin: $i?.instanceUrl || window.location.origin,
 });
 
 export const api = ((
-	endpoint: keyof Endpoints,
+	endpoint: keyof Misskey.Endpoints,
 	data: Record<string, any> = {}
 ) => {
 	return apiClient.request(endpoint, data);
 }) as typeof apiClient.request;
 
+
 export const apiGet = ((
-	endpoint: keyof Endpoints,
+	endpoint: keyof Misskey.Endpoints,
 	data: Record<string, any> = {}
 ) => {
-	pendingApiRequestsCount.value++;
-
-	const onFinally = () => {
-		pendingApiRequestsCount.value--;
-	};
 
 	const query = new URLSearchParams(data);
 
@@ -61,78 +55,12 @@ export const apiGet = ((
 			.catch(reject);
 	});
 
-	promise.then(onFinally, onFinally);
 
 	return promise;
 }) as typeof apiClient.request;
 
 export const apiWithDialog = ((
-	endpoint: keyof Endpoints,
-	data: Record<string, any> = {},
-	token?: string | null | undefined
-) => {
-	const promise = api(endpoint, data, token);
-	promiseDialog(promise, null, (err) => {
-		alert({
-			type: "error",
-			text: err.message + "\n" + (err as any).id,
-		});
-	});
-
-	return promise;
-}) as typeof api;
-
-export function promiseDialog<T extends Promise<any>>(
-	promise: T,
-	onSuccess?: ((res: any) => void) | null,
-	onFailure?: ((err: Error) => void) | null,
-	text?: string
-): T {
-	const showing = ref(true);
-	const success = ref(false);
-
-	promise
-		.then((res) => {
-			if (onSuccess) {
-				showing.value = false;
-				onSuccess(res);
-			} else {
-				success.value = true;
-				window.setTimeout(() => {
-					showing.value = false;
-				}, 1000);
-			}
-		})
-		.catch((err) => {
-			showing.value = false;
-			if (onFailure) {
-				onFailure(err);
-			} else {
-				alert({
-					type: "error",
-					text: err,
-				});
-			}
-		});
-
-	// NOTE: dynamic importすると挙動がおかしくなる(showingの変更が伝播しない)
-	popup(
-		MkWaitingDialog,
-		{
-			success: success,
-			showing: showing,
-			text: text,
-		},
-		{},
-		"closed"
-	);
-
-	return promise;
-}
-**/
-
-export const apiWithDialog = ((
-	endpoint: string,
+	endpoint: keyof Misskey.Endpoints,
 	data: Record<string, any> = {},
 	token?: string | null | undefined,
 ) => {
