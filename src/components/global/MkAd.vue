@@ -11,7 +11,7 @@
 			<div>Ads by {{ host }}</div>
 			<!--<MkButton class="button" primary>{{ $ts._ad.like }}</MkButton>-->
 			<MkButton v-if="chosen.ratio !== 0" :class="$style.menuButton" @click="reduceFrequency">{{ $ts._ad.reduceFrequencyOfThisAd }}</MkButton>
-			<MkButton v-if="$i && $i.policies.canHideAds" :class="$style.menuButton" @click="hide">{{ $ts._ad.hide }}</MkButton>
+			<MkButton v-if="$i && $i?.policies?.canHideAds" :class="$style.menuButton" @click="hide">{{ $ts._ad.hide }}</MkButton>
 			<button class="_textButton" @click="toggleMenu">{{ $ts._ad.back }}</button>
 		</div>
 	</div>

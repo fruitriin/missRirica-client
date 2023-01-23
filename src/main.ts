@@ -146,7 +146,6 @@ export let storedDeviceInfo: Object
 		}
 
 		await refreshAccount();
-		console.trace()
 		await afterLoginSetup()
 	} else {
 		if (_DEV_) {
