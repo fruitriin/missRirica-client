@@ -1,5 +1,5 @@
 <template>
-<form class="eppvobhk" :class="{ signing, totpLogin }" @submit.prevent="onSubmit">
+<form class="eppvobhk" :class="{ signing }" @submit.prevent="onSubmit">
 	<div class="normal-signin">
 		{{ i18n.ts.ririca.instance }}
 		<MkSelect v-model="instanceUrl" large :model-value="instances[0]?.url">

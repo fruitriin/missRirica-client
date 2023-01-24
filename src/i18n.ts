@@ -60,6 +60,7 @@ export let langNames =  Object.keys(languages).map(l => {
 })
 
 export function setLanguage(lang: keyof typeof languages) {
+	console.log(lang)
 	if (Object.keys(languages).includes(lang)) {
 		i18n = new I18n(languages[lang]);
 		return lang
@@ -67,6 +68,7 @@ export function setLanguage(lang: keyof typeof languages) {
 		const fuse = new Fuse(Object.keys(languages));
 		const results = fuse.search(lang);
 		i18n = new I18n(languages[results[0].item]);
+		console.log(results[0])
 		return results[0].item
 	}
 

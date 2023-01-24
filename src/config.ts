@@ -9,7 +9,6 @@ export const host = address?.host;
 export const hostname = address?.hostname;
 export const url = $i?.instanceUrl;
 export const apiUrl = url + '/api';
-export const wsUrl = url?.replace('http://', 'ws://').replace('https://', 'wss://') + '/streaming';
 export const lang = miLocalStorage.getItem('lang');
 export const langs = langNames
 export const version = _VERSION_;

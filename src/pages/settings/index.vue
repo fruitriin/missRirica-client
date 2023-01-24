@@ -4,6 +4,11 @@
 	<MkSpacer :content-max="900" :margin-min="20" :margin-max="32">
 		<div ref="el" class="vvcocwet" :class="{ wide: !narrow }">
 			<div class="body">
+				<div v-if="!narrow || currentPage?.route.name == null" class="nav">
+					<div class="baaadecd">
+						<MkSuperMenu :def="menuDef" :grid="currentPage?.route.name == null"></MkSuperMenu>
+					</div>
+				</div>
 				<div v-if="!(narrow && currentPage?.route.name == null)" class="main">
 					<div class="bkzroven" style="container-type: inline-size;">
 						<RouterView/>

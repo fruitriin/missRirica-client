@@ -89,7 +89,7 @@
 import { ref, computed, watch } from 'vue';
 import XEmojis from './about.emojis.vue';
 import XFederation from './about.federation.vue';
-import { version, instanceName, host } from '@/config';
+import {  instanceName, host } from '@/config';
 import FormLink from '@/components/form/link.vue';
 import FormSection from '@/components/form/section.vue';
 import FormSuspense from '@/components/form/suspense.vue';
@@ -101,6 +101,10 @@ import number from '@/filters/number';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
 import { claimAchievement } from '@/scripts/achievements';
+import { miLocalStorage } from "@/local-storage";
+import { instance } from "@/instance";
+
+const version = miLocalStorage.getItem('v')
 
 const props = withDefaults(defineProps<{
 	initialTab?: string;
