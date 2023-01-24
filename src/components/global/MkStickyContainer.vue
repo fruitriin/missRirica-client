@@ -28,7 +28,7 @@ const parentStickyTop = inject<Ref<number>>(CURRENT_STICKY_TOP, ref(document.que
 provide(CURRENT_STICKY_TOP, $$(childStickyTop));
 
 const calc = () => {
-  childStickyTop = parentStickyTop.value + headerEl.offsetHeight + document.querySelector<HTMLElement>("#header")?.offsetHeight;
+  childStickyTop = parentStickyTop.value + headerEl.offsetHeight;
 	headerHeight = headerEl.offsetHeight.toString();
 };
 
