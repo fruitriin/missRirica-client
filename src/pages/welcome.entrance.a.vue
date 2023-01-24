@@ -13,8 +13,9 @@
 		</div>
 		<div class="main">
 			<button class="_button _acrylic menu" @click="showMenu"><i class="ti ti-dots"></i></button>
+
 			<div class="fg">
-				<h1>
+				<h1 style="pointer-events: none">
 					<!-- 背景色によってはロゴが見えなくなるのでとりあえず無効に -->
 					<!-- <img class="logo" v-if="meta.logoImageUrl" :src="meta.logoImageUrl"><span v-else class="text">{{ instanceName }}</span> -->
 					<span class="text">{{ $ts.ririca.name }}</span>
@@ -45,7 +46,6 @@
 
 <script lang="ts" setup>
 import XSigninDialog from '@/components/MkSigninDialog.vue';
-import XSignupDialog from '@/components/MkSignupDialog.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
@@ -63,11 +63,6 @@ function signin() {
 	}, {}, 'closed');
 }
 
-function signup() {
-	os.popup(XSignupDialog, {
-		autoSet: true,
-	}, {}, 'closed');
-}
 
 function showMenu(ev) {
 	os.popupMenu([{
@@ -201,8 +196,6 @@ function showMenu(ev) {
 			}
 
 			> .fg {
-				position: relative;
-				z-index: 1;
 
 				> h1 {
 					display: block;

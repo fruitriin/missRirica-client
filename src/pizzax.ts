@@ -3,7 +3,6 @@
 import { onUnmounted, Ref, ref, watch } from 'vue';
 import { $i } from './account';
 import { api } from './os';
-import { stream } from './stream';
 
 type StateDef = Record<string, {
 	where: 'account' | 'device' | 'deviceAccount';
@@ -12,7 +11,6 @@ type StateDef = Record<string, {
 
 type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;
 
-const connection = $i && stream.useChannel('main');
 
 export class Storage<T extends StateDef> {
 	public readonly key: string;
