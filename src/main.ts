@@ -236,7 +236,6 @@ export let storedDeviceInfo: Object
 	window.onerror = null;
 	window.onunhandledrejection = null;
 
-	reactionPicker.init();
 
 	if (splash) {
 		splash.style.opacity = '0';

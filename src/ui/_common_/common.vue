@@ -40,7 +40,6 @@ import { $i } from '@/account';
 import { stream } from '@/stream';
 import { i18n } from '@/i18n';
 
-const XStreamIndicator = defineAsyncComponent(() => import('./stream-indicator.vue'));
 const XUpload = defineAsyncComponent(() => import('./upload.vue'));
 
 const dev = _DEV_;

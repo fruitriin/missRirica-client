@@ -40,6 +40,7 @@ export async function signout() {
 	await removeAccount($i.id);
 
 	const accounts = await getAccounts();
+	document.cookie = "igi=; path=/";
 
 	if (accounts.length > 0) login(accounts[0].token, accounts[0].instanceUrl);
 	else unisonReload('/');
@@ -105,6 +106,7 @@ export async function login(token: Account['token'], instanceUrl: string, redire
 	if (_DEV_) console.log('logging as token ', token, instanceUrl);
 	const me = await fetchAccount(token, instanceUrl);
 	miLocalStorage.setItem('account', JSON.stringify(me));
+	miLocalStorage.setItem("instance", JSON.stringify(await new misskey.api.APIClient({origin: instanceUrl, credential: token}).request("meta")))
 	document.cookie = `token=${token}; path=/; max-age=31536000`; // bull dashboardの認証とかで使う
 	await addAccount(me.id, token, instanceUrl);
 
