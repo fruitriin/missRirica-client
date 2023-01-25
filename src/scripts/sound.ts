@@ -65,13 +65,13 @@ export function play(type: string) {
 
 export async function playFile(file: string, volume: number) {
 	const masterVolume = ColdDeviceStorage.get("sound_masterVolume");
-  if (masterVolume === 0 || volume === 0) return;
+	if (masterVolume === 0 || volume === 0) return;
 
 	const soundSource = ctx.createBufferSource();
-  const gainNode = ctx.createGain();
-  soundSource.buffer = await getAudio(file);
-  gainNode.gain.value = masterVolume * volume;
-  soundSource.connect(gainNode).connect(ctx.destination);
+	const gainNode = ctx.createGain();
+	soundSource.buffer = await getAudio(file);
+	gainNode.gain.value = masterVolume * volume;
+	soundSource.connect(gainNode).connect(ctx.destination);
 	soundSource.start();
 
 }
