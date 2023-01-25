@@ -1,7 +1,5 @@
 import { ColdDeviceStorage } from '@/store';
 
-const cache = new Map<string, HTMLAudioElement>();
-
 export const soundsTypes = [
 	null,
 	'syuilo/up',
@@ -34,6 +32,8 @@ export const soundsTypes = [
 	'noizenecio/kick_gaba7',
 ] as const;
 
+const cache = new Map<string,  AudioBuffer>();
+const ctx = new AudioContext()
 
 export async function getAudio(file: string, useCache = true) {
 	if (useCache && cache.has(file)) {
