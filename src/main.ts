@@ -279,7 +279,7 @@ async function afterLoginSetup() {
 
 	// shortcut
 	document.addEventListener('keydown', makeHotkey(hotkeys));
-
+	reactionPicker.init();
 	const fetchInstanceMetaPromise = fetchInstance();
 
 	fetchInstanceMetaPromise.then(() => {
