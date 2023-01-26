@@ -1,0 +1,6 @@
+[submodule "misskeyV13"]
+	path = misskeyV13
+	url = https://github.com/misskey-dev/misskey.git
+[submodule "misskeyV12"]
+	path = misskeyV12
+	url = https://github.com/misskey-dev/misskey.git
