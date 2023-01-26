@@ -1,31 +1,16 @@
 <template>
 <MkStickyContainer>
-	<template #header>
-		<MkPageHeader
-			v-model:tab="src"
-			:actions="headerActions"
-			:tabs="headerTabs"
-			:display-my-avatar="true"
-		/>
-	</template>
+	<template #header><MkPageHeader v-model:tab="src" :actions="headerActions" :tabs="headerTabs" :display-my-avatar="true"/></template>
 	<MkSpacer :content-max="800">
-		<div ref="rootEl" v-hotkey.global="keymap" class="cmuxhskf">
-			<XPostForm
-				v-if="$store.reactiveState.showFixedPostForm.value"
-				class="post-form _block"
-				fixed
-			/>
+		<div ref="rootEl" v-hotkey.global="keymap">
+			<XTutorial v-if="$store.reactiveState.tutorial.value != -1" class="_panel" style="margin-bottom: var(--margin);"/>
+			<XPostForm v-if="$store.reactiveState.showFixedPostForm.value" :class="$style.postForm" class="post-form _panel" fixed style="margin-bottom: var(--margin);"/>
 
-			<div v-if="queue > 0" class="new">
-				<button class="_buttonPrimary" @click="top()">
-					{{ i18n.ts.newNoteRecived }}
-				</button>
-			</div>
-			<div class="tl _block">
+			<div v-if="queue > 0" :class="$style.new"><button class="_buttonPrimary" @click="top()">{{ i18n.ts.newNoteRecived }}</button></div>
+			<div :class="$style.tl">
 				<XTimeline
-					ref="tl"
+					ref="tlComponent"
 					:key="src"
-					class="tl"
 					:src="src"
 					:sound="true"
 					@queue="queueUpdated"
@@ -37,240 +22,160 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, watch } from "vue";
-import XTimeline from "@/components/MkTimeline.vue";
-import XPostForm from "@/components/MkPostForm.vue";
-import { scroll } from "@/scripts/scroll";
-import * as os from "@/os";
-import { defaultStore } from "@/store";
-import { i18n } from "@/i18n";
-import { instance } from "@/instance";
-import { $i } from "@/account";
-import { definePageMetadata } from "@/scripts/page-metadata";
-import OneSignal from "onesignal-cordova-plugin";
-import {Device} from "@capacitor/device";
-import { storedDeviceInfo } from "@/main";
+import { defineAsyncComponent, computed, watch } from 'vue';
+import XTimeline from '@/components/MkTimeline.vue';
+import XPostForm from '@/components/MkPostForm.vue';
+import { scroll } from '@/scripts/scroll';
+import * as os from '@/os';
+import { defaultStore } from '@/store';
+import { i18n } from '@/i18n';
+import { instance } from '@/instance';
+import { $i } from '@/account';
+import { definePageMetadata } from '@/scripts/page-metadata';
 
+const XTutorial = defineAsyncComponent(() => import('./timeline.tutorial.vue'));
 
-const XTutorial = defineAsyncComponent(() => import("./timeline.tutorial.vue"));
-
-const isLocalTimelineAvailable =
-  !instance.disableLocalTimeline ||
-  ($i != null && ($i.isModerator || $i.isAdmin));
-const isGlobalTimelineAvailable =
-  !instance.disableGlobalTimeline ||
-  ($i != null && ($i.isModerator || $i.isAdmin));
+const isLocalTimelineAvailable = ($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable);
+const isGlobalTimelineAvailable = ($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable);
 const keymap = {
-  t: focus,
+	't': focus,
 };
 
-const tlComponent = $ref<InstanceType<typeof XTimeline>>();
-const rootEl = $ref<HTMLElement>();
+const tlComponent = $shallowRef<InstanceType<typeof XTimeline>>();
+const rootEl = $shallowRef<HTMLElement>();
 
 let queue = $ref(0);
-const src = $computed({
-  get: () => defaultStore.reactiveState.tl.value.src,
-  set: (x) => saveSrc(x),
-});
+const src = $computed({ get: () => defaultStore.reactiveState.tl.value.src, set: (x) => saveSrc(x) });
 
-watch($$(src), () => (queue = 0));
+watch ($$(src), () => queue = 0);
 
 function queueUpdated(q: number): void {
-  queue = q;
+	queue = q;
 }
 
 function top(): void {
-  scroll(rootEl, { top: 0 });
+	scroll(rootEl, { top: 0 });
 }
 
 async function chooseList(ev: MouseEvent): Promise<void> {
-  const lists = await os.api("users/lists/list");
-  const items = lists.map((list) => ({
-    type: "link" as const,
-    text: list.name,
-    to: `/timeline/list/${list.id}`,
-  }));
-  os.popupMenu(items, ev.currentTarget ?? ev.target);
+	const lists = await os.api('users/lists/list');
+	const items = lists.map(list => ({
+		type: 'link' as const,
+		text: list.name,
+		to: `/timeline/list/${list.id}`,
+	}));
+	os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
 
 async function chooseAntenna(ev: MouseEvent): Promise<void> {
-  const antennas = await os.api("antennas/list");
-  const items = antennas.map((antenna) => ({
-    type: "link" as const,
-    text: antenna.name,
-    indicate: antenna.hasUnreadNote,
-    to: `/timeline/antenna/${antenna.id}`,
-  }));
-  os.popupMenu(items, ev.currentTarget ?? ev.target);
+	const antennas = await os.api('antennas/list');
+	const items = antennas.map(antenna => ({
+		type: 'link' as const,
+		text: antenna.name,
+		indicate: antenna.hasUnreadNote,
+		to: `/timeline/antenna/${antenna.id}`,
+	}));
+	os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
 
 async function chooseChannel(ev: MouseEvent): Promise<void> {
-  const channels = await os.api("channels/followed");
-  const items = channels.map((channel) => ({
-    type: "link" as const,
-    text: channel.name,
-    indicate: channel.hasUnreadNote,
-    to: `/channels/${channel.id}`,
-  }));
-  os.popupMenu(items, ev.currentTarget ?? ev.target);
+	const channels = await os.api('channels/followed');
+	const items = channels.map(channel => ({
+		type: 'link' as const,
+		text: channel.name,
+		indicate: channel.hasUnreadNote,
+		to: `/channels/${channel.id}`,
+	}));
+	os.popupMenu(items, ev.currentTarget ?? ev.target);
 }
 
-function saveSrc(newSrc: "home" | "local" | "social" | "global"): void {
-  defaultStore.set("tl", {
-    ...defaultStore.state.tl,
-    src: newSrc,
-  });
+function saveSrc(newSrc: 'home' | 'local' | 'social' | 'global'): void {
+	defaultStore.set('tl', {
+		...defaultStore.state.tl,
+		src: newSrc,
+	});
 }
 
 async function timetravel(): Promise<void> {
-  const { canceled, result: date } = await os.inputDate({
-    title: i18n.ts.date,
-  });
-  if (canceled) return;
+	const { canceled, result: date } = await os.inputDate({
+		title: i18n.ts.date,
+	});
+	if (canceled) return;
 
-  tlComponent.timetravel(date);
+	tlComponent.timetravel(date);
 }
 
 function focus(): void {
-  tlComponent.focus();
+	tlComponent.focus();
 }
 
 const headerActions = $computed(() => []);
 
-const headerTabs = $computed(() => [
-  {
-    key: "home",
-    title: i18n.ts._timelines.home,
-    icon: "fas fa-home",
-    iconOnly: true,
-  },
-  ...(isLocalTimelineAvailable
-    ? [
-        {
-          key: "local",
-          title: i18n.ts._timelines.local,
-          icon: "fas fa-comments",
-          iconOnly: true,
-        },
-        {
-          key: "social",
-          title: i18n.ts._timelines.social,
-          icon: "fas fa-share-alt",
-          iconOnly: true,
-        },
-      ]
-    : []),
-  ...(isGlobalTimelineAvailable
-    ? [
-        {
-          key: "global",
-          title: i18n.ts._timelines.global,
-          icon: "fas fa-globe",
-          iconOnly: true,
-        },
-      ]
-    : []),
-  {
-    icon: "fas fa-list-ul",
-    title: i18n.ts.lists,
-    iconOnly: true,
-    onClick: chooseList,
-  },
-  {
-    icon: "fas fa-satellite",
-    title: i18n.ts.antennas,
-    iconOnly: true,
-    onClick: chooseAntenna,
-  },
-  {
-    icon: "fas fa-satellite-dish",
-    title: i18n.ts.channel,
-    iconOnly: true,
-    onClick: chooseChannel,
-  },
-]);
+const headerTabs = $computed(() => [{
+	key: 'home',
+	title: i18n.ts._timelines.home,
+	icon: 'ti ti-home',
+	iconOnly: true,
+}, ...(isLocalTimelineAvailable ? [{
+	key: 'local',
+	title: i18n.ts._timelines.local,
+	icon: 'ti ti-planet',
+	iconOnly: true,
+}, {
+	key: 'social',
+	title: i18n.ts._timelines.social,
+	icon: 'ti ti-rocket',
+	iconOnly: true,
+}] : []), ...(isGlobalTimelineAvailable ? [{
+	key: 'global',
+	title: i18n.ts._timelines.global,
+	icon: 'ti ti-whirl',
+	iconOnly: true,
+}] : []), {
+	icon: 'ti ti-list',
+	title: i18n.ts.lists,
+	iconOnly: true,
+	onClick: chooseList,
+}, {
+	icon: 'ti ti-antenna',
+	title: i18n.ts.antennas,
+	iconOnly: true,
+	onClick: chooseAntenna,
+}, {
+	icon: 'ti ti-device-tv',
+	title: i18n.ts.channel,
+	iconOnly: true,
+	onClick: chooseChannel,
+}]);
 
-definePageMetadata(
-  computed(() => ({
-    title: i18n.ts.timeline,
-    icon:
-      src === "local"
-        ? "fas fa-comments"
-        : src === "social"
-        ? "fas fa-share-alt"
-        : src === "global"
-        ? "fas fa-globe"
-        : "fas fa-home",
-  }))
-);
-
-
-(async function addListeners() {
-  if (storedDeviceInfo.platform == "web") return
-
-  OneSignal.setAppId(import.meta.env.VITE_ONE_SIGNAL_APP_ID);
-  const deviceId = await Device.getId()
-  OneSignal.setExternalUserId(deviceId.uuid);
-
-  const res = await fetch(
-    import.meta.env.VITE_NOTIFICATION_TOKEN_ENDPOINT,
-    {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      mode: "cors", // no-cors, *cors, same-origin
-      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: "same-origin", // include, *same-origin, omit
-      headers: {
-        "Content-Type": "application/json",
-      },
-      redirect: "follow", // manual, *follow, error
-      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify({
-        misskey_token: $i.token,
-        device_id: deviceId.uuid,
-        instance_url: $i.instanceUrl
-      }), // 本体のデータ型は "Content-Type" ヘッダーと一致させる必要があります
-    }
-  ).catch((err) => {
-    throw err;
-  });
-  console.info(res);
-
-  OneSignal.setNotificationOpenedHandler(function (jsonData) {
-    console.log("notificationOpenedCallback: " + JSON.stringify(jsonData));
-  });
-
-  // Prompts the user for notification permissions.
-  //    * Since this shows a generic native prompt, we recommend instead using an In-App Message to prompt for notification permission (See step 7) to better communicate to your users what notifications they will get.
-  OneSignal.promptForPushNotificationsWithUserResponse(function (accepted) {
-    console.log("User accepted notifications: " + accepted);
-  });
-})();
+definePageMetadata(computed(() => ({
+	title: i18n.ts.timeline,
+	icon: src === 'local' ? 'ti ti-planet' : src === 'social' ? 'ti ti-rocket' : src === 'global' ? 'ti ti-whirl' : 'ti ti-home',
+})));
 </script>
 
-<style lang="scss" scoped>
-.cmuxhskf {
-  > .new {
-    position: sticky;
-    top: calc(var(--stickyTop, 0px) + 16px);
-    z-index: 1000;
-    width: 100%;
+<style lang="scss" module>
+.new {
+	position: sticky;
+	top: calc(var(--stickyTop, 0px) + 16px);
+	z-index: 1000;
+	width: 100%;
 
-    > button {
-      display: block;
-      margin: var(--margin) auto 0 auto;
-      padding: 8px 16px;
-      border-radius: 32px;
-    }
-  }
+	> button {
+		display: block;
+		margin: var(--margin) auto 0 auto;
+		padding: 8px 16px;
+		border-radius: 32px;
+	}
+}
 
-  > .post-form {
-    border-radius: var(--radius);
-  }
+.postForm {
+	border-radius: var(--radius);
+}
 
-  > .tl {
-    background: var(--bg);
-    border-radius: var(--radius);
-    overflow: clip;
-  }
+.tl {
+	background: var(--bg);
+	border-radius: var(--radius);
+	overflow: clip;
 }
 </style>
