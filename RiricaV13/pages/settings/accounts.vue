@@ -1,0 +1,167 @@
+<template>
+  <div class="_formRoot">
+    <FormSuspense :p="init">
+      <FormButton primary @click="addAccount"
+        ><i class="fas fa-plus"></i> {{ i18n.ts.addAccount }}</FormButton
+      >
+
+      <div
+        v-for="account in accounts"
+        :key="account.id"
+        class="_panel _button lcjjdxlm"
+        @click="menu(account, $event)"
+      >
+        <div class="avatar">
+          <MkAvatar :user="account" class="avatar" />
+        </div>
+        <div class="body">
+          <div class="name">
+            <MkUserName :user="account" />
+          </div>
+          <div class="acct">
+            <MkAcct :user="account" :detail="true" />
+          </div>
+        </div>
+      </div>
+    </FormSuspense>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { defineAsyncComponent, ref } from "vue";
+import FormSuspense from "@/components/form/suspense.vue";
+import FormButton from "@/components/MkButton.vue";
+import * as os from "@/os";
+import {
+  getAccounts,
+  addAccount as addAccounts,
+  removeAccount as _removeAccount,
+  login,
+  $i,
+} from "@/account";
+import { i18n } from "@/i18n";
+import { definePageMetadata } from "@/scripts/page-metadata";
+import { apiGet } from "@/os";
+import  * as Misskey from "misskey-js"
+
+const storedAccounts = ref<any>(null);
+const accounts = ref<any>([]);
+
+const init = async () => {
+   await getAccounts()
+    .then(async ( ac) => {
+      return  ac.filter((x) => x.id !== $i!.id).forEach(async a => {
+        accounts.value.push(
+          {
+            ...await new Misskey.api.APIClient({ origin: a.instanceUrl, credential: a.token }).request("users/show", {
+              userId: a.id
+            }),
+            host: a.instanceUrl
+          }
+        )
+    })
+  });
+
+  return Promise.resolve()
+};
+
+function menu(account, ev) {
+  os.popupMenu(
+    [
+      {
+        text: i18n.ts.switch,
+        icon: "fas fa-exchange-alt",
+        action: () => switchAccount(account),
+      },
+      {
+        text: i18n.ts.remove,
+        icon: "fas fa-trash-alt",
+        danger: true,
+        action: () => removeAccount(account),
+      },
+    ],
+    ev.currentTarget ?? ev.target
+  );
+}
+
+function addAccount(ev) {
+  os.popupMenu(
+    [
+      {
+        text: i18n.ts.existingAccount,
+        action: () => {
+          addExistingAccount();
+        },
+      },
+    ],
+    ev.currentTarget ?? ev.target
+  );
+}
+
+function removeAccount(account) {
+  _removeAccount(account.id);
+}
+
+function addExistingAccount() {
+  os.popup(
+    defineAsyncComponent(() => import("@/components/MkSigninDialog.vue")),
+    {},
+    {
+      done: (res) => {
+        addAccounts(res.id, res.i, res.instanceUrl);
+        os.success();
+      },
+    },
+    "closed"
+  );
+}
+
+async function switchAccount(account: any) {
+  const fetchedAccounts: any[] = await getAccounts();
+  const { token, instanceUrl } = fetchedAccounts.find((x) => x.id === account.id);
+  switchAccountWithToken(token, instanceUrl);
+}
+
+function switchAccountWithToken(token: string, instanceUrl: string) {
+  login(token, instanceUrl);
+}
+
+const headerActions = $computed(() => []);
+
+const headerTabs = $computed(() => []);
+
+definePageMetadata({
+  title: i18n.ts.accounts,
+  icon: "fas fa-users",
+});
+</script>
+
+<style lang="scss" scoped>
+.lcjjdxlm {
+  display: flex;
+  padding: 16px;
+
+  > .avatar {
+    display: block;
+    flex-shrink: 0;
+    margin: 0 12px 0 0;
+
+    > .avatar {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  > .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: calc(100% - 62px);
+    position: relative;
+
+    > .name {
+      font-weight: bold;
+    }
+  }
+}
+</style>
