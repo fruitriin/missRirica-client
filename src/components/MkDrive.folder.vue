@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref } from 'vue';
-import * as Misskey from 'misskey-js';
+import * as Misskey from 'yamisskey-js';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
 import { defaultStore } from '@/store';

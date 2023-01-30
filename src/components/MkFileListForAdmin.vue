@@ -33,7 +33,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import * as Acct from 'misskey-js/built/acct';
+import * as Acct from 'yamisskey-js/built/acct';
 import MkPagination from '@/components/MkPagination.vue';
 import MkDriveFileThumbnail from '@/components/MkDriveFileThumbnail.vue';
 import bytes from '@/filters/bytes';

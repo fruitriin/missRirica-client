@@ -71,6 +71,5 @@ export function setLanguage(lang: keyof typeof languages) {
 		console.log(results[0])
 		return results[0].item
 	}
-
 }
 export let i18n = new I18n(languages["ja-JP"]);
