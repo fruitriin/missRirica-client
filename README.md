@@ -21,10 +21,10 @@ Main Feature
 
 
 ## How it works?(どうやって動いてる？)
-MissRiricaは[Capacitor](https://capacitorjs.jp/)を採用しています。
+MissRiricaは[Capacitor](https://capacitorjs.jp/)を採用しています。  
 Capacitorは、内部と相互に通信できるWebViewであり、MissRirica用の修正を除いてMisskey Webそのままのコードを利用しています。
 
-MissRirica uses [Capacitor](https://capacitorjs.jp/).
+MissRirica uses [Capacitor](https://capacitorjs.jp/).  
 Capacitor is a WebView that can communicate internally and with each other, and uses the Misskey Web as-is code, except with modifications for MissRirica.
 
 
