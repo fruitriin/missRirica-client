@@ -79,7 +79,14 @@ export function openInstanceMenu(ev: MouseEvent) {
 		type: 'link',
 		text: i18n.ts.aboutMisskey,
 		to: '/about-misskey',
-	}], ev.currentTarget ?? ev.target, {
+	},
+		{
+			type: 'a',
+			target: "_blank",
+			href: "https://github.com/fruitriin/missRirica-client",
+			text: i18n.ts.ririca.name,
+		}
+	], ev.currentTarget ?? ev.target, {
 		align: 'left',
 	});
 }
