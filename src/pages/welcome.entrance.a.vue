@@ -59,10 +59,18 @@
 <script lang="ts" setup>
 import XSigninDialog from '@/components/MkSigninDialog.vue';
 import MkButton from '@/components/MkButton.vue';
+import MkSelect from "@/components/MkSelect.vue"
+import MkLink from "@/components/MkLink.vue"
 import * as os from '@/os';
 import { i18n } from '@/i18n';
-import { watch } from "vue";
+import { ref, watch } from "vue";
 import { miLocalStorage } from "@/local-storage";
+import { langs as _langs } from '@/config';
+import { unisonReload } from "@/scripts/unison-reload";
+
+const langs = ref(_langs)
+const lang = ref(miLocalStorage.getItem('lang'));
+
 
 let meta = $ref();
 let stats = $ref();
@@ -104,6 +112,22 @@ watch(lang, () => {
   miLocalStorage.setItem('lang', lang.value as string);
   miLocalStorage.removeItem('locale');
 });
+
+watch([
+  lang,
+], async () => {
+  await reloadAsk();
+});
+
+async function reloadAsk() {
+  const { canceled } = await os.confirm({
+    type: 'info',
+    text: i18n.ts.reloadToApplySetting,
+  });
+  if (canceled) return;
+
+  unisonReload();
+}
 </script>
 
 <style lang="scss" scoped>

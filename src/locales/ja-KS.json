@@ -1689,5 +1689,17 @@
       "mentions": "あんた宛て",
       "direct": "ダイレクト"
     }
+  },
+
+  "ririca" : {
+    "name": "MissRirica",
+    "description": "MissRiricaはMisskeyクライアントです。アクセストークンを用意してログインしてください。",
+    "term": "プライバシーポリシー及び利用規約に同意する",
+    "termLink": "プライバシーポリシー及び利用規約を読む",
+    "instance": "インスタンス",
+    "makeToken" : "アクセストークンの作り方",
+    "selectInstanceYourself": "インスタンスのURLを入力する",
+    "accessToken": "アクセストークン",
+    "howToCreateToken" : "アクセストークンの作り方"
   }
 }
