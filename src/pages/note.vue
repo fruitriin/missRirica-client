@@ -42,7 +42,7 @@
 
 <script lang="ts" setup>
 import { computed, defineComponent, watch } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from 'yamisskey-js';
 import XNote from '@/components/MkNote.vue';
 import XNoteDetailed from '@/components/MkNoteDetailed.vue';
 import XNotes from '@/components/MkNotes.vue';

@@ -13,7 +13,7 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from 'yamisskey-js';
 import XNotes from '@/components/MkNotes.vue';
 import MkTab from '@/components/MkTab.vue';
 import * as os from '@/os';

@@ -1,5 +1,5 @@
 import { reactive, ref } from 'vue';
-import * as Misskey from 'misskey-js';
+import * as Misskey from 'yamisskey-js';
 import * as loadImage from "blueimp-load-image"
 import { getCompressionConfig } from './upload/compress-config';
 import { defaultStore } from '@/store';

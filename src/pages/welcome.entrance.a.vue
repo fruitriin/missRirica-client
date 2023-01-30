@@ -37,6 +37,18 @@
 							i18n.ts.login
 						}}
 					</MkButton>
+
+					<MkSelect v-model="lang">
+						<template #label>{{ i18n.ts.uiLanguage }}</template>
+						<option v-for="x in langs" :key="x[0]" :value="x[0]">{{ x[1] }}</option>
+						<template #caption>
+							<I18n :src="i18n.ts.i18nInfo" tag="span">
+								<template #link>
+									<MkLink url="https://crowdin.com/project/misskey">Crowdin</MkLink>
+								</template>
+							</I18n>
+						</template>
+					</MkSelect>
 				</div>
 			</div>
 		</div>
@@ -49,6 +61,8 @@ import XSigninDialog from '@/components/MkSigninDialog.vue';
 import MkButton from '@/components/MkButton.vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
+import { watch } from "vue";
+import { miLocalStorage } from "@/local-storage";
 
 let meta = $ref();
 let stats = $ref();
@@ -85,6 +99,11 @@ function showMenu(ev) {
 		},
 	}], ev.currentTarget ?? ev.target);
 }
+
+watch(lang, () => {
+  miLocalStorage.setItem('lang', lang.value as string);
+  miLocalStorage.removeItem('locale');
+});
 </script>
 
 <style lang="scss" scoped>

@@ -30,7 +30,7 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from 'yamisskey-js';
 import { swInject } from './sw-inject';
 import XNotification from './notification.vue';
 import { popup, popups } from '@/os';

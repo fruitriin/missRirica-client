@@ -1,5 +1,5 @@
 import { computed, reactive } from 'vue';
-import * as Misskey from 'misskey-js';
+import * as Misskey from 'yamisskey-js';
 import { api } from './os';
 import { miLocalStorage } from './local-storage';
 
