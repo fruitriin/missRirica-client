@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { length } from 'stringz';
-import * as misskey from 'misskey-js';
+import * as misskey from 'yamisskey-js';
 import { concat } from '@/scripts/array';
 import { i18n } from '@/i18n';
 

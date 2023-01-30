@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts" setup>
-import * as misskey from 'misskey-js';
+import * as misskey from 'yamisskey-js';
 import { onMounted } from 'vue';
 import * as os from '@/os';
 import { i18n } from '@/i18n';
