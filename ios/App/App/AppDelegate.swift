@@ -9,7 +9,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+        UIApplication.shared.applicationSupportsShakeToEdit = false
         
         return true
     }
@@ -22,6 +22,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
       NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
+    }
+    
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+      
+      // Check if app is in foreground
+      if UIApplication.shared.applicationState == .active {
+        // App is in foreground, do not show the notification in the Notification Center
+        completionHandler(UIBackgroundFetchResult.noData)
+      } else {
+        // App is in the background, show the notification in the Notification Center
+        completionHandler(UIBackgroundFetchResult.newData)
+      }
     }
     
 
