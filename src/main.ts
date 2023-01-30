@@ -49,6 +49,7 @@ import { fetchCustomEmojis } from './custom-emojis';
 import {Device} from "@capacitor/device";
 import lightTheme from "@/themes/_light.json5";
 import OneSignal from "onesignal-cordova-plugin";
+import { App } from "@capacitor/app";
 export let storedDeviceInfo: Object
 
 (async () => {
@@ -261,6 +262,13 @@ export let storedDeviceInfo: Object
 		}
 	}
 
+	App.addListener('backButton', (canGoBack) => {
+		if(canGoBack){
+			history.back()
+		}else{
+			App.exitApp()
+		}
+	})
 })();
 
 

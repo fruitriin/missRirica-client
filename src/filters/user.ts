@@ -1,4 +1,4 @@
-import * as misskey from 'misskey-js';
+import * as misskey from 'yamisskey-js';
 import * as Acct from 'misskey-js/built/acct';
 import { url } from '@/config';
 

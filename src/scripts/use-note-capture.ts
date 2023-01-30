@@ -1,5 +1,5 @@
 import { onUnmounted, Ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from 'yamisskey-js';
 import { stream } from '@/stream';
 import { $i } from '@/account';
 

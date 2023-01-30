@@ -12,7 +12,7 @@
 import { markRaw, version as vueVersion, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { Chart, ChartDataset } from 'chart.js';
 import tinycolor from 'tinycolor2';
-import * as misskey from 'misskey-js';
+import * as misskey from 'yamisskey-js';
 import gradient from 'chartjs-plugin-gradient';
 import * as os from '@/os';
 import { defaultStore } from '@/store';

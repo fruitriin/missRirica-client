@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from 'yamisskey-js';
 import XHeatmap from './activity.heatmap.vue';
 import XPv from './activity.pv.vue';
 import XNotes from './activity.notes.vue';

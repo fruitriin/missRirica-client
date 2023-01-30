@@ -30,7 +30,7 @@ import * as os from '@/os';
 import { getAccounts, addAccount as addAccounts, removeAccount as _removeAccount, login, $i } from '@/account';
 import { i18n } from '@/i18n';
 import { definePageMetadata } from '@/scripts/page-metadata';
-import { api} from "misskey-js";
+import { api} from "yamisskey-js";
 
 const storedAccounts = ref<any>(null);
 const accounts = ref<any>([]);

@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import { onActivated, onDeactivated, onMounted, onUnmounted, ref } from 'vue';
-import * as misskey from 'misskey-js';
+import * as misskey from 'yamisskey-js';
 import MkAchievements from '@/components/MkAchievements.vue';
 import { i18n } from '@/i18n';
 import { claimAchievement } from '@/scripts/achievements';

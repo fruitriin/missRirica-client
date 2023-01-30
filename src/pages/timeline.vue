@@ -31,6 +31,7 @@ import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import { $i } from '@/account';
 import { definePageMetadata } from '@/scripts/page-metadata';
+import { Camera } from "@capacitor/camera"
 
 const XTutorial = defineAsyncComponent(() => import('./timeline.tutorial.vue'));
 
@@ -151,6 +152,12 @@ definePageMetadata(computed(() => ({
 	title: i18n.ts.timeline,
 	icon: src === 'local' ? 'ti ti-planet' : src === 'social' ? 'ti ti-rocket' : src === 'global' ? 'ti ti-whirl' : 'ti ti-home',
 })));
+
+const permissionState = await Camera.checkPermissions()
+if(!permissionState.camera ){
+  Camera.requestPermissions({ permissions: ["photos" , "camera"]})
+}
+
 </script>
 
 <style lang="scss" module>

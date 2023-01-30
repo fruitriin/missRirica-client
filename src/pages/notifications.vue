@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { notificationTypes } from 'misskey-js';
+import { notificationTypes } from 'yamisskey-js';
 import XNotifications from '@/components/MkNotifications.vue';
 import XNotes from '@/components/MkNotes.vue';
 import * as os from '@/os';

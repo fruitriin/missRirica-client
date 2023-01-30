@@ -5,10 +5,10 @@
 	@drop.stop="onDrop"
 >
 	<textarea
-		:class="$style['textarea']"
-		class="_acrylic"
 		ref="textEl"
 		v-model="text"
+		:class="$style['textarea']"
+		class="_acrylic"
 		:placeholder="i18n.ts.inputMessageHere"
 		@keydown="onKeydown"
 		@compositionupdate="onCompositionUpdate"
@@ -24,13 +24,13 @@
 			</button>
 		</div>
 	</footer>
-	<input :class="$style['file-input']" ref="fileEl" type="file" @change="onChangeFile"/>
+	<input ref="fileEl" :class="$style['file-input']" type="file" @change="onChangeFile"/>
 </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, watch } from 'vue';
-import * as Misskey from 'misskey-js';
+import * as Misskey from 'yamisskey-js';
 import autosize from 'autosize';
 //import insertTextAtCursor from 'insert-text-at-cursor';
 import { throttle } from 'throttle-debounce';
