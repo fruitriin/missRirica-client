@@ -509,10 +509,10 @@
     stringz "2.1.0"
     uuid "9.0.0"
 
-"@tabler/icons@^1.119.0":
-  version "1.119.0"
-  resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-1.119.0.tgz#8c590bc5a563c8673a78ccd451bedabd584b376e"
-  integrity sha512-Fk3Qq4w2SXcTjc/n1cuL5bccPkylrOMo7cYpQIf/yw6zP76LQV9dtLcHQUjFiUnaYuswR645CnURIhlafyAh9g==
+"@tabler/icons@^2.0.0":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-2.1.2.tgz#589ede0fe885d388caa78186c71c2997dd29dd73"
+  integrity sha512-+CPB+BSqVDP4+/d+cHSaGwG460C3sob7EJkQ+ZS8xV6bRER64OsCP92O7M+uYBhJFDWuf6poCeSETNZNcFa2nA==
 
 "@trapezedev/gradle-parse@5.0.10":
   version "5.0.10"
@@ -5784,10 +5784,10 @@ yallist@^4.0.0:
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
 
-yamisskey-js@^0.0.15:
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/yamisskey-js/-/yamisskey-js-0.0.15.tgz#00ee05c72e331146727172f71d49d2e32d5e5ffc"
-  integrity sha512-L12qHtpH23nYc3PiIMehF0qsZ5F674Ox+E1RpM9p+BBfGYUq0EzctmtlE9amxswB561pxtYbL9RNs+1yOdyn7A==
+yamisskey-js@^0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/yamisskey-js/-/yamisskey-js-0.0.16.tgz#f251e2cc288f6fe2f31386b350623d1cbde08733"
+  integrity sha512-CQwm6dsmENUZL/KQX5yl05+x03vMxd9SiLQR4T2J65ShzyDfj5R5qZFZJKleo9nwVC1tqU1vxnifF99LCgbMtA==
   dependencies:
     autobind-decorator "^2.4.0"
     eventemitter3 "^4.0.7"

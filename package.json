@@ -81,7 +81,7 @@
     "@capacitor/cli": "^4.5.0",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/pluginutils": "^5.0.2",
-    "@tabler/icons": "^1.119.0",
+    "@tabler/icons": "^2.0.0",
     "@types/escape-regexp": "0.0.1",
     "@types/glob": "8.0.0",
     "@types/gulp": "4.0.10",
