@@ -927,10 +927,10 @@
     "@typescript-eslint/types" "5.47.0"
     eslint-visitor-keys "^3.3.0"
 
-"@vitejs/plugin-vue@3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-3.2.0.tgz#a1484089dd85d6528f435743f84cdd0d215bbb54"
-  integrity sha512-E0tnaL4fr+qkdCNxJ+Xd0yM31UwMkQje76fsDVBBUCoGOUPexu2VDUYHL8P4CwV+zMvWw6nlRw19OnRKmYAJpw==
+"@vitejs/plugin-vue@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.0.0.tgz#93815beffd23db46288c787352a8ea31a0c03e5e"
+  integrity sha512-e0X4jErIxAB5oLtDqbHvHpJe/uWNkdpYV83AOG2xo2tEVSzCzewgJMtREZM30wXnM5ls90hxiOtAuVU6H5JgbA==
 
 "@volar/language-core@1.0.24":
   version "1.0.24"
@@ -5784,10 +5784,10 @@ yallist@^4.0.0:
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
 
-yamisskey-js@^0.0.15:
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/yamisskey-js/-/yamisskey-js-0.0.15.tgz#00ee05c72e331146727172f71d49d2e32d5e5ffc"
-  integrity sha512-L12qHtpH23nYc3PiIMehF0qsZ5F674Ox+E1RpM9p+BBfGYUq0EzctmtlE9amxswB561pxtYbL9RNs+1yOdyn7A==
+yamisskey-js@^0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/yamisskey-js/-/yamisskey-js-0.0.16.tgz#f251e2cc288f6fe2f31386b350623d1cbde08733"
+  integrity sha512-CQwm6dsmENUZL/KQX5yl05+x03vMxd9SiLQR4T2J65ShzyDfj5R5qZFZJKleo9nwVC1tqU1vxnifF99LCgbMtA==
   dependencies:
     autobind-decorator "^2.4.0"
     eventemitter3 "^4.0.7"
