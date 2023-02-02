@@ -18,8 +18,6 @@ jobs:
     steps:        
       - name: Build MissRirica
         uses: actions/checkout@v3
-        with:
-          path: missRirica-client
       - name: Set Node.js latest
         uses: actions/setup-node@v3
         with:
@@ -27,44 +25,25 @@ jobs:
       - name: Cache Node Modules
         uses: actions/cache@v3
         with:
-          path: missRirica-client/node_modules
+          path: node_modules
           key: node-modules-${{ runner.os }}-${{ matrix.node-version }}-missRirica-client
       - name: Install Packages
-        run: test -d ./missRirica-client/node_modules && echo "node_modules exists" || yarn install --frozen-lockfile --cwd='./missRirica-client'
+        run: test -d node_modules && echo "node_modules exists" || yarn install --frozen-lockfile
       - name: Build
-        run: cd missRirica-client && yarn build
-      - name: Archive
-        run:  tar -Jcf missRirica-client.tar.xz missRirica-client
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: missRirica-client
-          path: missRirica-client.tar.xz
-          retention-days: 1
-
-  build_apk:
-    name: Build missRirica
-    needs: build_missririca_client
-    runs-on: ubuntu-latest
-    steps:
+        run: yarn build
+# Java/Gradle part
       - name: Set up Java Env
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 17
-      - name: Download missRirica-client
-        uses: actions/download-artifact@v3
-        with:
-          name: missRirica-client
-      - name: Extract missRirica-client
-        run:  tar -Jxf missRirica-client.tar.xz
       - name: Build using Gradle with Cache
         uses: burrunan/gradle-cache-action@v1
         with:
           save-generated-gradle-jars: false
           arguments: build
           remote-build-cache-proxy-enabled: false
-          build-root-directory: missRirica-client/android
+          build-root-directory: android
           save-local-build-cache: false
           concurrent: true
           gradle-build-scan-report: false
@@ -76,4 +55,4 @@ jobs:
           draft: true
           automatic_release_tag: "latest"
           title: "Development Build"
-          files: ./missRirica-client/android/app/build/outputs/apk/debug/app-debug.apk
+          files: android/app/build/outputs/apk/debug/app-debug.apk
