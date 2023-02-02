@@ -10,7 +10,7 @@
     "lint": "vue-tsc",
     "preview": "vite preview",
     "ios": "npx cap open ios",
-    "android": "studio android",
+    "android": "studio android"
   },
   "dependencies": {
     "@capacitor/android": "^4.5.0",
