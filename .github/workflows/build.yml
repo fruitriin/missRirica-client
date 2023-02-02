@@ -1,0 +1,104 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+    - "main"
+
+jobs:
+# 1. build misskey.js, which is required by missRirica
+# 2. build missRirica the vite project
+# 3. build missRirica Android client
+# 4. release debug APK
+  build_misskey_js:
+    name: Build misskey.js
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [19.5.0]
+    steps:
+      - name: Checkout misskey.js
+        uses: actions/checkout@v3
+        with:
+          repository: 'misskey-dev/misskey.js'
+          ref: refs/heads/develop
+          path: misskey.js
+      - name: Setup NodeJs
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: misskey.js/node_modules
+          key: node-modules-${{ runner.os }}-${{ matrix.node-version }}-misskey-js
+      - name: Install Packages
+        run:  test -d ./misskey.js/node_modules && echo "node_modules exists" || yarn install --frozen-lockfile --cwd='./misskey.js'
+      - name: Build
+        run:  cd ./misskey.js && yarn build
+      - name: Archive
+        run:  tar -Jcf misskey.js.tar.xz misskey.js
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: misskey.js
+          path: misskey.js.tar.xz
+          retention-days: 1
+
+  build_missririca_client:
+    name: Build missRirica
+    needs: build_misskey_js
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [19.5.0]
+    steps:        
+      - name: Download misskey.js
+        uses: actions/download-artifact@v3
+        with:
+          name: misskey.js
+      - name: Extract misskey.js
+        run:  tar -Jxf misskey.js.tar.xz
+      - name: Build MissRirica
+        uses: actions/checkout@v3
+        with:
+          ref:  refs/heads/main
+          path: missRirica-client
+      - name: Set Node.js latest
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: missRirica-client/node_modules
+          key: node-modules-${{ runner.os }}-${{ matrix.node-version }}-missRirica-client
+      - name: Install Packages
+        run: test -d ./missRirica-client/node_modules && echo "node_modules exists" || yarn install --frozen-lockfile --cwd='./missRirica-client'
+      - name: Build
+        run: cd missRirica-client && yarn build
+
+      - name: Set up Java Env
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Build using Gradle with Cache
+        uses: burrunan/gradle-cache-action@v1
+        with:
+          save-generated-gradle-jars: false
+          arguments: build
+          remote-build-cache-proxy-enabled: false
+          build-root-directory: missRirica-client/android
+          save-local-build-cache: false
+          concurrent: true
+          gradle-build-scan-report: false
+          gradle-distribution-sha-256-sum-warning: false
+      - name: Create Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          draft: true
+          automatic_release_tag: "latest"
+          title: "Development Build"
+          files: ./missRirica-client/android/app/build/outputs/apk/debug/app-debug.apk
