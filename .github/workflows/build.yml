@@ -10,6 +10,8 @@ jobs:
 # 2. build missRirica Android client
 # 3. release debug APK
   build_missririca_client:
+  # The cache steps are heavily based on @dwy6626's article:
+  # https://dwye.dev/post/github-action-npm-cache/
     name: Build missRirica
     runs-on: ubuntu-latest
     strategy:
@@ -40,11 +42,9 @@ jobs:
       - name: Build using Gradle with Cache
         uses: burrunan/gradle-cache-action@v1
         with:
-          save-generated-gradle-jars: false
           arguments: build
           remote-build-cache-proxy-enabled: false
           build-root-directory: android
-          save-local-build-cache: false
           concurrent: true
           gradle-build-scan-report: false
           gradle-distribution-sha-256-sum-warning: false
