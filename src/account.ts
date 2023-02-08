@@ -148,6 +148,7 @@ export async function openAccountMenu(opts: {
 	async function switchAccount(account: misskey.entities.UserDetailed) {
 		const storedAccounts = await getAccounts();
 		const acc = storedAccounts.find(x => x.id === account.id);
+		miLocalStorage.removeItem("lastEmojisFetchedAt")
 		switchAccountWithToken(acc.token, acc.instanceUrl);
 	}
 

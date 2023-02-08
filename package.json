@@ -1,7 +1,7 @@
 {
   "name": "missririca-client",
   "private": true,
-  "version": "1.3.0",
+  "version": "1.5.3",
   "type": "module",
   "scripts": {
     "dev": "cp capacitor.config.dev.json capacitor.config.json;npx cap copy; vite --host;",
