@@ -1,0 +1,594 @@
+diff --color=auto src/account.ts Ririca13/src/account.ts
+2c2
+< import * as misskey from "yamisskey-js";
+---
+> import * as misskey from "misskey-js";
+6a7
+> import { apiUrl } from "@/config";
+14,20c15
+< let accountData = null;
+< try {
+<   accountData = JSON.parse(miLocalStorage.getItem("account"));
+< } catch (e) {
+<   miLocalStorage.removeItem("account");
+<   window.location.reload();
+< }
+---
+> const accountData = miLocalStorage.getItem("account");
+23c18,20
+< export const $i = accountData ? reactive(accountData as Account) : null;
+---
+> export const $i = accountData
+>   ? reactive(JSON.parse(accountData) as Account)
+>   : null;
+39a37,66
+> 
+>   //#region Remove service worker registration
+>   try {
+>     if (navigator.serviceWorker.controller) {
+>       const registration = await navigator.serviceWorker.ready;
+>       const push = await registration.pushManager.getSubscription();
+>       if (push) {
+>         await window.fetch(`${apiUrl}/sw/unregister`, {
+>           method: "POST",
+>           body: JSON.stringify({
+>             i: $i.token,
+>             endpoint: push.endpoint,
+>           }),
+>           headers: {
+>             "Content-Type": "application/json",
+>           },
+>         });
+>       }
+>     }
+> 
+>     if (accounts.length === 0) {
+>       await navigator.serviceWorker.getRegistrations().then((registrations) => {
+>         return Promise.all(
+>           registrations.map((registration) => registration.unregister())
+>         );
+>       });
+>     }
+>   } catch (err) {}
+>   //#endregion
+> 
+42c69
+<   if (accounts.length > 0) login(accounts[0].token, accounts[0].instanceUrl);
+---
+>   if (accounts.length > 0) login(accounts[0].token);
+47c74
+<   { id: Account["id"]; token: Account["token"]; instanceUrl: string }[]
+---
+>   { id: Account["id"]; token: Account["token"] }[]
+52,56c79
+< export async function addAccount(
+<   id: Account["id"],
+<   token: Account["token"],
+<   instanceUrl: string
+< ) {
+---
+> export async function addAccount(id: Account["id"], token: Account["token"]) {
+59c82
+<     await set("accounts", accounts.concat([{ id, token, instanceUrl }]));
+---
+>     await set("accounts", accounts.concat([{ id, token }]));
+74,96c97,130
+< function fetchAccount(
+<   token: string,
+<   instanceUrl: string
+< ): Promise<Account & { instanceUrl: string }> {
+<   return new misskey.api.APIClient({ origin: instanceUrl, credential: token })
+<     .request("i")
+<     .then((res) => {
+<       return { ...(res as Account), token, instanceUrl };
+<     })
+<     .catch((res) => {
+<       if (res.error.id === "a8c724b3-6e9c-4b46-b1a8-bc3ed6258370") {
+<         showSuspendedDialog().then(() => {
+<           signout();
+<         });
+<       } else {
+<         alert({
+<           type: "error",
+<           title: i18n.ts.failedToFetchAccountInformation,
+<           text: JSON.stringify(res.error),
+<         });
+<       }
+<       return Promise.reject(res);
+<     });
+---
+> function fetchAccount(token: string): Promise<Account> {
+>   return new Promise((done, fail) => {
+>     // Fetch user
+>     window
+>       .fetch(`${apiUrl}/i`, {
+>         method: "POST",
+>         body: JSON.stringify({
+>           i: token,
+>         }),
+>         headers: {
+>           "Content-Type": "application/json",
+>         },
+>       })
+>       .then((res) => res.json())
+>       .then((res) => {
+>         if (res.error) {
+>           if (res.error.id === "a8c724b3-6e9c-4b46-b1a8-bc3ed6258370") {
+>             showSuspendedDialog().then(() => {
+>               signout();
+>             });
+>           } else {
+>             alert({
+>               type: "error",
+>               title: i18n.ts.failedToFetchAccountInformation,
+>               text: JSON.stringify(res.error),
+>             });
+>           }
+>         } else {
+>           res.token = token;
+>           done(res);
+>         }
+>       })
+>       .catch(fail);
+>   });
+99c133
+< export function updateAccount(accountData: Object) {
+---
+> export function updateAccount(accountData) {
+107c141
+<   return fetchAccount($i.token, $i.instanceUrl).then(updateAccount);
+---
+>   return fetchAccount($i.token).then(updateAccount);
+110,114c144
+< export async function login(
+<   token: Account["token"],
+<   instanceUrl: string,
+<   redirect?: string
+< ) {
+---
+> export async function login(token: Account["token"], redirect?: string) {
+116,117c146,147
+<   if (_DEV_) console.log("logging as token ", token, instanceUrl);
+<   const me = await fetchAccount(token, instanceUrl);
+---
+>   if (_DEV_) console.log("logging as token ", token);
+>   const me = await fetchAccount(token);
+119,127d148
+<   miLocalStorage.setItem(
+<     "instance",
+<     JSON.stringify(
+<       await new misskey.api.APIClient({
+<         origin: instanceUrl,
+<         credential: token,
+<       }).request("meta")
+<     )
+<   );
+129c150
+<   await addAccount(me.id, token, instanceUrl);
+---
+>   await addAccount(me.id, token);
+157c178
+<           addAccount(res.id, res.i, res.instanceUrl);
+---
+>           addAccount(res.id, res.i);
+171,172c192,193
+<           addAccount(res.id, res.i, res.instanceUrl);
+<           switchAccountWithToken(res.i, res.instanceUrl);
+---
+>           addAccount(res.id, res.i);
+>           switchAccountWithToken(res.i);
+181,183c202,203
+<     const acc = storedAccounts.find((x) => x.id === account.id);
+<     miLocalStorage.removeItem("lastEmojisFetchedAt");
+<     switchAccountWithToken(acc.token, acc.instanceUrl);
+---
+>     const token = storedAccounts.find((x) => x.id === account.id).token;
+>     switchAccountWithToken(token);
+186,187c206,207
+<   function switchAccountWithToken(token: string, instanceUrl: string) {
+<     login(token, instanceUrl);
+---
+>   function switchAccountWithToken(token: string) {
+>     login(token);
+215,217c235,238
+<         const client = new misskey.api.APIClient({
+<           origin: a.instanceUrl,
+<           credential: a.token,
+---
+>         accountsPromise.then((accounts) => {
+>           const account = accounts.find((x) => x.id === a.id);
+>           if (account == null) return res(null);
+>           res(createItem(account));
+219,231d239
+< 
+<         client
+<           .request("users/show", {
+<             userIds: [a.id],
+<           })
+<           .then((accounts) => {
+<             const account = accounts.find((x) => x.id === a.id);
+<             if (account == null) return res(null);
+< 
+<             client.request("meta").then((meta) => {
+<               res(createItem({ ...account, host: meta.name }));
+<             });
+<           });
+256a265,270
+>                 },
+>               },
+>               {
+>                 text: i18n.ts.createAccount,
+>                 action: () => {
+>                   createAccount();
+Only in src: assets
+Common subdirectories: src/components and Ririca13/src/components
+diff --color=auto src/config.ts Ririca13/src/config.ts
+2,3d1
+< import { $i } from "@/account";
+< import { langNames } from "@/i18n";
+5c3
+< const address = $i ? new URL($i.instanceUrl) : null;
+---
+> const address = new URL(location.href);
+10,12c8,10
+< export const host = address?.host;
+< export const hostname = address?.hostname;
+< export const url = $i?.instanceUrl;
+---
+> export const host = address.host;
+> export const hostname = address.hostname;
+> export const url = address.origin;
+13a12,13
+> export const wsUrl =
+>   url.replace("http://", "ws://").replace("https://", "wss://") + "/streaming";
+15c15,16
+< export const langs = langNames;
+---
+> export const langs = _LANGS_;
+> export let locale = JSON.parse(miLocalStorage.getItem("locale"));
+19a21,24
+> 
+> export function updateLocale(newLocale) {
+>   locale = newLocale;
+> }
+Common subdirectories: src/directives and Ririca13/src/directives
+Common subdirectories: src/filters and Ririca13/src/filters
+diff --color=auto src/i18n.ts Ririca13/src/i18n.ts
+0a1,2
+> import { markRaw } from "vue";
+> import { locale } from "@/config";
+2,26d3
+< import arSA from "@/locales/ar-SA.json";
+< import csCZ from "@/locales/cs-CZ.json";
+< import daDK from "@/locales/da-DK.json";
+< import deDE from "@/locales/de-DE.json";
+< import enUS from "@/locales/en-US.json";
+< import esES from "@/locales/es-ES.json";
+< import frFR from "@/locales/fr-FR.json";
+< import idID from "@/locales/id-ID.json";
+< import itIT from "@/locales/it-IT.json";
+< import jaJP from "@/locales/ja-JP.json";
+< import jaKS from "@/locales/ja-KS.json";
+< import kabKAB from "@/locales/kab-KAB.json";
+< import knIN from "@/locales/kn-IN.json";
+< import koKR from "@/locales/ko-KR.json";
+< import nlNL from "@/locales/nl-NL.json";
+< import noNO from "@/locales/no-NO.json";
+< import plPL from "@/locales/pl-PL.json";
+< import ptPT from "@/locales/pt-PT.json";
+< import ruRU from "@/locales/ru-RU.json";
+< import skSK from "@/locales/sk-SK.json";
+< import ugCN from "@/locales/ug-CN.json";
+< import ukUA from "@/locales/uk-UA.json";
+< import viVN from "@/locales/vi-VN.json";
+< import zhCN from "@/locales/zh-CN.json";
+< import zhTW from "@/locales/zh-TW.json";
+28c5
+< import Fuse from "fuse.js";
+---
+> export const i18n = markRaw(new I18n(locale));
+30,73c7,8
+< const languages = {
+<   "ar-SA": arSA,
+<   "cs-CZ": csCZ,
+<   "da-DK": daDK,
+<   "de-DE": deDE,
+<   "en-US": enUS,
+<   "es-ES": esES,
+<   "fr-FR": frFR,
+<   "id-ID": idID,
+<   "it-IT": itIT,
+<   "ja-JP": jaJP,
+<   "ja-KS": jaKS,
+<   "kab-KAB": kabKAB,
+<   "kn-IN": knIN,
+<   "ko-KR": koKR,
+<   "nl-NL": nlNL,
+<   "no-NO": noNO,
+<   "pl-PL": plPL,
+<   "pt-PT": ptPT,
+<   "ru-RU": ruRU,
+<   "sk-SK": skSK,
+<   "ug-CN": ugCN,
+<   "uk-UA": ukUA,
+<   "vi-VN": viVN,
+<   "zh-CN": zhCN,
+<   "zh-TW": zhTW,
+< } as const;
+< 
+< export let langNames = Object.keys(languages).map((l) => {
+<   return [l, languages[l]._lang_];
+< });
+< 
+< export function setLanguage(lang: keyof typeof languages) {
+<   console.log(lang);
+<   if (Object.keys(languages).includes(lang)) {
+<     i18n = new I18n(languages[lang]);
+<     return lang;
+<   } else {
+<     const fuse = new Fuse(Object.keys(languages));
+<     const results = fuse.search(lang);
+<     i18n = new I18n(languages[results[0].item]);
+<     console.log(results[0]);
+<     return results[0].item;
+<   }
+---
+> export function updateI18n(newLocale) {
+>   i18n.ts = newLocale;
+75d9
+< export let i18n = new I18n(languages["ja-JP"]);
+Only in Ririca13/src: init.ts
+diff --color=auto src/instance.ts Ririca13/src/instance.ts
+2c2
+< import * as Misskey from "yamisskey-js";
+---
+> import * as Misskey from "misskey-js";
+31,73d30
+< 
+< /**
+< export const instance: Misskey.entities.InstanceMetadata = reactive(
+< 	instanceData
+< 		? JSON.parse(instanceData)
+< 		: {
+< 			// TODO: set default values
+< 		}
+< );
+< 
+< export async function fetchInstance() {
+< 	const meta = await noCredentialApi.request("meta", {
+< 		detail: false,
+< 	});
+< 
+< 	for (const [k, v] of Object.entries(meta)) {
+< 		instance[k] = v;
+< 	}
+< 
+< 	localStorage.setItem("instance", JSON.stringify(instance));
+< }
+< 
+< export const emojiCategories = computed(() => {
+< 	if (instance.emojis == null) return [];
+< 	const categories = new Set();
+< 	for (const emoji of instance.emojis) {
+< 		categories.add(emoji.category);
+< 	}
+< 	return Array.from(categories);
+< });
+< 
+< export const emojiTags = computed(() => {
+< 	if (instance.emojis == null) return [];
+< 	const tags = new Set();
+< 	for (const emoji of instance.emojis) {
+< 		for (const tag of emoji.aliases) {
+< 			tags.add(tag);
+< 		}
+< 	}
+< 	return Array.from(tags);
+< });
+< 
+<  */
+Only in src: locales
+Only in src: main.ts
+diff --color=auto src/navbar.ts Ririca13/src/navbar.ts
+108c108
+<     icon: "ti ti-military-award",
+---
+>     icon: "ti ti-medal",
+diff --color=auto src/os.ts Ririca13/src/os.ts
+2a3,4
+> import { pendingApiRequestsCount, api, apiGet } from "@/scripts/api";
+> export { pendingApiRequestsCount, api, apiGet };
+6c8
+< import * as Misskey from "yamisskey-js";
+---
+> import * as Misskey from "misskey-js";
+19d20
+< import { $i } from "@/account";
+22,56d22
+< const apiClient = new Misskey.api.APIClient({
+<   origin: $i?.instanceUrl,
+<   credential: $i?.token,
+< });
+< 
+< export const noCredentialApi = new Misskey.api.APIClient({
+<   origin: $i?.instanceUrl || window.location.origin,
+< });
+< 
+< export const api = ((
+<   endpoint: keyof Misskey.Endpoints,
+<   data: Record<string, any> = {}
+< ) => {
+<   return apiClient.request(endpoint, data);
+< }) as typeof apiClient.request;
+< 
+< export const apiGet = ((
+<   endpoint: keyof Misskey.Endpoints,
+<   data: Record<string, any> = {}
+< ) => {
+<   const query = new URLSearchParams(data);
+< 
+<   const promise = new Promise((resolve, reject) => {
+<     // Send request
+<     apiClient
+<       .request(endpoint, { ...data })
+<       .then(async (res) => {
+<         resolve(res);
+<       })
+<       .catch(reject);
+<   });
+< 
+<   return promise;
+< }) as typeof apiClient.request;
+< 
+58c24
+<   endpoint: keyof Misskey.Endpoints,
+---
+>   endpoint: string,
+Common subdirectories: src/pages and Ririca13/src/pages
+diff --color=auto src/pizzax.ts Ririca13/src/pizzax.ts
+5a6
+> import { stream } from "./stream";
+16a18,19
+> const connection = $i && stream.useChannel("main");
+> 
+81a85,151
+> 
+>     if ($i) {
+>       // なぜかsetTimeoutしないとapi関数内でエラーになる(おそらく循環参照してることに原因がありそう)
+>       window.setTimeout(() => {
+>         api("i/registry/get-all", { scope: ["client", this.key] }).then(
+>           (kvs) => {
+>             const cache = {};
+>             for (const [k, v] of Object.entries(def)) {
+>               if (v.where === "account") {
+>                 if (Object.prototype.hasOwnProperty.call(kvs, k)) {
+>                   state[k] = kvs[k];
+>                   reactiveState[k].value = kvs[k];
+>                   cache[k] = kvs[k];
+>                 } else {
+>                   state[k] = v.default;
+>                   reactiveState[k].value = v.default;
+>                 }
+>               }
+>             }
+>             localStorage.setItem(
+>               this.keyForLocalStorage + "::cache::" + $i.id,
+>               JSON.stringify(cache)
+>             );
+>             this.markAsReady();
+>           }
+>         );
+>       }, 1);
+>       // streamingのuser storage updateイベントを監視して更新
+>       connection?.on(
+>         "registryUpdated",
+>         ({
+>           scope,
+>           key,
+>           value,
+>         }: {
+>           scope: string[];
+>           key: keyof T;
+>           value: T[typeof key]["default"];
+>         }) => {
+>           if (
+>             scope.length !== 2 ||
+>             scope[0] !== "client" ||
+>             scope[1] !== this.key ||
+>             this.state[key] === value
+>           )
+>             return;
+> 
+>           this.state[key] = value;
+>           this.reactiveState[key].value = value;
+> 
+>           const cache = JSON.parse(
+>             localStorage.getItem(
+>               this.keyForLocalStorage + "::cache::" + $i.id
+>             ) || "{}"
+>           );
+>           if (cache[key] !== value) {
+>             cache[key] = value;
+>             localStorage.setItem(
+>               this.keyForLocalStorage + "::cache::" + $i.id,
+>               JSON.stringify(cache)
+>             );
+>           }
+>         }
+>       );
+>     } else {
+>       this.markAsReady();
+>     }
+Common subdirectories: src/scripts and Ririca13/src/scripts
+diff --color=auto src/store.ts Ririca13/src/store.ts
+305c305
+< import { Note, UserDetailed } from "yamisskey-js/built/entities";
+---
+> import { Note, UserDetailed } from "misskey-js/built/entities";
+diff --color=auto src/stream.ts Ririca13/src/stream.ts
+1c1
+< import * as Misskey from "yamisskey-js";
+---
+> import * as Misskey from "misskey-js";
+3a4
+> import { url } from "@/config";
+5,11c6,15
+< export const stream = $i
+<   ? markRaw(
+<       new Misskey.Stream($i.instanceUrl, {
+<         token: $i?.token,
+<       })
+<     )
+<   : null;
+---
+> export const stream = markRaw(
+>   new Misskey.Stream(
+>     url,
+>     $i
+>       ? {
+>           token: $i.token,
+>         }
+>       : null
+>   )
+> );
+diff --color=auto src/style.scss Ririca13/src/style.scss
+138,139c138,139
+<   vertical-align: -10%;
+<   line-height: 0.9em;
+---
+>   vertical-align: -40%;
+>   line-height: 1em;
+142c142,144
+<     font-size: 130%;
+---
+>     display: inline-block;
+>     font-size: 165%;
+>     width: 0.74em;
+diff --color=auto src/theme-store.ts Ririca13/src/theme-store.ts
+17c17,20
+<     // const themes = await api('i/registry/get', { scope: ['client'], key: 'themes' });
+---
+>     const themes = await api("i/registry/get", {
+>       scope: ["client"],
+>       key: "themes",
+>     });
+29c32,36
+<   // await api('i/registry/set', { scope: ['client'], key: 'themes', value: themes });
+---
+>   await api("i/registry/set", {
+>     scope: ["client"],
+>     key: "themes",
+>     value: themes,
+>   });
+36c43,47
+<   // await api('i/registry/set', { scope: ['client'], key: 'themes', value: themes });
+---
+>   await api("i/registry/set", {
+>     scope: ["client"],
+>     key: "themes",
+>     value: themes,
+>   });
+Common subdirectories: src/themes and Ririca13/src/themes
+Common subdirectories: src/types and Ririca13/src/types
+Common subdirectories: src/ui and Ririca13/src/ui
+Common subdirectories: src/widgets and Ririca13/src/widgets
