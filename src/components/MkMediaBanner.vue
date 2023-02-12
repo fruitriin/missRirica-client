@@ -13,11 +13,15 @@
       v-else-if="media.type.startsWith('audio') && media.type !== 'audio/midi'"
       class="audio"
     >
-      <VuePlyr :options="{ volume: 0.5 }">
-        <audio controls preload="metadata">
-          <source :src="media.url" :type="media.type" />
-        </audio>
-      </VuePlyr>
+      <audio
+        ref="audioEl"
+        class="audio"
+        :src="media.url"
+        :title="media.name"
+        controls
+        preload="metadata"
+        @volumechange="volumechange"
+      />
     </div>
     <a
       v-else
@@ -35,9 +39,7 @@
 <script lang="ts" setup>
 import { onMounted } from "vue";
 import * as misskey from "misskey-js";
-import VuePlyr from "vue-plyr";
 import { ColdDeviceStorage } from "@/store";
-import "vue-plyr/dist/vue-plyr.css";
 
 const props = withDefaults(
   defineProps<{
@@ -63,11 +65,7 @@ onMounted(() => {
   width: 100%;
   border-radius: 4px;
   margin-top: 4px;
-  // overflow: clip;
-
-  --plyr-color-main: var(--accent);
-  --plyr-audio-controls-background: var(--bg);
-  --plyr-audio-controls-color: var(--accentLighten);
+  overflow: hidden;
 
   > .download,
   > .sensitive {
@@ -105,8 +103,10 @@ onMounted(() => {
   }
 
   > .audio {
-    border-radius: 8px;
-    // overflow: clip;
+    .audio {
+      display: block;
+      width: 100%;
+    }
   }
 }
 </style>

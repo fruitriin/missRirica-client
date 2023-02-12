@@ -2,11 +2,11 @@
   <span
     v-if="!link"
     v-user-preview="preview ? user.id : undefined"
-    class="_noSelect"
     :class="[
       $style.root,
       { [$style.cat]: user.isCat, [$style.square]: $store.state.squareAvatars },
     ]"
+    class="_noSelect"
     :style="{ color }"
     :title="acct(user)"
     @click="onClick"
@@ -17,10 +17,6 @@
       :class="$style.indicator"
       :user="user"
     />
-    <template v-if="user.isCat">
-      <div :class="$style.earLeft" />
-      <div :class="$style.earRight" />
-    </template>
   </span>
   <MkA
     v-else
@@ -31,8 +27,8 @@
       { [$style.cat]: user.isCat, [$style.square]: $store.state.squareAvatars },
     ]"
     :style="{ color }"
-    :title="acct(user)"
     :to="userPage(user)"
+    :title="acct(user)"
     :target="target"
   >
     <img :class="$style.inner" :src="url" decoding="async" />
@@ -41,10 +37,6 @@
       :class="$style.indicator"
       :user="user"
     />
-    <template v-if="user.isCat">
-      <div :class="$style.earLeft" />
-      <div :class="$style.earRight" />
-    </template>
   </MkA>
 </template>
 
@@ -56,6 +48,7 @@ import { extractAvgColorFromBlurhash } from "@/scripts/extract-avg-color-from-bl
 import { acct, userPage } from "@/filters/user";
 import MkUserOnlineIndicator from "@/components/MkUserOnlineIndicator.vue";
 import { defaultStore } from "@/store";
+import { $i } from "@/account";
 
 const props = withDefaults(
   defineProps<{
@@ -178,41 +171,33 @@ watch(
 }
 
 .cat {
-  > .earLeft,
-  > .earRight {
-    contain: strict;
+  &:before,
+  &:after {
+    background: #df548f;
+    border: solid 4px currentColor;
+    box-sizing: border-box;
+    content: "";
     display: inline-block;
     height: 50%;
     width: 50%;
-    background: currentColor;
-
-    &::before {
-      contain: strict;
-      content: "";
-      display: block;
-      width: 60%;
-      height: 60%;
-      margin: 20%;
-      background: #df548f;
-    }
   }
 
-  > .earLeft {
+  &:before {
     border-radius: 0 75% 75%;
     transform: rotate(37.5deg) skew(30deg);
   }
 
-  > .earRight {
+  &:after {
     border-radius: 75% 0 75% 75%;
     transform: rotate(-37.5deg) skew(-30deg);
   }
 
   &:hover {
-    > .earLeft {
+    &:before {
       animation: earwiggleleft 1s infinite;
     }
 
-    > .earRight {
+    &:after {
       animation: earwiggleright 1s infinite;
     }
   }

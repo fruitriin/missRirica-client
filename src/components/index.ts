@@ -5,7 +5,6 @@ import MkA from "./global/MkA.vue";
 import MkAcct from "./global/MkAcct.vue";
 import MkAvatar from "./global/MkAvatar.vue";
 import MkEmoji from "./global/MkEmoji.vue";
-import MkCustomEmoji from "./global/MkCustomEmoji.vue";
 import MkUserName from "./global/MkUserName.vue";
 import MkEllipsis from "./global/MkEllipsis.vue";
 import MkTime from "./global/MkTime.vue";
@@ -27,7 +26,6 @@ export default function (app: App) {
   app.component("MkAcct", MkAcct);
   app.component("MkAvatar", MkAvatar);
   app.component("MkEmoji", MkEmoji);
-  app.component("MkCustomEmoji", MkCustomEmoji);
   app.component("MkUserName", MkUserName);
   app.component("MkEllipsis", MkEllipsis);
   app.component("MkTime", MkTime);
@@ -49,7 +47,6 @@ declare module "@vue/runtime-core" {
     MkAcct: typeof MkAcct;
     MkAvatar: typeof MkAvatar;
     MkEmoji: typeof MkEmoji;
-    MkCustomEmoji: typeof MkCustomEmoji;
     MkUserName: typeof MkUserName;
     MkEllipsis: typeof MkEllipsis;
     MkTime: typeof MkTime;

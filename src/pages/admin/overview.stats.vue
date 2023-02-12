@@ -65,7 +65,10 @@
           <div class="icon"><i class="ti ti-access-point"></i></div>
           <div class="body">
             <div class="value">
-              <MkNumber :value="onlineUsersCount" style="margin-right: 0.5em" />
+              <MkNumber
+                :value="stats.onlineUsersCount"
+                style="margin-right: 0.5em"
+              />
             </div>
             <div class="label">Online</div>
           </div>

@@ -1,4 +1,4 @@
-import * as Acct from "misskey-js/built/acct";
+import * as Acct from "yamisskey-js/built/acct";
 import { defineAsyncComponent } from "vue";
 import { i18n } from "@/i18n";
 import copyToClipboard from "@/scripts/copy-to-clipboard";
@@ -257,24 +257,6 @@ export function getUserMenu(user, router: Router = mainRouter) {
           text: i18n.ts.moderation,
           action: () => {
             router.push("/user-info/" + user.id + "#moderation");
-          },
-        },
-        {
-          icon: "ti ti-badges",
-          text: i18n.ts.roles,
-          action: async () => {
-            const roles = await os.api("admin/roles/list");
-
-            const { canceled, result: roleId } = await os.select({
-              title: i18n.ts._role.chooseRoleToAssign,
-              items: roles.map((r) => ({ text: r.name, value: r.id })),
-            });
-            if (canceled) return;
-
-            await os.apiWithDialog("admin/roles/assign", {
-              roleId,
-              userId: user.id,
-            });
           },
         },
       ]);

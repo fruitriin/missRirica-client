@@ -15,33 +15,23 @@
         class="_button item"
         @click="emit('chosen', emoji, $event)"
       >
-        <MkCustomEmoji
-          v-if="emoji[0] === ':'"
-          class="emoji"
-          :name="emoji"
-          :normal="true"
-        />
-        <MkEmoji v-else class="emoji" :emoji="emoji" :normal="true" />
+        <MkEmoji class="emoji" :emoji="emoji" :normal="true" />
       </button>
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, Ref } from "vue";
+import { ref } from "vue";
 
 const props = defineProps<{
-  emojis: string[] | Ref<string[]>;
+  emojis: string[];
   initialShown?: boolean;
 }>();
 
 const emit = defineEmits<{
   (ev: "chosen", v: string, event: MouseEvent): void;
 }>();
-
-const emojis = computed(() =>
-  Array.isArray(props.emojis) ? props.emojis : props.emojis.value
-);
 
 const shown = ref(!!props.initialShown);
 </script>

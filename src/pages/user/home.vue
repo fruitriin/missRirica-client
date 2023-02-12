@@ -89,14 +89,8 @@
                 v-tooltip="role.description"
                 class="role"
                 :style="{ '--color': role.color }"
+                >{{ role.name }}</span
               >
-                <img
-                  v-if="role.iconUrl"
-                  style="height: 1.3em; vertical-align: -22%"
-                  :src="role.iconUrl"
-                />
-                {{ role.name }}
-              </span>
             </div>
             <div class="description">
               <MkOmit>
@@ -155,15 +149,27 @@
               </dl>
             </div>
             <div class="status">
-              <MkA v-click-anime :to="userPage(user)">
+              <MkA
+                v-click-anime
+                :to="userPage(user)"
+                :class="{ active: page === 'index' }"
+              >
                 <b>{{ number(user.notesCount) }}</b>
                 <span>{{ i18n.ts.notes }}</span>
               </MkA>
-              <MkA v-click-anime :to="userPage(user, 'following')">
+              <MkA
+                v-click-anime
+                :to="userPage(user, 'following')"
+                :class="{ active: page === 'following' }"
+              >
                 <b>{{ number(user.followingCount) }}</b>
                 <span>{{ i18n.ts.following }}</span>
               </MkA>
-              <MkA v-click-anime :to="userPage(user, 'followers')">
+              <MkA
+                v-click-anime
+                :to="userPage(user, 'followers')"
+                :class="{ active: page === 'followers' }"
+              >
                 <b>{{ number(user.followersCount) }}</b>
                 <span>{{ i18n.ts.followers }}</span>
               </MkA>
@@ -188,7 +194,9 @@
             <XPhotos :key="user.id" :user="user" />
             <XActivity :key="user.id" :user="user" />
           </template>
-          <XNotes :no-gap="true" :pagination="pagination" />
+        </div>
+        <div>
+          <XUserTimeline :user="user" />
         </div>
       </div>
       <div v-if="!narrow" class="sub _gaps" style="container-type: inline-size">
@@ -210,6 +218,7 @@ import {
 } from "vue";
 import calcAge from "s-age";
 import * as misskey from "misskey-js";
+import XUserTimeline from "./index.timeline.vue";
 import XNote from "@/components/MkNote.vue";
 import MkFollowButton from "@/components/MkFollowButton.vue";
 import MkContainer from "@/components/MkContainer.vue";
@@ -228,7 +237,6 @@ import { i18n } from "@/i18n";
 import { $i } from "@/account";
 import { dateString } from "@/filters/date";
 import { confetti } from "@/scripts/confetti";
-import XNotes from "@/components/MkNotes.vue";
 
 const XPhotos = defineAsyncComponent(() => import("./index.photos.vue"));
 const XActivity = defineAsyncComponent(() => import("./index.activity.vue"));
@@ -246,14 +254,6 @@ let parallaxAnimationId = $ref<null | number>(null);
 let narrow = $ref<null | boolean>(null);
 let rootEl = $ref<null | HTMLElement>(null);
 let bannerEl = $ref<null | HTMLElement>(null);
-
-const pagination = {
-  endpoint: "users/notes" as const,
-  limit: 10,
-  params: computed(() => ({
-    userId: props.user.id,
-  })),
-};
 
 const style = $computed(() => {
   if (props.user.bannerUrl == null) return {};

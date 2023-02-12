@@ -31,12 +31,6 @@
     :is-stacked="isStacked"
     @parent-focus="emit('parent-focus', $event)"
   />
-  <XChannelColumn
-    v-else-if="column.type === 'channel'"
-    :column="column"
-    :is-stacked="isStacked"
-    @parent-focus="emit('parent-focus', $event)"
-  />
   <XAntennaColumn
     v-else-if="column.type === 'antenna'"
     :column="column"
@@ -63,7 +57,6 @@ import XMainColumn from "./main-column.vue";
 import XTlColumn from "./tl-column.vue";
 import XAntennaColumn from "./antenna-column.vue";
 import XListColumn from "./list-column.vue";
-import XChannelColumn from "./channel-column.vue";
 import XNotificationsColumn from "./notifications-column.vue";
 import XWidgetsColumn from "./widgets-column.vue";
 import XMentionsColumn from "./mentions-column.vue";

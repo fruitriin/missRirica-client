@@ -20,8 +20,11 @@ export function useNoteCapture(props: {
       case "reacted": {
         const reaction = body.reaction;
 
-        if (body.emoji && !(body.emoji.name in note.value.reactionEmojis)) {
-          note.value.reactionEmojis[body.emoji.name] = body.emoji.url;
+        if (body.emoji) {
+          const emojis = note.value.emojis || [];
+          if (!emojis.includes(body.emoji)) {
+            note.value.emojis = [...emojis, body.emoji];
+          }
         }
 
         // TODO: reactionsプロパティがない場合ってあったっけ？ なければ || {} は消せる

@@ -194,8 +194,6 @@ function changeAvatar(ev) {
       const { canceled } = await os.confirm({
         type: "question",
         text: i18n.t("cropImageAsk"),
-        okText: i18n.ts.cropYes,
-        cancelText: i18n.ts.cropNo,
       });
 
       if (!canceled) {
@@ -222,8 +220,6 @@ function changeBanner(ev) {
       const { canceled } = await os.confirm({
         type: "question",
         text: i18n.t("cropImageAsk"),
-        okText: i18n.ts.cropYes,
-        cancelText: i18n.ts.cropNo,
       });
 
       if (!canceled) {

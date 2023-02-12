@@ -1,10 +1,10 @@
 <template>
   <div :class="$style['root']" @dragover.stop="onDragover" @drop.stop="onDrop">
     <textarea
-      :class="$style['textarea']"
-      class="_acrylic"
       ref="textEl"
       v-model="text"
+      :class="$style['textarea']"
+      class="_acrylic"
       :placeholder="i18n.ts.inputMessageHere"
       @keydown="onKeydown"
       @compositionupdate="onCompositionUpdate"
@@ -34,8 +34,8 @@
       </div>
     </footer>
     <input
-      :class="$style['file-input']"
       ref="fileEl"
+      :class="$style['file-input']"
       type="file"
       @change="onChangeFile"
     />

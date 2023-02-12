@@ -13,12 +13,7 @@
         >
           <template #item="{ element }">
             <button class="_button item" @click="remove(element, $event)">
-              <MkCustomEmoji
-                v-if="element[0] === ':'"
-                :name="element"
-                :normal="true"
-              />
-              <MkEmoji v-else :emoji="element" :normal="true" />
+              <MkEmoji :emoji="element" :normal="true" />
             </button>
           </template>
           <template #footer>

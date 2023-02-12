@@ -60,7 +60,7 @@
           </div>
         </div>
 
-        <MkPostForm
+        <XPostForm
           v-if="$i"
           :channel="channel"
           class="post-form _panel _margin"
@@ -83,7 +83,7 @@
 <script lang="ts" setup>
 import { computed, inject, watch } from "vue";
 import MkContainer from "@/components/MkContainer.vue";
-import MkPostForm from "@/components/MkPostForm.vue";
+import XPostForm from "@/components/MkPostForm.vue";
 import XTimeline from "@/components/MkTimeline.vue";
 import XChannelFollowButton from "@/components/MkChannelFollowButton.vue";
 import * as os from "@/os";

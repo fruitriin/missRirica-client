@@ -25,7 +25,6 @@
             ref="imgEl"
             :src="imgUrl"
             style="display: none"
-            crossorigin="anonymous"
             @load="onImageLoad"
           />
         </div>

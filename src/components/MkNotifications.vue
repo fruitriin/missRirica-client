@@ -24,7 +24,7 @@
           :key="notification.id"
           :notification="notification"
           :with-time="true"
-          :full="true"
+          :full="false"
           class="_panel notification"
         />
       </MkDateSeparatedList>

@@ -87,15 +87,14 @@
           :autofocus="!input && !select"
           @click="ok"
           >{{
-            okText ??
-            (showCancelButton || input || select ? i18n.ts.ok : i18n.ts.gotIt)
+            showCancelButton || input || select ? i18n.ts.ok : i18n.ts.gotIt
           }}</MkButton
         >
         <MkButton
           v-if="showCancelButton || input || select"
           inline
           @click="cancel"
-          >{{ cancelText ?? i18n.ts.cancel }}</MkButton
+          >{{ i18n.ts.cancel }}</MkButton
         >
       </div>
       <div v-if="actions" :class="$style.buttons">
@@ -107,7 +106,7 @@
           @click="
             () => {
               action.callback();
-              modal?.close();
+              close();
             }
           "
           >{{ action.text }}</MkButton
@@ -162,8 +161,6 @@ const props = withDefaults(
     showOkButton?: boolean;
     showCancelButton?: boolean;
     cancelableByBgClick?: boolean;
-    okText?: string;
-    cancelText?: string;
   }>(),
   {
     type: "info",

@@ -64,6 +64,8 @@ async function renderChart() {
     }
   }
 
+  console.log(data);
+
   fetching = false;
 
   await nextTick();

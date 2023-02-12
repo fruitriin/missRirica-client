@@ -8,12 +8,6 @@
         <div class="body">
           <div v-if="!narrow || currentPage?.route.name == null" class="nav">
             <div class="baaadecd">
-              <MkInfo v-if="emailNotConfigured" warn class="info"
-                >{{ i18n.ts.emailNotConfiguredWarning }}
-                <MkA to="/settings/email" class="_link">{{
-                  i18n.ts.configure
-                }}</MkA></MkInfo
-              >
               <MkSuperMenu
                 :def="menuDef"
                 :grid="currentPage?.route.name == null"
@@ -60,7 +54,6 @@ import {
 } from "@/scripts/page-metadata";
 import * as os from "@/os";
 import { miLocalStorage } from "@/local-storage";
-import { fetchCustomEmojis } from "@/custom-emojis";
 
 const indexInfo = {
   title: i18n.ts.settings,
@@ -122,6 +115,12 @@ const menuDef = computed(() => [
         text: i18n.ts.email,
         to: "/settings/email",
         active: currentPage?.route.name === "email",
+      },
+      {
+        icon: "ti ti-share",
+        text: i18n.ts.integration,
+        to: "/settings/integration",
+        active: currentPage?.route.name === "integration",
       },
       {
         icon: "ti ti-lock",
@@ -231,13 +230,11 @@ const menuDef = computed(() => [
         type: "button",
         icon: "ti ti-trash",
         text: i18n.ts.clearCache,
-        action: async () => {
-          os.waiting();
+        action: () => {
           miLocalStorage.removeItem("locale");
           miLocalStorage.removeItem("theme");
           miLocalStorage.removeItem("emojis");
           miLocalStorage.removeItem("lastEmojisFetchedAt");
-          await fetchCustomEmojis();
           unisonReload();
         },
       },

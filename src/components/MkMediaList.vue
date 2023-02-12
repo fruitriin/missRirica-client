@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="hoawjimk">
     <XBanner
       v-for="media in mediaList.filter((media) => !previewable(media))"
       :key="media.id"
@@ -7,14 +7,11 @@
     />
     <div
       v-if="mediaList.filter((media) => previewable(media)).length > 0"
-      :class="$style.container"
+      class="gird-container"
     >
       <div
         ref="gallery"
-        :class="[
-          $style.medias,
-          count <= 4 ? $style['n' + count] : $style.nMany,
-        ]"
+        :data-count="mediaList.filter((media) => previewable(media)).length"
       >
         <template
           v-for="media in mediaList.filter((media) => previewable(media))"
@@ -22,13 +19,11 @@
           <XVideo
             v-if="media.type.startsWith('video')"
             :key="media.id"
-            :class="$style.media"
             :video="media"
           />
           <XImage
             v-else-if="media.type.startsWith('image')"
             :key="media.id"
-            :class="$style.media"
             class="image"
             :data-id="media.id"
             :image="media"
@@ -60,9 +55,6 @@ const props = defineProps<{
 
 const gallery = ref(null);
 const pswpZIndex = os.claimZIndex("middle");
-const count = $computed(
-  () => props.mediaList.filter((media) => previewable(media)).length
-);
 
 onMounted(() => {
   const lightbox = new PhotoSwipeLightbox({
@@ -168,64 +160,82 @@ const previewable = (file: misskey.entities.DriveFile): boolean => {
 };
 </script>
 
-<style lang="scss" module>
-.container {
-  position: relative;
-  width: 100%;
-  margin-top: 4px;
-}
+<style lang="scss" scoped>
+.hoawjimk {
+  > .gird-container {
+    position: relative;
+    width: 100%;
+    margin-top: 4px;
 
-.medias {
-  display: grid;
-  grid-gap: 8px;
-
-  // for webkit
-  height: 100%;
-
-  &.n1 {
-    aspect-ratio: 16/9;
-    grid-template-rows: 1fr;
-  }
-
-  &.n2 {
-    aspect-ratio: 16/9;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-  }
-
-  &.n3 {
-    aspect-ratio: 16/9;
-    grid-template-columns: 1fr 0.5fr;
-    grid-template-rows: 1fr 1fr;
-
-    > .media:nth-child(1) {
-      grid-row: 1 / 3;
+    &:before {
+      content: "";
+      display: block;
+      padding-top: 56.25%; // 16:9;
     }
 
-    > .media:nth-child(3) {
-      grid-column: 2 / 3;
-      grid-row: 2 / 3;
+    > div {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: grid;
+      grid-gap: 8px;
+
+      > * {
+        overflow: hidden;
+        border-radius: 6px;
+      }
+
+      &[data-count="1"] {
+        grid-template-rows: 1fr;
+      }
+
+      &[data-count="2"] {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+      }
+
+      &[data-count="3"] {
+        grid-template-columns: 1fr 0.5fr;
+        grid-template-rows: 1fr 1fr;
+
+        > *:nth-child(1) {
+          grid-row: 1 / 3;
+        }
+
+        > *:nth-child(3) {
+          grid-column: 2 / 3;
+          grid-row: 2 / 3;
+        }
+      }
+
+      &[data-count="4"] {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+
+      > *:nth-child(1) {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+      }
+
+      > *:nth-child(2) {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+      }
+
+      > *:nth-child(3) {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+      }
+
+      > *:nth-child(4) {
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+      }
     }
   }
-
-  &.n4 {
-    aspect-ratio: 16/9;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
-
-  &.nMany {
-    grid-template-columns: 1fr 1fr;
-
-    > .media {
-      aspect-ratio: 16/9;
-    }
-  }
-}
-
-.media {
-  overflow: hidden; // clipにするとバグる
-  border-radius: 8px;
 }
 </style>
 

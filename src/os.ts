@@ -3,7 +3,7 @@
 import { Component, markRaw, Ref, ref, defineAsyncComponent } from "vue";
 import { EventEmitter } from "eventemitter3";
 import insertTextAtCursor from "insert-text-at-cursor";
-import * as Misskey from "yamisskey-js";
+import * as Misskey from "misskey-js";
 import { i18n } from "./i18n";
 import MkPostFormDialog from "@/components/MkPostFormDialog.vue";
 import MkWaitingDialog from "@/components/MkWaitingDialog.vue";
@@ -15,7 +15,6 @@ import MkEmojiPickerWindow from "@/components/MkEmojiPickerWindow.vue";
 import MkPopupMenu from "@/components/MkPopupMenu.vue";
 import MkContextMenu from "@/components/MkContextMenu.vue";
 import { MenuItem } from "@/types/menu";
-import copyToClipboard from "./scripts/copy-to-clipboard";
 
 import { $i } from "@/account";
 export const openingWindowsCount = ref(0);
@@ -61,47 +60,15 @@ export const apiWithDialog = ((
   token?: string | null | undefined
 ) => {
   const promise = api(endpoint, data, token);
-  promiseDialog(promise, null, async (err) => {
+  promiseDialog(promise, null, (err) => {
     let title = null;
     let text = err.message + "\n" + (err as any).id;
-    if (err.code === "INTERNAL_ERROR") {
-      title = i18n.ts.internalServerError;
-      text = i18n.ts.internalServerErrorDescription;
-      const date = new Date().toISOString();
-      const { result } = await actions({
-        type: "error",
-        title,
-        text,
-        actions: [
-          {
-            value: "ok",
-            text: i18n.ts.gotIt,
-            primary: true,
-          },
-          {
-            value: "copy",
-            text: i18n.ts.copyErrorInfo,
-          },
-        ],
-      });
-      if (result === "copy") {
-        copyToClipboard(
-          `Endpoint: ${endpoint}\nInfo: ${JSON.stringify(
-            err.info
-          )}\nDate: ${date}`
-        );
-        success();
-      }
-      return;
-    } else if (err.code === "RATE_LIMIT_EXCEEDED") {
+    if (err.code === "RATE_LIMIT_EXCEEDED") {
       title = i18n.ts.cannotPerformTemporary;
       text = i18n.ts.cannotPerformTemporaryDescription;
     } else if (err.code.startsWith("TOO_MANY")) {
       title = i18n.ts.youCannotCreateAnymore;
       text = `${i18n.ts.error}: ${err.id}`;
-    } else if (err.message.startsWith("Unexpected token")) {
-      title = i18n.ts.gotInvalidResponseError;
-      text = i18n.ts.gotInvalidResponseErrorDescription;
     }
     alert({
       type: "error",
@@ -271,8 +238,6 @@ export function confirm(props: {
   type: "error" | "info" | "success" | "warning" | "waiting" | "question";
   title?: string | null;
   text?: string | null;
-  okText?: string;
-  cancelText?: string;
 }): Promise<{ canceled: boolean }> {
   return new Promise((resolve, reject) => {
     popup(
@@ -280,49 +245,6 @@ export function confirm(props: {
       {
         ...props,
         showCancelButton: true,
-      },
-      {
-        done: (result) => {
-          resolve(result ? result : { canceled: true });
-        },
-      },
-      "closed"
-    );
-  });
-}
-
-// TODO: const T extends ... にしたい
-// https://zenn.dev/general_link/articles/813e47b7a0eef7#const-type-parameters
-export function actions<
-  T extends {
-    value: string;
-    text: string;
-    primary?: boolean;
-  }[]
->(props: {
-  type: "error" | "info" | "success" | "warning" | "waiting" | "question";
-  title?: string | null;
-  text?: string | null;
-  actions: T;
-}): Promise<
-  | { canceled: true; result: undefined }
-  | {
-      canceled: false;
-      result: T[number]["value"];
-    }
-> {
-  return new Promise((resolve, reject) => {
-    popup(
-      MkDialog,
-      {
-        ...props,
-        actions: props.actions.map((a) => ({
-          text: a.text,
-          primary: a.primary,
-          callback: () => {
-            resolve({ canceled: false, result: a.value });
-          },
-        })),
       },
       {
         done: (result) => {
@@ -810,9 +732,3 @@ export function checkExistence(fileData: ArrayBuffer): Promise<any> {
 		});
 	});
 }*/
-
-export const shownNoteIds = new Set();
-
-window.setInterval(() => {
-  shownNoteIds.clear();
-}, 1000 * 60 * 5);

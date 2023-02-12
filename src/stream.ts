@@ -1,4 +1,4 @@
-import * as Misskey from "yamisskey-js";
+import * as Misskey from "misskey-js";
 import { markRaw } from "vue";
 import { $i } from "@/account";
 

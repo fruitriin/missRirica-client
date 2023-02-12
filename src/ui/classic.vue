@@ -180,15 +180,13 @@ function onAiClick(ev) {
 }
 
 if (window.innerWidth < 1024) {
-  const currentUI = miLocalStorage.getItem("ui");
-  miLocalStorage.setItem("ui_temp", currentUI || "default");
   miLocalStorage.setItem("ui", "default");
   location.reload();
 }
 
 document.documentElement.style.overflowY = "scroll";
 
-defaultStore.loaded.then(() => {
+defaultStore.ready.then(() => {
   if (defaultStore.state.widgets.length === 0) {
     defaultStore.set("widgets", [
       {

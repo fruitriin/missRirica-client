@@ -342,7 +342,7 @@ function getButtonOptions(
   if (primary) utils.assertBoolean(primary);
   const rounded = def.value.get("rounded");
   if (rounded) utils.assertBoolean(rounded);
-  const disabled = def.value.get("disabled");
+  const disabled = button.value.get("disabled");
   if (disabled) utils.assertBoolean(disabled);
 
   return {

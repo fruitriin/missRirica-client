@@ -28,11 +28,7 @@ export function install(plugin) {
           inputText({
             title: q,
           }).then(({ canceled, result: a }) => {
-            if (canceled) {
-              ok("");
-            } else {
-              ok(a);
-            }
+            ok(a);
           });
         });
       },

@@ -1,5 +1,5 @@
 import { defineAsyncComponent, reactive } from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import { showSuspendedDialog } from "./scripts/show-suspended-dialog";
 import { i18n } from "./i18n";
 import { miLocalStorage } from "./local-storage";
@@ -37,6 +37,7 @@ export async function signout() {
   await removeAccount($i.id);
 
   const accounts = await getAccounts();
+  document.cookie = "igi=; path=/";
 
   if (accounts.length > 0) login(accounts[0].token, accounts[0].instanceUrl);
   else unisonReload("/");
@@ -50,8 +51,8 @@ export async function getAccounts(): Promise<
 
 export async function addAccount(
   id: Account["id"],
-    token: Account["token"],
-    instanceUrl: string
+  token: Account["token"],
+  instanceUrl: string
 ) {
   const accounts = await getAccounts();
   if (!accounts.some((x) => x.id === id)) {

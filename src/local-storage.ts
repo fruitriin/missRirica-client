@@ -18,7 +18,6 @@ type Keys =
   | "useSystemFont"
   | "fontSize"
   | "ui"
-  | "ui_temp"
   | "locale"
   | "localeVersion"
   | "theme"

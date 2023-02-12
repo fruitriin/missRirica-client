@@ -1,10 +1,6 @@
 <template>
   <MkSpacer :content-max="1200">
-    <MkAchievements
-      :user="user"
-      :with-locked="false"
-      :with-description="$i != null && props.user.id === $i.id"
-    />
+    <MkAchievements :user="user" :with-locked="false" />
   </MkSpacer>
 </template>
 

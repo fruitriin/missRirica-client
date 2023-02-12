@@ -1,10 +1,6 @@
 <template>
   <div :class="$style.root">
-    <XNotification
-      :notification="notification"
-      class="notification _acrylic"
-      :full="false"
-    />
+    <XNotification :notification="notification" class="notification _acrylic" />
   </div>
 </template>
 

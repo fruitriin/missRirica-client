@@ -25,6 +25,12 @@
           @click="reduceFrequency"
           >{{ $ts._ad.reduceFrequencyOfThisAd }}</MkButton
         >
+        <MkButton
+          v-if="$i && $i?.policies?.canHideAds"
+          :class="$style.menuButton"
+          @click="hide"
+          >{{ $ts._ad.hide }}</MkButton
+        >
         <button class="_textButton" @click="toggleMenu">
           {{ $ts._ad.back }}
         </button>
@@ -102,7 +108,12 @@ const choseAd = (): Ad | null => {
 };
 
 const chosen = ref(choseAd());
-const shouldHide = $ref($i && $i.policies.canHideAds);
+let shouldHide = $ref(
+  chosen.value &&
+    $i &&
+    $i?.policies?.canHideAds &&
+    defaultStore.state.hiddenAds.includes(chosen.value.id)
+);
 
 function reduceFrequency(): void {
   if (chosen.value == null) return;
@@ -111,6 +122,13 @@ function reduceFrequency(): void {
   os.success();
   chosen.value = choseAd();
   showMenu.value = false;
+}
+
+function hide() {
+  if (chosen.value == null) return;
+  defaultStore.push("hiddenAds", chosen.value.id);
+  os.success();
+  shouldHide = true;
 }
 </script>
 

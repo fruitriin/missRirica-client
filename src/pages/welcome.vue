@@ -1,5 +1,5 @@
 <template>
-<XEntrance/>
+  <XEntrance />
 </template>
 
 <script lang="ts" setup>

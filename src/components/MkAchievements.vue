@@ -41,17 +41,11 @@
           </div>
           <div :class="$style.description">
             {{
-              withDescription
-                ? i18n.ts._achievements._types["_" + achievement.name]
-                    .description
-                : "???"
+              i18n.ts._achievements._types["_" + achievement.name].description
             }}
           </div>
           <div
-            v-if="
-              i18n.ts._achievements._types['_' + achievement.name].flavor &&
-              withDescription
-            "
+            v-if="i18n.ts._achievements._types['_' + achievement.name].flavor"
             :class="$style.flavor"
           >
             {{ i18n.ts._achievements._types["_" + achievement.name].flavor }}
@@ -97,11 +91,9 @@ const props = withDefaults(
   defineProps<{
     user: misskey.entities.User;
     withLocked: boolean;
-    withDescription: boolean;
   }>(),
   {
     withLocked: true,
-    withDescription: true,
   }
 );
 
@@ -165,7 +157,6 @@ onMounted(() => {
 }
 
 .iconFrame {
-  position: relative;
   width: 58px;
   height: 58px;
   padding: 6px;

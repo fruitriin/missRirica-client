@@ -1,12 +1,8 @@
 import { query, appendQuery } from "@/scripts/url";
 import { url } from "@/config";
-import { instance } from "@/instance";
 
 export function getProxiedImageUrl(imageUrl: string, type?: "preview"): string {
-  if (
-    imageUrl.startsWith(instance.mediaProxy + "/") ||
-    imageUrl.startsWith("/proxy/")
-  ) {
+  if (imageUrl.startsWith(`${url}/proxy/`) || imageUrl.startsWith("/proxy/")) {
     // もう既にproxyっぽそうだったらsearchParams付けるだけ
     return appendQuery(
       imageUrl,
@@ -17,7 +13,7 @@ export function getProxiedImageUrl(imageUrl: string, type?: "preview"): string {
     );
   }
 
-  return `${instance.mediaProxy}/image.webp?${query({
+  return `${url}/proxy/image.webp?${query({
     url: imageUrl,
     fallback: "1",
     ...(type ? { [type]: "1" } : {}),
@@ -37,19 +33,22 @@ export function getStaticImageUrl(baseUrl: string): string {
     ? new URL(baseUrl)
     : new URL(baseUrl, url);
 
+  if (u.href.startsWith(`${url}/proxy/`)) {
+    // もう既にproxyっぽそうだったらsearchParams付けるだけ
+    u.searchParams.set("static", "1");
+    return u.href;
+  }
+
   if (u.href.startsWith(`${url}/emoji/`)) {
     // もう既にemojiっぽそうだったらsearchParams付けるだけ
     u.searchParams.set("static", "1");
     return u.href;
   }
 
-  if (u.href.startsWith(instance.mediaProxy + "/")) {
-    // もう既にproxyっぽそうだったらsearchParams付けるだけ
-    u.searchParams.set("static", "1");
-    return u.href;
-  }
+  // 拡張子がないとキャッシュしてくれないCDNがあるのでダミーの名前を指定する
+  const dummy = `${encodeURIComponent(`${u.host}${u.pathname}`)}.webp`;
 
-  return `${instance.mediaProxy}/static.webp?${query({
+  return `${url}/proxy/${dummy}?${query({
     url: u.href,
     static: "1",
   })}`;

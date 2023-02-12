@@ -29,13 +29,13 @@
           <div class="action">
             <div>
               <input id="term" v-model="isTerm" type="checkbox" /><label
-              for="term"
-            >
-              {{ $ts.ririca.term }}</label
-            ><br />
+                for="term"
+              >
+                {{ $ts.ririca.term }}</label
+              ><br />
               <a href="https://riinswork.space/missRirica/privacy/">{{
-                  $ts.ririca.termLink
-                }}</a>
+                $ts.ririca.termLink
+              }}</a>
             </div>
 
             <!--					<MkButton inline rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.signup }}</MkButton>-->
@@ -58,7 +58,7 @@
                 <I18n :src="i18n.ts.i18nInfo" tag="span">
                   <template #link>
                     <MkLink url="https://crowdin.com/project/misskey"
-                    >Crowdin</MkLink
+                      >Crowdin</MkLink
                     >
                   </template>
                 </I18n>
@@ -181,18 +181,18 @@ async function reloadAsk() {
       height: calc(100% - 128px);
       overflow: hidden;
       -webkit-mask-image: linear-gradient(
-          0deg,
-          rgba(0, 0, 0, 0) 0%,
-          rgba(0, 0, 0, 1) 128px,
-          rgba(0, 0, 0, 1) calc(100% - 128px),
-          rgba(0, 0, 0, 0) 100%
+        0deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 1) 128px,
+        rgba(0, 0, 0, 1) calc(100% - 128px),
+        rgba(0, 0, 0, 0) 100%
       );
       mask-image: linear-gradient(
-          0deg,
-          rgba(0, 0, 0, 0) 0%,
-          rgba(0, 0, 0, 1) 128px,
-          rgba(0, 0, 0, 1) calc(100% - 128px),
-          rgba(0, 0, 0, 0) 100%
+        0deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 1) 128px,
+        rgba(0, 0, 0, 1) calc(100% - 128px),
+        rgba(0, 0, 0, 0) 100%
       );
 
       @media (max-width: 1200px) {

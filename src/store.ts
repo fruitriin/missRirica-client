@@ -47,10 +47,6 @@ export const defaultStore = markRaw(
       where: "account",
       default: false,
     },
-    collapseRenotes: {
-      where: "account",
-      default: true,
-    },
     rememberNoteVisibility: {
       where: "account",
       default: false,
@@ -88,6 +84,10 @@ export const defaultStore = markRaw(
       default: [],
     },
     mutedAds: {
+      where: "account",
+      default: [] as string[],
+    },
+    hiddenAds: {
       where: "account",
       default: [] as string[],
     },
@@ -157,15 +157,11 @@ export const defaultStore = markRaw(
     },
     animation: {
       where: "device",
-      default: !matchMedia("(prefers-reduced-motion)").matches,
+      default: true,
     },
     animatedMfm: {
       where: "device",
       default: false,
-    },
-    advancedMfm: {
-      where: "device",
-      default: true,
     },
     loadRawImages: {
       where: "device",
@@ -177,7 +173,7 @@ export const defaultStore = markRaw(
     },
     disableShowingAnimatedImages: {
       where: "device",
-      default: matchMedia("(prefers-reduced-motion)").matches,
+      default: false,
     },
     emojiStyle: {
       where: "device",
@@ -189,11 +185,11 @@ export const defaultStore = markRaw(
     },
     useBlurEffectForModal: {
       where: "device",
-      default: !/mobile|iphone|android/.test(navigator.userAgent.toLowerCase()), // 循環参照するのでdevice-kind.tsは参照できない
+      default: true,
     },
     useBlurEffect: {
       where: "device",
-      default: !/mobile|iphone|android/.test(navigator.userAgent.toLowerCase()), // 循環参照するのでdevice-kind.tsは参照できない
+      default: true,
     },
     showFixedPostForm: {
       where: "device",
@@ -339,19 +335,6 @@ export class ColdDeviceStorage {
     } else {
       return JSON.parse(value);
     }
-  }
-
-  public static getAll(): Partial<typeof this.default> {
-    return (Object.keys(this.default) as (keyof typeof this.default)[]).reduce(
-      (acc, key) => {
-        const value = localStorage.getItem(PREFIX + key);
-        if (value != null) {
-          acc[key] = JSON.parse(value);
-        }
-        return acc;
-      },
-      {} as any
-    );
   }
 
   public static set<T extends keyof typeof ColdDeviceStorage.default>(

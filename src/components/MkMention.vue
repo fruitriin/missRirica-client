@@ -5,7 +5,11 @@
     :to="url"
     :style="{ background: bgCss }"
   >
-    <img :class="$style.icon" :src="`${$i.instanceUrl}/avatar/@${username}@${host}`" alt="" />
+    <img
+      :class="$style.icon"
+      :src="`${$i.instanceUrl}/avatar/@${username}@${host}`"
+      alt=""
+    />
     <span>
       <span :class="$style.username">@{{ username }}</span>
       <span

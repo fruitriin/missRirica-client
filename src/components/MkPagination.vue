@@ -32,15 +32,13 @@
         <MkButton
           v-if="!moreFetching"
           v-appear="
-            enableInfiniteScroll && !props.disableAutoLoad
-              ? fetchMoreAhead
-              : null
+            enableInfiniteScroll && !props.disableAutoLoad ? fetchMore : null
           "
           :class="$style.more"
           :disabled="moreFetching"
           :style="{ cursor: moreFetching ? 'wait' : 'pointer' }"
           primary
-          @click="fetchMoreAhead"
+          @click="fetchMore"
         >
           {{ i18n.ts.loadMore }}
         </MkButton>

@@ -14,9 +14,6 @@
       <i class="ti ti-x"></i>
     </button>
     <iframe
-      v-if="
-        player.url.startsWith('http://') || player.url.startsWith('https://')
-      "
       :class="$style.playerIframe"
       :src="
         player.url +
@@ -30,7 +27,6 @@
       allow="autoplay; encrypted-media"
       allowfullscreen
     />
-    <span v-else>invalid url</span>
   </div>
   <div
     v-else-if="tweetId && tweetExpanded"
@@ -154,8 +150,6 @@ let tweetHeight = $ref(150);
 let unknownUrl = $ref(false);
 
 const requestUrl = new URL(props.url);
-if (!["http:", "https:"].includes(requestUrl.protocol))
-  throw new Error("invalid url");
 
 if (
   requestUrl.hostname === "twitter.com" ||

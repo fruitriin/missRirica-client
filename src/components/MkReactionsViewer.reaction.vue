@@ -12,11 +12,7 @@
     ]"
     @click="toggleReaction()"
   >
-    <MkReactionIcon
-      :class="$style.icon"
-      :reaction="reaction"
-      :emoji-url="note.reactionEmojis[reaction.substr(1, reaction.length - 2)]"
-    />
+    <MkReactionIcon :class="$style.icon" :reaction="reaction" />
     <span :class="$style.count">{{ count }}</span>
   </button>
 </template>
@@ -31,7 +27,6 @@ import { useTooltip } from "@/scripts/use-tooltip";
 import { $i } from "@/account";
 import MkReactionEffect from "@/components/MkReactionEffect.vue";
 import { claimAchievement } from "@/scripts/achievements";
-import { defaultStore } from "@/store";
 
 const props = defineProps<{
   reaction: string;
@@ -76,7 +71,6 @@ const toggleReaction = () => {
 
 const anime = () => {
   if (document.hidden) return;
-  if (!defaultStore.state.animation) return;
 
   const rect = buttonEl.value.getBoundingClientRect();
   const x = rect.left + 16;
@@ -133,7 +127,7 @@ useTooltip(
   border-radius: 4px;
 
   &.canToggle {
-    background: var(--buttonBg);
+    background: rgba(0, 0, 0, 0.05);
 
     &:hover {
       background: rgba(0, 0, 0, 0.1);
