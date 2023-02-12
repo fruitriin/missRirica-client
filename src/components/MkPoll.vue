@@ -37,7 +37,7 @@
 
 <script lang="ts" setup>
 import { computed, onUnmounted, ref, toRef } from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import { sum } from "@/scripts/array";
 import { pleaseLogin } from "@/scripts/please-login";
 import * as os from "@/os";

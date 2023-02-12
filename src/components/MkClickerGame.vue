@@ -12,7 +12,7 @@
         :class="$style.button"
         @click="onClick"
       >
-        <!--			<img src="/client-assets/cookie.png" :class="$style.img">-->
+        <img src="/client-assets/cookie.png" :class="$style.img" />
       </button>
     </div>
     <div v-else>

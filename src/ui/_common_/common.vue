@@ -1,62 +1,67 @@
 <template>
-  <component
-    :is="popup.component"
-    v-for="popup in popups"
-    :key="popup.id"
-    v-bind="popup.props"
-    v-on="popup.events"
-  />
+<component
+	:is="popup.component"
+	v-for="popup in popups"
+	:key="popup.id"
+	v-bind="popup.props"
+	v-on="popup.events"
+/>
 
-  <XUpload v-if="uploads.length > 0" />
+<XUpload v-if="uploads.length > 0"/>
 
-  <TransitionGroup
-    tag="div"
-    :class="$style.notifications"
-    :move-class="
-      $store.state.animation ? $style.transition_notification_move : ''
-    "
-    :enter-active-class="
-      $store.state.animation ? $style.transition_notification_enterActive : ''
-    "
-    :leave-active-class="
-      $store.state.animation ? $style.transition_notification_leaveActive : ''
-    "
-    :enter-from-class="
-      $store.state.animation ? $style.transition_notification_enterFrom : ''
-    "
-    :leave-to-class="
-      $store.state.animation ? $style.transition_notification_leaveTo : ''
-    "
-  >
-    <XNotification
-      v-for="notification in notifications"
-      :key="notification.id"
-      :notification="notification"
-      :class="$style.notification"
-    />
-  </TransitionGroup>
+<TransitionGroup
+	tag="div"
+	:class="$style.notifications"
+	:move-class="
+		$store.state.animation ? $style.transition_notification_move : ''
+	"
+	:enter-active-class="
+		$store.state.animation ? $style.transition_notification_enterActive : ''
+	"
+	:leave-active-class="
+		$store.state.animation ? $style.transition_notification_leaveActive : ''
+	"
+	:enter-from-class="
+		$store.state.animation ? $style.transition_notification_enterFrom : ''
+	"
+	:leave-to-class="
+		$store.state.animation ? $style.transition_notification_leaveTo : ''
+	"
+>
+	<XNotification
+		v-for="notification in notifications"
+		:key="notification.id"
+		:notification="notification"
+		:class="$style.notification"
+	/>
+</TransitionGroup>
 
-  <XStreamIndicator />
+<XStreamIndicator/>
 
-  <div v-if="dev" id="devTicker"><span>DEV BUILD</span></div>
+<div v-if="pendingApiRequestsCount > 0" id="wait"></div>
 
-  <div v-if="$i && $i.isBot" id="botWarn">
-    <span>{{ i18n.ts.loggedInAsBot }}</span>
-  </div>
+<div v-if="dev" id="devTicker"><span>DEV BUILD</span></div>
+
+<div v-if="$i && $i.isBot" id="botWarn">
+	<span>{{ i18n.ts.loggedInAsBot }}</span>
+</div>
 </template>
 
 <script lang="ts" setup>
 import { defineAsyncComponent, nextTick } from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import { swInject } from "./sw-inject";
 import XNotification from "./notification.vue";
-import { popup, popups } from "@/os";
+import { popup, popups, pendingApiRequestsCount } from "@/os";
 import { uploads } from "@/scripts/upload";
 import * as sound from "@/scripts/sound";
 import { $i } from "@/account";
 import { stream } from "@/stream";
 import { i18n } from "@/i18n";
 
+const XStreamIndicator = defineAsyncComponent(
+  () => import("./stream-indicator.vue")
+);
 const XUpload = defineAsyncComponent(() => import("./upload.vue"));
 
 const dev = _DEV_;

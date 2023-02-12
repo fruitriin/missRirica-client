@@ -18,7 +18,7 @@ import {
 } from "vue";
 import { Chart } from "chart.js";
 import tinycolor from "tinycolor2";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import * as os from "@/os";
 import { defaultStore } from "@/store";
 import { useChartTooltip } from "@/scripts/use-chart-tooltip";

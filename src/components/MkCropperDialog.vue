@@ -25,6 +25,7 @@
             ref="imgEl"
             :src="imgUrl"
             style="display: none"
+            crossorigin="anonymous"
             @load="onImageLoad"
           />
         </div>
@@ -35,7 +36,7 @@
 
 <script lang="ts" setup>
 import { nextTick, onMounted } from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import Cropper from "cropperjs";
 import tinycolor from "tinycolor2";
 import MkModalWindow from "@/components/MkModalWindow.vue";

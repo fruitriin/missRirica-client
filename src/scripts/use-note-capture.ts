@@ -1,5 +1,5 @@
 import { onUnmounted, Ref } from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import { stream } from "@/stream";
 import { $i } from "@/account";
 
@@ -20,11 +20,8 @@ export function useNoteCapture(props: {
       case "reacted": {
         const reaction = body.reaction;
 
-        if (body.emoji) {
-          const emojis = note.value.emojis || [];
-          if (!emojis.includes(body.emoji)) {
-            note.value.emojis = [...emojis, body.emoji];
-          }
+        if (body.emoji && !(body.emoji.name in note.value.reactionEmojis)) {
+          note.value.reactionEmojis[body.emoji.name] = body.emoji.url;
         }
 
         // TODO: reactionsプロパティがない場合ってあったっけ？ なければ || {} は消せる

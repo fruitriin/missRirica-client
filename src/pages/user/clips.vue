@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
 import { computed } from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import MkPagination from "@/components/MkPagination.vue";
 
 const props = defineProps<{

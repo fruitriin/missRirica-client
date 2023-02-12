@@ -32,13 +32,15 @@
         <MkButton
           v-if="!moreFetching"
           v-appear="
-            enableInfiniteScroll && !props.disableAutoLoad ? fetchMore : null
+            enableInfiniteScroll && !props.disableAutoLoad
+              ? fetchMoreAhead
+              : null
           "
           :class="$style.more"
           :disabled="moreFetching"
           :style="{ cursor: moreFetching ? 'wait' : 'pointer' }"
           primary
-          @click="fetchMore"
+          @click="fetchMoreAhead"
         >
           {{ i18n.ts.loadMore }}
         </MkButton>
@@ -78,7 +80,7 @@ import {
   ref,
   watch,
 } from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import * as os from "@/os";
 import {
   onScrollTop,

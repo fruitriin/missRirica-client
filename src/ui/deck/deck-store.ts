@@ -1,6 +1,6 @@
 import { throttle } from "throttle-debounce";
 import { markRaw } from "vue";
-import { notificationTypes } from "yamisskey-js";
+import { notificationTypes } from "misskey-js";
 import { Storage } from "../../pizzax";
 import { i18n } from "@/i18n";
 import { api } from "@/os";
@@ -20,6 +20,7 @@ export type Column = {
     | "notifications"
     | "tl"
     | "antenna"
+    | "channel"
     | "list"
     | "mentions"
     | "direct";
@@ -30,6 +31,7 @@ export type Column = {
   flexible?: boolean;
   antennaId?: string;
   listId?: string;
+  channelId?: string;
   includingTypes?: (typeof notificationTypes)[number][];
   tl?: "home" | "local" | "social" | "global";
 };

@@ -18,7 +18,7 @@ import {
 } from "vue";
 import { Chart, ChartDataset } from "chart.js";
 import tinycolor from "tinycolor2";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import gradient from "chartjs-plugin-gradient";
 import { satisfies } from "compare-versions";
 import * as os from "@/os";

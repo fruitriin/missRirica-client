@@ -45,7 +45,7 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent } from "vue";
-import { notificationTypes } from "yamisskey-js";
+import { notificationTypes } from "misskey-js";
 import MkButton from "@/components/MkButton.vue";
 import FormLink from "@/components/form/link.vue";
 import FormSection from "@/components/form/section.vue";

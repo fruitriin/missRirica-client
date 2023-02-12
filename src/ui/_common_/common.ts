@@ -60,7 +60,7 @@ export function openInstanceMenu(ev: MouseEvent) {
             icon: "ti ti-cookie",
           },
           $i &&
-          ($i.isAdmin || $i?.policies?.canInvite) &&
+          ($i.isAdmin || $i.policies.canInvite) &&
           instance.disableRegistration
             ? {
                 text: i18n.ts.invite,
@@ -82,7 +82,7 @@ export function openInstanceMenu(ev: MouseEvent) {
                 },
               }
             : undefined,
-          $i && ($i.isAdmin || $i?.policies?.canManageCustomEmojis)
+          $i && ($i.isAdmin || $i.policies.canManageCustomEmojis)
             ? {
                 type: "link",
                 to: "/custom-emojis-manager",
@@ -104,12 +104,6 @@ export function openInstanceMenu(ev: MouseEvent) {
         type: "link",
         text: i18n.ts.aboutMisskey,
         to: "/about-misskey",
-      },
-      {
-        type: "a",
-        target: "_blank",
-        href: "https://github.com/fruitriin/missRirica-client",
-        text: i18n.ts.ririca.name,
       },
     ],
     ev.currentTarget ?? ev.target,

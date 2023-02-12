@@ -1,0 +1,736 @@
+diff --color=auto -u Ririca13/src/account.ts src/account.ts
+--- Ririca13/src/account.ts	2023-02-12 22:14:02
++++ src/account.ts	2023-02-12 22:15:42
+@@ -1,10 +1,9 @@
+ import { defineAsyncComponent, reactive } from "vue";
+-import * as misskey from "misskey-js";
++import * as misskey from "yamisskey-js";
+ import { showSuspendedDialog } from "./scripts/show-suspended-dialog";
+ import { i18n } from "./i18n";
+ import { miLocalStorage } from "./local-storage";
+ import { del, get, set } from "@/scripts/idb-proxy";
+-import { apiUrl } from "@/config";
+ import { waiting, api, popup, popupMenu, success, alert } from "@/os";
+ import { unisonReload, reloadChannel } from "@/scripts/unison-reload";
+ 
+@@ -12,12 +11,16 @@
+ 
+ type Account = misskey.entities.MeDetailed;
+ 
+-const accountData = miLocalStorage.getItem("account");
++let accountData = null;
++try {
++  accountData = JSON.parse(miLocalStorage.getItem("account"));
++} catch (e) {
++  miLocalStorage.removeItem("account");
++  window.location.reload();
++}
+ 
+ // TODO: 外部からはreadonlyに
+-export const $i = accountData
+-  ? reactive(JSON.parse(accountData) as Account)
+-  : null;
++export const $i = accountData ? reactive(accountData as Account) : null;
+ 
+ export const iAmModerator = $i != null && ($i.isAdmin || $i.isModerator);
+ export const iAmAdmin = $i != null && $i.isAdmin;
+@@ -34,52 +37,26 @@
+   await removeAccount($i.id);
+ 
+   const accounts = await getAccounts();
+-
+-  //#region Remove service worker registration
+-  try {
+-    if (navigator.serviceWorker.controller) {
+-      const registration = await navigator.serviceWorker.ready;
+-      const push = await registration.pushManager.getSubscription();
+-      if (push) {
+-        await window.fetch(`${apiUrl}/sw/unregister`, {
+-          method: "POST",
+-          body: JSON.stringify({
+-            i: $i.token,
+-            endpoint: push.endpoint,
+-          }),
+-          headers: {
+-            "Content-Type": "application/json",
+-          },
+-        });
+-      }
+-    }
+-
+-    if (accounts.length === 0) {
+-      await navigator.serviceWorker.getRegistrations().then((registrations) => {
+-        return Promise.all(
+-          registrations.map((registration) => registration.unregister())
+-        );
+-      });
+-    }
+-  } catch (err) {}
+-  //#endregion
+-
+   document.cookie = "igi=; path=/";
+ 
+-  if (accounts.length > 0) login(accounts[0].token);
++  if (accounts.length > 0) login(accounts[0].token, accounts[0].instanceUrl);
+   else unisonReload("/");
+ }
+ 
+ export async function getAccounts(): Promise<
+-  { id: Account["id"]; token: Account["token"] }[]
++  { id: Account["id"]; token: Account["token"]; instanceUrl: string }[]
+ > {
+   return (await get("accounts")) || [];
+ }
+ 
+-export async function addAccount(id: Account["id"], token: Account["token"]) {
++export async function addAccount(
++  id: Account["id"],
++  token: Account["token"],
++  instanceUrl: string
++) {
+   const accounts = await getAccounts();
+   if (!accounts.some((x) => x.id === id)) {
+-    await set("accounts", accounts.concat([{ id, token }]));
++    await set("accounts", accounts.concat([{ id, token, instanceUrl }]));
+   }
+ }
+ 
+@@ -94,43 +71,32 @@
+   else await del("accounts");
+ }
+ 
+-function fetchAccount(token: string): Promise<Account> {
+-  return new Promise((done, fail) => {
+-    // Fetch user
+-    window
+-      .fetch(`${apiUrl}/i`, {
+-        method: "POST",
+-        body: JSON.stringify({
+-          i: token,
+-        }),
+-        headers: {
+-          "Content-Type": "application/json",
+-        },
+-      })
+-      .then((res) => res.json())
+-      .then((res) => {
+-        if (res.error) {
+-          if (res.error.id === "a8c724b3-6e9c-4b46-b1a8-bc3ed6258370") {
+-            showSuspendedDialog().then(() => {
+-              signout();
+-            });
+-          } else {
+-            alert({
+-              type: "error",
+-              title: i18n.ts.failedToFetchAccountInformation,
+-              text: JSON.stringify(res.error),
+-            });
+-          }
+-        } else {
+-          res.token = token;
+-          done(res);
+-        }
+-      })
+-      .catch(fail);
+-  });
++function fetchAccount(
++  token: string,
++  instanceUrl: string
++): Promise<Account & { instanceUrl: string }> {
++  return new misskey.api.APIClient({ origin: instanceUrl, credential: token })
++    .request("i")
++    .then((res) => {
++      return { ...(res as Account), token, instanceUrl };
++    })
++    .catch((res) => {
++      if (res.error.id === "a8c724b3-6e9c-4b46-b1a8-bc3ed6258370") {
++        showSuspendedDialog().then(() => {
++          signout();
++        });
++      } else {
++        alert({
++          type: "error",
++          title: i18n.ts.failedToFetchAccountInformation,
++          text: JSON.stringify(res.error),
++        });
++      }
++      return Promise.reject(res);
++    });
+ }
+ 
+-export function updateAccount(accountData) {
++export function updateAccount(accountData: Object) {
+   for (const [key, value] of Object.entries(accountData)) {
+     $i[key] = value;
+   }
+@@ -138,16 +104,29 @@
+ }
+ 
+ export function refreshAccount() {
+-  return fetchAccount($i.token).then(updateAccount);
++  return fetchAccount($i.token, $i.instanceUrl).then(updateAccount);
+ }
+ 
+-export async function login(token: Account["token"], redirect?: string) {
++export async function login(
++  token: Account["token"],
++  instanceUrl: string,
++  redirect?: string
++) {
+   waiting();
+-  if (_DEV_) console.log("logging as token ", token);
+-  const me = await fetchAccount(token);
++  if (_DEV_) console.log("logging as token ", token, instanceUrl);
++  const me = await fetchAccount(token, instanceUrl);
+   miLocalStorage.setItem("account", JSON.stringify(me));
++  miLocalStorage.setItem(
++    "instance",
++    JSON.stringify(
++      await new misskey.api.APIClient({
++        origin: instanceUrl,
++        credential: token,
++      }).request("meta")
++    )
++  );
+   document.cookie = `token=${token}; path=/; max-age=31536000`; // bull dashboardの認証とかで使う
+-  await addAccount(me.id, token);
++  await addAccount(me.id, token, instanceUrl);
+ 
+   if (redirect) {
+     // 他のタブは再読み込みするだけ
+@@ -175,7 +154,7 @@
+       {},
+       {
+         done: (res) => {
+-          addAccount(res.id, res.i);
++          addAccount(res.id, res.i, res.instanceUrl);
+           success();
+         },
+       },
+@@ -189,8 +168,8 @@
+       {},
+       {
+         done: (res) => {
+-          addAccount(res.id, res.i);
+-          switchAccountWithToken(res.i);
++          addAccount(res.id, res.i, res.instanceUrl);
++          switchAccountWithToken(res.i, res.instanceUrl);
+         },
+       },
+       "closed"
+@@ -199,12 +178,13 @@
+ 
+   async function switchAccount(account: misskey.entities.UserDetailed) {
+     const storedAccounts = await getAccounts();
+-    const token = storedAccounts.find((x) => x.id === account.id).token;
+-    switchAccountWithToken(token);
++    const acc = storedAccounts.find((x) => x.id === account.id);
++    miLocalStorage.removeItem("lastEmojisFetchedAt");
++    switchAccountWithToken(acc.token, acc.instanceUrl);
+   }
+ 
+-  function switchAccountWithToken(token: string) {
+-    login(token);
++  function switchAccountWithToken(token: string, instanceUrl: string) {
++    login(token, instanceUrl);
+   }
+ 
+   const storedAccounts = await getAccounts().then((accounts) =>
+@@ -232,11 +212,23 @@
+   const accountItemPromises = storedAccounts.map(
+     (a) =>
+       new Promise((res) => {
+-        accountsPromise.then((accounts) => {
+-          const account = accounts.find((x) => x.id === a.id);
+-          if (account == null) return res(null);
+-          res(createItem(account));
++        const client = new misskey.api.APIClient({
++          origin: a.instanceUrl,
++          credential: a.token,
+         });
++
++        client
++          .request("users/show", {
++            userIds: [a.id],
++          })
++          .then((accounts) => {
++            const account = accounts.find((x) => x.id === a.id);
++            if (account == null) return res(null);
++
++            client.request("meta").then((meta) => {
++              res(createItem({ ...account, host: meta.name }));
++            });
++          });
+       })
+   );
+ 
+@@ -262,12 +254,6 @@
+                 text: i18n.ts.existingAccount,
+                 action: () => {
+                   showSigninDialog();
+-                },
+-              },
+-              {
+-                text: i18n.ts.createAccount,
+-                action: () => {
+-                  createAccount();
+                 },
+               },
+             ],
+Only in src: assets
+Common subdirectories: Ririca13/src/components and src/components
+diff --color=auto -u Ririca13/src/config.ts src/config.ts
+--- Ririca13/src/config.ts	2023-02-12 22:14:04
++++ src/config.ts	2023-02-12 22:15:45
+@@ -1,24 +1,19 @@
+ import { miLocalStorage } from "./local-storage";
++import { $i } from "@/account";
++import { langNames } from "@/i18n";
+ 
+-const address = new URL(location.href);
++const address = $i ? new URL($i.instanceUrl) : null;
+ const siteName = (
+   document.querySelector('meta[property="og:site_name"]') as HTMLMetaElement
+ )?.content;
+ 
+-export const host = address.host;
+-export const hostname = address.hostname;
+-export const url = address.origin;
++export const host = address?.host;
++export const hostname = address?.hostname;
++export const url = $i?.instanceUrl;
+ export const apiUrl = url + "/api";
+-export const wsUrl =
+-  url.replace("http://", "ws://").replace("https://", "wss://") + "/streaming";
+ export const lang = miLocalStorage.getItem("lang");
+-export const langs = _LANGS_;
+-export let locale = JSON.parse(miLocalStorage.getItem("locale"));
++export const langs = langNames;
+ export const version = _VERSION_;
+ export const instanceName = siteName === "Misskey" ? host : siteName;
+ export const ui = miLocalStorage.getItem("ui");
+ export const debug = miLocalStorage.getItem("debug") === "true";
+-
+-export function updateLocale(newLocale) {
+-  locale = newLocale;
+-}
+Common subdirectories: Ririca13/src/directives and src/directives
+Common subdirectories: Ririca13/src/filters and src/filters
+diff --color=auto -u Ririca13/src/i18n.ts src/i18n.ts
+--- Ririca13/src/i18n.ts	2023-02-12 22:14:04
++++ src/i18n.ts	2023-02-12 22:15:45
+@@ -1,9 +1,75 @@
+-import { markRaw } from "vue";
+-import { locale } from "@/config";
+ import { I18n } from "@/scripts/i18n";
++import arSA from "@/locales/ar-SA.json";
++import csCZ from "@/locales/cs-CZ.json";
++import daDK from "@/locales/da-DK.json";
++import deDE from "@/locales/de-DE.json";
++import enUS from "@/locales/en-US.json";
++import esES from "@/locales/es-ES.json";
++import frFR from "@/locales/fr-FR.json";
++import idID from "@/locales/id-ID.json";
++import itIT from "@/locales/it-IT.json";
++import jaJP from "@/locales/ja-JP.json";
++import jaKS from "@/locales/ja-KS.json";
++import kabKAB from "@/locales/kab-KAB.json";
++import knIN from "@/locales/kn-IN.json";
++import koKR from "@/locales/ko-KR.json";
++import nlNL from "@/locales/nl-NL.json";
++import noNO from "@/locales/no-NO.json";
++import plPL from "@/locales/pl-PL.json";
++import ptPT from "@/locales/pt-PT.json";
++import ruRU from "@/locales/ru-RU.json";
++import skSK from "@/locales/sk-SK.json";
++import ugCN from "@/locales/ug-CN.json";
++import ukUA from "@/locales/uk-UA.json";
++import viVN from "@/locales/vi-VN.json";
++import zhCN from "@/locales/zh-CN.json";
++import zhTW from "@/locales/zh-TW.json";
+ 
+-export const i18n = markRaw(new I18n(locale));
++import Fuse from "fuse.js";
+ 
+-export function updateI18n(newLocale) {
+-  i18n.ts = newLocale;
++const languages = {
++  "ar-SA": arSA,
++  "cs-CZ": csCZ,
++  "da-DK": daDK,
++  "de-DE": deDE,
++  "en-US": enUS,
++  "es-ES": esES,
++  "fr-FR": frFR,
++  "id-ID": idID,
++  "it-IT": itIT,
++  "ja-JP": jaJP,
++  "ja-KS": jaKS,
++  "kab-KAB": kabKAB,
++  "kn-IN": knIN,
++  "ko-KR": koKR,
++  "nl-NL": nlNL,
++  "no-NO": noNO,
++  "pl-PL": plPL,
++  "pt-PT": ptPT,
++  "ru-RU": ruRU,
++  "sk-SK": skSK,
++  "ug-CN": ugCN,
++  "uk-UA": ukUA,
++  "vi-VN": viVN,
++  "zh-CN": zhCN,
++  "zh-TW": zhTW,
++} as const;
++
++export let langNames = Object.keys(languages).map((l) => {
++  return [l, languages[l]._lang_];
++});
++
++export function setLanguage(lang: keyof typeof languages) {
++  console.log(lang);
++  if (Object.keys(languages).includes(lang)) {
++    i18n = new I18n(languages[lang]);
++    return lang;
++  } else {
++    const fuse = new Fuse(Object.keys(languages));
++    const results = fuse.search(lang);
++    i18n = new I18n(languages[results[0].item]);
++    console.log(results[0]);
++    return results[0].item;
++  }
+ }
++export let i18n = new I18n(languages["ja-JP"]);
+Only in Ririca13/src: init.ts
+diff --color=auto -u Ririca13/src/instance.ts src/instance.ts
+--- Ririca13/src/instance.ts	2023-02-12 22:14:05
++++ src/instance.ts	2023-02-12 22:15:45
+@@ -1,5 +1,5 @@
+ import { computed, reactive } from "vue";
+-import * as Misskey from "misskey-js";
++import * as Misskey from "yamisskey-js";
+ import { api } from "./os";
+ import { miLocalStorage } from "./local-storage";
+ 
+@@ -28,3 +28,46 @@
+ 
+   miLocalStorage.setItem("instance", JSON.stringify(instance));
+ }
++
++/**
++export const instance: Misskey.entities.InstanceMetadata = reactive(
++	instanceData
++		? JSON.parse(instanceData)
++		: {
++			// TODO: set default values
++		}
++);
++
++export async function fetchInstance() {
++	const meta = await noCredentialApi.request("meta", {
++		detail: false,
++	});
++
++	for (const [k, v] of Object.entries(meta)) {
++		instance[k] = v;
++	}
++
++	localStorage.setItem("instance", JSON.stringify(instance));
++}
++
++export const emojiCategories = computed(() => {
++	if (instance.emojis == null) return [];
++	const categories = new Set();
++	for (const emoji of instance.emojis) {
++		categories.add(emoji.category);
++	}
++	return Array.from(categories);
++});
++
++export const emojiTags = computed(() => {
++	if (instance.emojis == null) return [];
++	const tags = new Set();
++	for (const emoji of instance.emojis) {
++		for (const tag of emoji.aliases) {
++			tags.add(tag);
++		}
++	}
++	return Array.from(tags);
++});
++
++ */
+Only in src: locales
+Only in src: main.ts
+diff --color=auto -u Ririca13/src/navbar.ts src/navbar.ts
+--- Ririca13/src/navbar.ts	2023-02-12 22:14:05
++++ src/navbar.ts	2023-02-12 22:15:47
+@@ -105,7 +105,7 @@
+   },
+   achievements: {
+     title: i18n.ts.achievements,
+-    icon: "ti ti-medal",
++    icon: "ti ti-military-award",
+     show: computed(() => $i != null),
+     to: "/my/achievements",
+   },
+diff --color=auto -u Ririca13/src/os.ts src/os.ts
+--- Ririca13/src/os.ts	2023-02-12 22:14:05
++++ src/os.ts	2023-02-12 22:15:47
+@@ -1,11 +1,9 @@
+ // TODO: なんでもかんでもos.tsに突っ込むのやめたいのでよしなに分割する
+ 
+-import { pendingApiRequestsCount, api, apiGet } from "@/scripts/api";
+-export { pendingApiRequestsCount, api, apiGet };
+ import { Component, markRaw, Ref, ref, defineAsyncComponent } from "vue";
+ import { EventEmitter } from "eventemitter3";
+ import insertTextAtCursor from "insert-text-at-cursor";
+-import * as Misskey from "misskey-js";
++import * as Misskey from "yamisskey-js";
+ import { i18n } from "./i18n";
+ import MkPostFormDialog from "@/components/MkPostFormDialog.vue";
+ import MkWaitingDialog from "@/components/MkWaitingDialog.vue";
+@@ -18,10 +16,46 @@
+ import MkContextMenu from "@/components/MkContextMenu.vue";
+ import { MenuItem } from "@/types/menu";
+ 
++import { $i } from "@/account";
+ export const openingWindowsCount = ref(0);
+ 
++const apiClient = new Misskey.api.APIClient({
++  origin: $i?.instanceUrl,
++  credential: $i?.token,
++});
++
++export const noCredentialApi = new Misskey.api.APIClient({
++  origin: $i?.instanceUrl || window.location.origin,
++});
++
++export const api = ((
++  endpoint: keyof Misskey.Endpoints,
++  data: Record<string, any> = {}
++) => {
++  return apiClient.request(endpoint, data);
++}) as typeof apiClient.request;
++
++export const apiGet = ((
++  endpoint: keyof Misskey.Endpoints,
++  data: Record<string, any> = {}
++) => {
++  const query = new URLSearchParams(data);
++
++  const promise = new Promise((resolve, reject) => {
++    // Send request
++    apiClient
++      .request(endpoint, { ...data })
++      .then(async (res) => {
++        resolve(res);
++      })
++      .catch(reject);
++  });
++
++  return promise;
++}) as typeof apiClient.request;
++
+ export const apiWithDialog = ((
+-  endpoint: string,
++  endpoint: keyof Misskey.Endpoints,
+   data: Record<string, any> = {},
+   token?: string | null | undefined
+ ) => {
+Common subdirectories: Ririca13/src/pages and src/pages
+diff --color=auto -u Ririca13/src/pizzax.ts src/pizzax.ts
+--- Ririca13/src/pizzax.ts	2023-02-12 22:14:07
++++ src/pizzax.ts	2023-02-12 22:15:50
+@@ -3,7 +3,6 @@
+ import { onUnmounted, Ref, ref, watch } from "vue";
+ import { $i } from "./account";
+ import { api } from "./os";
+-import { stream } from "./stream";
+ 
+ type StateDef = Record<
+   string,
+@@ -15,8 +14,6 @@
+ 
+ type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;
+ 
+-const connection = $i && stream.useChannel("main");
+-
+ export class Storage<T extends StateDef> {
+   public readonly key: string;
+   public readonly keyForLocalStorage: string;
+@@ -82,73 +79,6 @@
+     }
+     this.state = state as any;
+     this.reactiveState = reactiveState as any;
+-
+-    if ($i) {
+-      // なぜかsetTimeoutしないとapi関数内でエラーになる(おそらく循環参照してることに原因がありそう)
+-      window.setTimeout(() => {
+-        api("i/registry/get-all", { scope: ["client", this.key] }).then(
+-          (kvs) => {
+-            const cache = {};
+-            for (const [k, v] of Object.entries(def)) {
+-              if (v.where === "account") {
+-                if (Object.prototype.hasOwnProperty.call(kvs, k)) {
+-                  state[k] = kvs[k];
+-                  reactiveState[k].value = kvs[k];
+-                  cache[k] = kvs[k];
+-                } else {
+-                  state[k] = v.default;
+-                  reactiveState[k].value = v.default;
+-                }
+-              }
+-            }
+-            localStorage.setItem(
+-              this.keyForLocalStorage + "::cache::" + $i.id,
+-              JSON.stringify(cache)
+-            );
+-            this.markAsReady();
+-          }
+-        );
+-      }, 1);
+-      // streamingのuser storage updateイベントを監視して更新
+-      connection?.on(
+-        "registryUpdated",
+-        ({
+-          scope,
+-          key,
+-          value,
+-        }: {
+-          scope: string[];
+-          key: keyof T;
+-          value: T[typeof key]["default"];
+-        }) => {
+-          if (
+-            scope.length !== 2 ||
+-            scope[0] !== "client" ||
+-            scope[1] !== this.key ||
+-            this.state[key] === value
+-          )
+-            return;
+-
+-          this.state[key] = value;
+-          this.reactiveState[key].value = value;
+-
+-          const cache = JSON.parse(
+-            localStorage.getItem(
+-              this.keyForLocalStorage + "::cache::" + $i.id
+-            ) || "{}"
+-          );
+-          if (cache[key] !== value) {
+-            cache[key] = value;
+-            localStorage.setItem(
+-              this.keyForLocalStorage + "::cache::" + $i.id,
+-              JSON.stringify(cache)
+-            );
+-          }
+-        }
+-      );
+-    } else {
+-      this.markAsReady();
+-    }
+   }
+ 
+   public set<K extends keyof T>(key: K, value: T[K]["default"]): void {
+Common subdirectories: Ririca13/src/scripts and src/scripts
+diff --color=auto -u Ririca13/src/store.ts src/store.ts
+--- Ririca13/src/store.ts	2023-02-12 22:14:07
++++ src/store.ts	2023-02-12 22:15:50
+@@ -302,7 +302,7 @@
+ import { miLocalStorage } from "./local-storage";
+ import lightTheme from "@/themes/l-light.json5";
+ import darkTheme from "@/themes/d-green-lime.json5";
+-import { Note, UserDetailed } from "misskey-js/built/entities";
++import { Note, UserDetailed } from "yamisskey-js/built/entities";
+ 
+ export class ColdDeviceStorage {
+   public static default = {
+diff --color=auto -u Ririca13/src/stream.ts src/stream.ts
+--- Ririca13/src/stream.ts	2023-02-12 22:14:07
++++ src/stream.ts	2023-02-12 22:15:50
+@@ -1,15 +1,11 @@
+-import * as Misskey from "misskey-js";
++import * as Misskey from "yamisskey-js";
+ import { markRaw } from "vue";
+ import { $i } from "@/account";
+-import { url } from "@/config";
+ 
+-export const stream = markRaw(
+-  new Misskey.Stream(
+-    url,
+-    $i
+-      ? {
+-          token: $i.token,
+-        }
+-      : null
+-  )
+-);
++export const stream = $i
++  ? markRaw(
++      new Misskey.Stream($i.instanceUrl, {
++        token: $i?.token,
++      })
++    )
++  : null;
+diff --color=auto -u Ririca13/src/style.scss src/style.scss
+--- Ririca13/src/style.scss	2023-02-12 22:14:07
++++ src/style.scss	2023-02-12 22:15:50
+@@ -135,13 +135,11 @@
+ }
+ 
+ .ti {
+-  vertical-align: -40%;
+-  line-height: 1em;
++  vertical-align: -10%;
++  line-height: 0.9em;
+ 
+   &:before {
+-    display: inline-block;
+-    font-size: 165%;
+-    width: 0.74em;
++    font-size: 130%;
+   }
+ }
+ 
+diff --color=auto -u Ririca13/src/theme-store.ts src/theme-store.ts
+--- Ririca13/src/theme-store.ts	2023-02-12 22:14:07
++++ src/theme-store.ts	2023-02-12 22:15:50
+@@ -14,10 +14,7 @@
+   if ($i == null) return;
+ 
+   try {
+-    const themes = await api("i/registry/get", {
+-      scope: ["client"],
+-      key: "themes",
+-    });
++    // const themes = await api('i/registry/get', { scope: ['client'], key: 'themes' });
+     miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
+   } catch (err) {
+     if (err.code === "NO_SUCH_KEY") return;
+@@ -29,21 +26,13 @@
+   if ($i == null) return;
+   await fetchThemes();
+   const themes = getThemes().concat(theme);
+-  await api("i/registry/set", {
+-    scope: ["client"],
+-    key: "themes",
+-    value: themes,
+-  });
++  // await api('i/registry/set', { scope: ['client'], key: 'themes', value: themes });
+   miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
+ }
+ 
+ export async function removeTheme(theme: Theme): Promise<void> {
+   if ($i == null) return;
+   const themes = getThemes().filter((t) => t.id !== theme.id);
+-  await api("i/registry/set", {
+-    scope: ["client"],
+-    key: "themes",
+-    value: themes,
+-  });
++  // await api('i/registry/set', { scope: ['client'], key: 'themes', value: themes });
+   miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
+ }
+Common subdirectories: Ririca13/src/themes and src/themes
+Common subdirectories: Ririca13/src/types and src/types
+Common subdirectories: Ririca13/src/ui and src/ui
+Common subdirectories: Ririca13/src/widgets and src/widgets

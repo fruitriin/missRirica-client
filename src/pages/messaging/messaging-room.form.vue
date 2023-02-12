@@ -1,10 +1,10 @@
 <template>
   <div :class="$style['root']" @dragover.stop="onDragover" @drop.stop="onDrop">
     <textarea
-      ref="textEl"
-      v-model="text"
       :class="$style['textarea']"
       class="_acrylic"
+      ref="textEl"
+      v-model="text"
       :placeholder="i18n.ts.inputMessageHere"
       @keydown="onKeydown"
       @compositionupdate="onCompositionUpdate"
@@ -34,8 +34,8 @@
       </div>
     </footer>
     <input
-      ref="fileEl"
       :class="$style['file-input']"
+      ref="fileEl"
       type="file"
       @change="onChangeFile"
     />
@@ -44,7 +44,7 @@
 
 <script lang="ts" setup>
 import { onMounted, watch } from "vue";
-import * as Misskey from "yamisskey-js";
+import * as Misskey from "misskey-js";
 import autosize from "autosize";
 //import insertTextAtCursor from 'insert-text-at-cursor';
 import { throttle } from "throttle-debounce";

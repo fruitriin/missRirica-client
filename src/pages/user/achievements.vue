@@ -1,12 +1,16 @@
 <template>
   <MkSpacer :content-max="1200">
-    <MkAchievements :user="user" :with-locked="false" />
+    <MkAchievements
+      :user="user"
+      :with-locked="false"
+      :with-description="$i != null && props.user.id === $i.id"
+    />
   </MkSpacer>
 </template>
 
 <script lang="ts" setup>
 import { onActivated, onDeactivated, onMounted, onUnmounted, ref } from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import MkAchievements from "@/components/MkAchievements.vue";
 import { i18n } from "@/i18n";
 import { claimAchievement } from "@/scripts/achievements";

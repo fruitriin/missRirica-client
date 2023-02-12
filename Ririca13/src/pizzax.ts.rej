@@ -1,0 +1,82 @@
+@@ -3,7 +3,6 @@
+ import { onUnmounted, Ref, ref, watch } from "vue";
+ import { $i } from "./account";
+ import { api } from "./os";
+-import { stream } from "./stream";
+ 
+ type StateDef = Record<
+   string,
+@@ -98,73 +95,6 @@
+     }
+     this.state = state as any;
+     this.reactiveState = reactiveState as any;
+-
+-    if ($i) {
+-      // なぜかsetTimeoutしないとapi関数内でエラーになる(おそらく循環参照してることに原因がありそう)
+-      window.setTimeout(() => {
+-        api("i/registry/get-all", { scope: ["client", this.key] }).then(
+-          (kvs) => {
+-            const cache = {};
+-            for (const [k, v] of Object.entries(def)) {
+-              if (v.where === "account") {
+-                if (Object.prototype.hasOwnProperty.call(kvs, k)) {
+-                  state[k] = kvs[k];
+-                  reactiveState[k].value = kvs[k];
+-                  cache[k] = kvs[k];
+-                } else {
+-                  state[k] = v.default;
+-                  reactiveState[k].value = v.default;
+-                }
+-              }
+-            }
+-            localStorage.setItem(
+-              this.keyForLocalStorage + "::cache::" + $i.id,
+-              JSON.stringify(cache)
+-            );
+-            this.markAsReady();
+-          }
+-        );
+-      }, 1);
+-      // streamingのuser storage updateイベントを監視して更新
+-      connection?.on(
+-        "registryUpdated",
+-        ({
+-          scope,
+-          key,
+-          value,
+-        }: {
+-          scope: string[];
+-          key: keyof T;
+-          value: T[typeof key]["default"];
+-        }) => {
+-          if (
+-            scope.length !== 2 ||
+-            scope[0] !== "client" ||
+-            scope[1] !== this.key ||
+-            this.state[key] === value
+-          )
+-            return;
+-
+-          this.state[key] = value;
+-          this.reactiveState[key].value = value;
+-
+-          const cache = JSON.parse(
+-            localStorage.getItem(
+-              this.keyForLocalStorage + "::cache::" + $i.id
+-            ) || "{}"
+-          );
+-          if (cache[key] !== value) {
+-            cache[key] = value;
+-            localStorage.setItem(
+-              this.keyForLocalStorage + "::cache::" + $i.id,
+-              JSON.stringify(cache)
+-            );
+-          }
+-        }
+-      );
+-    } else {
+-      this.markAsReady();
+-    }
+   }
+ 
+   public set<K extends keyof T>(key: K, value: T[K]["default"]): void {

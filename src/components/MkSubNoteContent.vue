@@ -15,10 +15,10 @@
       ></MkA>
       <Mfm
         v-if="note.text"
-        v-once
         :text="note.text"
         :author="note.user"
         :i="$i"
+        :emoji-urls="note.emojis"
       />
       <MkA
         v-if="note.renoteId"
@@ -48,7 +48,7 @@
 
 <script lang="ts" setup>
 import {} from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import MkMediaList from "@/components/MkMediaList.vue";
 import MkPoll from "@/components/MkPoll.vue";
 import { i18n } from "@/i18n";

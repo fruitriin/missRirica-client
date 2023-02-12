@@ -47,7 +47,7 @@ onDeactivated(() => {
 
 definePageMetadata({
   title: i18n.ts.achievements,
-  icon: "ti ti-military-award",
+  icon: "ti ti-medal",
 });
 </script>
 

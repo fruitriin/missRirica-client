@@ -24,8 +24,8 @@ import {
   onUnmounted,
   watch,
 } from "vue";
-import * as Acct from "yamisskey-js/built/acct";
-import * as misskey from "yamisskey-js";
+import * as Acct from "misskey-js/built/acct";
+import * as misskey from "misskey-js";
 import XFollowList from "./follow-list.vue";
 import * as os from "@/os";
 import { definePageMetadata } from "@/scripts/page-metadata";

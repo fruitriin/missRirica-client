@@ -24,7 +24,7 @@
 
 <script lang="ts" setup>
 import { computed } from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import MkUserInfo from "@/components/MkUserInfo.vue";
 import MkPagination from "@/components/MkPagination.vue";
 

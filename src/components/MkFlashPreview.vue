@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 import {} from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import { userName } from "@/filters/user";
 import * as os from "@/os";
 

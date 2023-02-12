@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import {} from "vue";
-import * as Misskey from "yamisskey-js";
+import * as Misskey from "misskey-js";
 import MkModalWindow from "@/components/MkModalWindow.vue";
 import MkTextarea from "@/components/MkTextarea.vue";
 import MkDriveFileThumbnail from "@/components/MkDriveFileThumbnail.vue";

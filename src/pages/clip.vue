@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 import { computed, watch, provide } from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import XNotes from "@/components/MkNotes.vue";
 import { $i } from "@/account";
 import { i18n } from "@/i18n";

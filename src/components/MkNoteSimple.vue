@@ -11,6 +11,7 @@
             :text="note.cw"
             :author="note.user"
             :i="$i"
+            :emoji-urls="note.emojis"
           />
           <MkCwButton v-model="showContent" :note="note" />
         </p>
@@ -24,7 +25,7 @@
 
 <script lang="ts" setup>
 import {} from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import MkNoteHeader from "@/components/MkNoteHeader.vue";
 import MkSubNoteContent from "@/components/MkSubNoteContent.vue";
 import MkCwButton from "@/components/MkCwButton.vue";
@@ -50,8 +51,8 @@ const showContent = $ref(false);
   flex-shrink: 0;
   display: block;
   margin: 0 10px 0 0;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 8px;
 }
 
@@ -76,6 +77,14 @@ const showContent = $ref(false);
   cursor: default;
   margin: 0;
   padding: 0;
+}
+
+@container (min-width: 250px) {
+  .avatar {
+    margin: 0 10px 0 0;
+    width: 40px;
+    height: 40px;
+  }
 }
 
 @container (min-width: 350px) {

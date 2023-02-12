@@ -4,12 +4,13 @@
     :author="user"
     :plain="true"
     :nowrap="nowrap"
+    :emoji-urls="user.emojis"
   />
 </template>
 
 <script lang="ts" setup>
 import {} from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 
 const props = withDefaults(
   defineProps<{

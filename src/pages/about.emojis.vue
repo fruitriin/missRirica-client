@@ -1,7 +1,7 @@
 <template>
   <div class="driuhtrh _gaps">
     <MkButton
-      v-if="$i && ($i.isModerator || $i?.policies?.canManageCustomEmojis)"
+      v-if="$i && ($i.isModerator || $i.policies.canManageCustomEmojis)"
       primary
       link
       to="/custom-emojis-manager"
@@ -62,15 +62,15 @@ import MkTab from "@/components/MkTab.vue";
 import * as os from "@/os";
 import {
   customEmojis,
-  getCustomEmojiCategories,
+  customEmojiCategories,
   getCustomEmojiTags,
 } from "@/custom-emojis";
 import { i18n } from "@/i18n";
+import * as Misskey from "misskey-js";
 
-const customEmojiCategories = getCustomEmojiCategories();
 const customEmojiTags = getCustomEmojiTags();
 let q = $ref("");
-let searchEmojis = $ref(null);
+let searchEmojis = $ref<Misskey.entities.CustomEmoji[]>(null);
 let selectedTags = $ref(new Set());
 
 function search() {
@@ -80,11 +80,11 @@ function search() {
   }
 
   if (selectedTags.size === 0) {
-    searchEmojis = customEmojis.filter(
+    searchEmojis = customEmojis.value.filter(
       (emoji) => emoji.name.includes(q) || emoji.aliases.includes(q)
     );
   } else {
-    searchEmojis = customEmojis.filter(
+    searchEmojis = customEmojis.value.filter(
       (emoji) =>
         (emoji.name.includes(q) || emoji.aliases.includes(q)) &&
         [...selectedTags].every((t) => emoji.aliases.includes(t))

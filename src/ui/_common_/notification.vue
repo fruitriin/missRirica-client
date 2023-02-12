@@ -1,12 +1,16 @@
 <template>
   <div :class="$style.root">
-    <XNotification :notification="notification" class="notification _acrylic" />
+    <XNotification
+      :notification="notification"
+      class="notification _acrylic"
+      :full="false"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import {} from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import XNotification from "@/components/MkNotification.vue";
 
 defineProps<{

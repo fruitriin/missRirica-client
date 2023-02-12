@@ -24,7 +24,7 @@
           :key="notification.id"
           :notification="notification"
           :with-time="true"
-          :full="false"
+          :full="true"
           class="_panel notification"
         />
       </MkDateSeparatedList>
@@ -41,7 +41,7 @@ import {
   computed,
   shallowRef,
 } from "vue";
-import { notificationTypes } from "yamisskey-js";
+import { notificationTypes } from "misskey-js";
 import MkPagination, { Paging } from "@/components/MkPagination.vue";
 import XNotification from "@/components/MkNotification.vue";
 import MkDateSeparatedList from "@/components/MkDateSeparatedList.vue";

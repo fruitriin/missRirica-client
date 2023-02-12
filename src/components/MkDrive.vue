@@ -125,7 +125,7 @@ import {
   shallowRef,
   watch,
 } from "vue";
-import * as Misskey from "yamisskey-js";
+import * as Misskey from "misskey-js";
 import MkButton from "./MkButton.vue";
 import XNavFolder from "@/components/MkDrive.navFolder.vue";
 import XFolder from "@/components/MkDrive.folder.vue";

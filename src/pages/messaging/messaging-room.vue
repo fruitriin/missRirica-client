@@ -61,8 +61,8 @@
           <div v-show="showIndicator" :class="$style['new-message']">
             <button
               class="_buttonPrimary"
-              :class="$style['new-message-button']"
               @click="onIndicatorClick"
+              :class="$style['new-message-button']"
             >
               <i
                 class="fas ti-fw fa-arrow-circle-down"
@@ -86,8 +86,8 @@
 
 <script lang="ts" setup>
 import { computed, watch, onMounted, nextTick, onBeforeUnmount } from "vue";
-import * as Misskey from "yamisskey-js";
-import * as Acct from "yamisskey-js/built/acct";
+import * as Misskey from "misskey-js";
+import * as Acct from "misskey-js/built/acct";
 import XMessage from "./messaging-room.message.vue";
 import XForm from "./messaging-room.form.vue";
 import MkDateSeparatedList from "@/components/MkDateSeparatedList.vue";

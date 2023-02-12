@@ -14,10 +14,7 @@ export async function fetchThemes(): Promise<void> {
   if ($i == null) return;
 
   try {
-    const themes = await api("i/registry/get", {
-      scope: ["client"],
-      key: "themes",
-    });
+    // const themes = await api('i/registry/get', { scope: ['client'], key: 'themes' });
     miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
   } catch (err) {
     if (err.code === "NO_SUCH_KEY") return;
@@ -29,21 +26,13 @@ export async function addTheme(theme: Theme): Promise<void> {
   if ($i == null) return;
   await fetchThemes();
   const themes = getThemes().concat(theme);
-  await api("i/registry/set", {
-    scope: ["client"],
-    key: "themes",
-    value: themes,
-  });
+  // await api('i/registry/set', { scope: ['client'], key: 'themes', value: themes });
   miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
 }
 
 export async function removeTheme(theme: Theme): Promise<void> {
   if ($i == null) return;
   const themes = getThemes().filter((t) => t.id !== theme.id);
-  await api("i/registry/set", {
-    scope: ["client"],
-    key: "themes",
-    value: themes,
-  });
+  // await api('i/registry/set', { scope: ['client'], key: 'themes', value: themes });
   miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
 }

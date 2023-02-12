@@ -53,7 +53,12 @@
         @click="complete(type, emoji.emoji)"
         @keydown="onKeydown"
       >
-        <MkEmoji :emoji="emoji.emoji" :class="$style.emoji" />
+        <MkCustomEmoji
+          v-if="'isCustomEmoji' in emoji && emoji.isCustomEmoji"
+          :name="emoji.emoji"
+          :class="$style.emoji"
+        />
+        <MkEmoji v-else :emoji="emoji.emoji" :class="$style.emoji" />
         <!-- eslint-disable-next-line vue/no-v-html -->
         <span
           v-if="q"
@@ -85,6 +90,7 @@ import {
   markRaw,
   ref,
   shallowRef,
+  computed,
   onUpdated,
   onMounted,
   onBeforeUnmount,
@@ -123,62 +129,65 @@ type EmojiDef =
 
 const lib = emojilist.filter((x) => x.category !== "flags");
 
-const char2path =
-  defaultStore.state.emojiStyle === "twemoji"
-    ? char2twemojiFilePath
-    : char2fluentEmojiFilePath;
+const emojiDb = computed(() => {
+  //#region Unicode Emoji
+  const char2path =
+    defaultStore.reactiveState.emojiStyle.value === "twemoji"
+      ? char2twemojiFilePath
+      : char2fluentEmojiFilePath;
 
-const emjdb: EmojiDef[] = lib.map((x) => ({
-  emoji: x.char,
-  name: x.name,
-  url: char2path(x.char),
-}));
-
-for (const x of lib) {
-  if (x.keywords) {
-    for (const k of x.keywords) {
-      emjdb.push({
-        emoji: x.char,
-        name: k,
-        aliasOf: x.name,
-        url: char2path(x.char),
-      });
-    }
-  }
-}
-
-emjdb.sort((a, b) => a.name.length - b.name.length);
-
-//#region Construct Emoji DB
-const emojiDefinitions: EmojiDef[] = [];
-
-for (const x of customEmojis) {
-  emojiDefinitions.push({
+  const unicodeEmojiDB: EmojiDef[] = lib.map((x) => ({
+    emoji: x.char,
     name: x.name,
-    emoji: `:${x.name}:`,
-    isCustomEmoji: true,
-  });
+    url: char2path(x.char),
+  }));
 
-  if (x.aliases) {
-    for (const alias of x.aliases) {
-      emojiDefinitions.push({
-        name: alias,
-        aliasOf: x.name,
-        emoji: `:${x.name}:`,
-        isCustomEmoji: true,
-      });
+  for (const x of lib) {
+    if (x.keywords) {
+      for (const k of x.keywords) {
+        unicodeEmojiDB.push({
+          emoji: x.char,
+          name: k,
+          aliasOf: x.name,
+          url: char2path(x.char),
+        });
+      }
     }
   }
-}
 
-emojiDefinitions.sort((a, b) => a.name.length - b.name.length);
+  unicodeEmojiDB.sort((a, b) => a.name.length - b.name.length);
+  //#endregion
 
-const emojiDb = markRaw(emojiDefinitions.concat(emjdb));
-//#endregion
+  //#region Custom Emoji
+  const customEmojiDB: EmojiDef[] = [];
+
+  for (const x of customEmojis.value) {
+    customEmojiDB.push({
+      name: x.name,
+      emoji: `:${x.name}:`,
+      isCustomEmoji: true,
+    });
+
+    if (x.aliases) {
+      for (const alias of x.aliases) {
+        customEmojiDB.push({
+          name: alias,
+          aliasOf: x.name,
+          emoji: `:${x.name}:`,
+          isCustomEmoji: true,
+        });
+      }
+    }
+  }
+
+  customEmojiDB.sort((a, b) => a.name.length - b.name.length);
+  //#endregion
+
+  return markRaw([...customEmojiDB, ...unicodeEmojiDB]);
+});
 
 export default {
   emojiDb,
-  emojiDefinitions,
   emojilist,
 };
 </script>
@@ -297,7 +306,9 @@ function exec() {
     if (!props.q || props.q === "") {
       // 最近使った絵文字をサジェスト
       emojis.value = defaultStore.state.recentlyUsedEmojis
-        .map((emoji) => emojiDb.find((dbEmoji) => dbEmoji.emoji === emoji))
+        .map((emoji) =>
+          emojiDb.value.find((dbEmoji) => dbEmoji.emoji === emoji)
+        )
         .filter((x) => x) as EmojiDef[];
       return;
     }
@@ -305,7 +316,7 @@ function exec() {
     const matched: EmojiDef[] = [];
     const max = 30;
 
-    emojiDb.some((x) => {
+    emojiDb.value.some((x) => {
       if (
         x.name.startsWith(props.q ?? "") &&
         !x.aliasOf &&
@@ -316,7 +327,7 @@ function exec() {
     });
 
     if (matched.length < max) {
-      emojiDb.some((x) => {
+      emojiDb.value.some((x) => {
         if (
           x.name.startsWith(props.q ?? "") &&
           !matched.some((y) => y.emoji === x.emoji)
@@ -327,7 +338,7 @@ function exec() {
     }
 
     if (matched.length < max) {
-      emojiDb.some((x) => {
+      emojiDb.value.some((x) => {
         if (
           x.name.includes(props.q ?? "") &&
           !matched.some((y) => y.emoji === x.emoji)

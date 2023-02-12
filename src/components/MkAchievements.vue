@@ -41,11 +41,17 @@
           </div>
           <div :class="$style.description">
             {{
-              i18n.ts._achievements._types["_" + achievement.name].description
+              withDescription
+                ? i18n.ts._achievements._types["_" + achievement.name]
+                    .description
+                : "???"
             }}
           </div>
           <div
-            v-if="i18n.ts._achievements._types['_' + achievement.name].flavor"
+            v-if="
+              i18n.ts._achievements._types['_' + achievement.name].flavor &&
+              withDescription
+            "
             :class="$style.flavor"
           >
             {{ i18n.ts._achievements._types["_" + achievement.name].flavor }}
@@ -77,7 +83,7 @@
 </template>
 
 <script lang="ts" setup>
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import { onMounted } from "vue";
 import * as os from "@/os";
 import { i18n } from "@/i18n";
@@ -91,9 +97,11 @@ const props = withDefaults(
   defineProps<{
     user: misskey.entities.User;
     withLocked: boolean;
+    withDescription: boolean;
   }>(),
   {
     withLocked: true,
+    withDescription: true,
   }
 );
 
@@ -157,6 +165,7 @@ onMounted(() => {
 }
 
 .iconFrame {
+  position: relative;
   width: 58px;
   height: 58px;
   padding: 6px;

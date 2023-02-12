@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import * as Misskey from "yamisskey-js";
+import * as Misskey from "misskey-js";
 import * as os from "@/os";
 import { i18n } from "@/i18n";
 

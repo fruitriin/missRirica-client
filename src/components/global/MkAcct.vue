@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import { toUnicode } from "punycode/";
 import { host as hostRaw } from "@/config";
 

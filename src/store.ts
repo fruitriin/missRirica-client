@@ -47,6 +47,10 @@ export const defaultStore = markRaw(
       where: "account",
       default: false,
     },
+    collapseRenotes: {
+      where: "account",
+      default: true,
+    },
     rememberNoteVisibility: {
       where: "account",
       default: false,
@@ -84,10 +88,6 @@ export const defaultStore = markRaw(
       default: [],
     },
     mutedAds: {
-      where: "account",
-      default: [] as string[],
-    },
-    hiddenAds: {
       where: "account",
       default: [] as string[],
     },
@@ -157,11 +157,15 @@ export const defaultStore = markRaw(
     },
     animation: {
       where: "device",
-      default: true,
+      default: !matchMedia("(prefers-reduced-motion)").matches,
     },
     animatedMfm: {
       where: "device",
       default: false,
+    },
+    advancedMfm: {
+      where: "device",
+      default: true,
     },
     loadRawImages: {
       where: "device",
@@ -173,7 +177,7 @@ export const defaultStore = markRaw(
     },
     disableShowingAnimatedImages: {
       where: "device",
-      default: false,
+      default: matchMedia("(prefers-reduced-motion)").matches,
     },
     emojiStyle: {
       where: "device",
@@ -185,11 +189,11 @@ export const defaultStore = markRaw(
     },
     useBlurEffectForModal: {
       where: "device",
-      default: true,
+      default: !/mobile|iphone|android/.test(navigator.userAgent.toLowerCase()), // 循環参照するのでdevice-kind.tsは参照できない
     },
     useBlurEffect: {
       where: "device",
-      default: true,
+      default: !/mobile|iphone|android/.test(navigator.userAgent.toLowerCase()), // 循環参照するのでdevice-kind.tsは参照できない
     },
     showFixedPostForm: {
       where: "device",
@@ -302,7 +306,7 @@ interface Watcher {
 import { miLocalStorage } from "./local-storage";
 import lightTheme from "@/themes/l-light.json5";
 import darkTheme from "@/themes/d-green-lime.json5";
-import { Note, UserDetailed } from "misskey-js/built/entities";
+import { Note, UserDetailed } from "yamisskey-js/built/entities";
 
 export class ColdDeviceStorage {
   public static default = {
@@ -335,6 +339,19 @@ export class ColdDeviceStorage {
     } else {
       return JSON.parse(value);
     }
+  }
+
+  public static getAll(): Partial<typeof this.default> {
+    return (Object.keys(this.default) as (keyof typeof this.default)[]).reduce(
+      (acc, key) => {
+        const value = localStorage.getItem(PREFIX + key);
+        if (value != null) {
+          acc[key] = JSON.parse(value);
+        }
+        return acc;
+      },
+      {} as any
+    );
   }
 
   public static set<T extends keyof typeof ColdDeviceStorage.default>(

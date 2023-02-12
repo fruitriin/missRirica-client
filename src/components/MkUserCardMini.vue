@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import { onMounted } from "vue";
 import MkMiniChart from "@/components/MkMiniChart.vue";
 import * as os from "@/os";

@@ -1,0 +1,17 @@
+@@ -135,13 +135,11 @@
+ }
+ 
+ .ti {
+-  vertical-align: -40%;
+-  line-height: 1em;
++  vertical-align: -10%;
++  line-height: 0.9em;
+ 
+   &:before {
+-    display: inline-block;
+-    font-size: 165%;
+-    width: 0.74em;
++    font-size: 130%;
+   }
+ }
+ 

@@ -1,6 +1,6 @@
 <template>
   <div ref="elRef" :class="$style.root">
-    <div v-once :class="$style.head">
+    <div :class="$style.head">
       <MkAvatar
         v-if="notification.type === 'pollEnded'"
         :class="$style.icon"
@@ -55,7 +55,7 @@
         ></i>
         <i
           v-else-if="notification.type === 'achievementEarned'"
-          class="ti ti-military-award"
+          class="ti ti-medal"
         ></i>
         <!-- notification.reaction が null になることはまずないが、ここでoptional chaining使うと一部ブラウザで刺さるので念の為 -->
         <MkReactionIcon
@@ -94,7 +94,7 @@
           :class="$style.headerTime"
         />
       </header>
-      <div v-once :class="$style.content">
+      <div :class="$style.content">
         <MkA
           v-if="notification.type === 'reaction'"
           :class="$style.text"
@@ -105,7 +105,7 @@
           <Mfm
             :text="getNoteSummary(notification.note)"
             :plain="true"
-            :nowrap="!full"
+            :nowrap="true"
             :author="notification.note.user"
           />
           <i class="ti ti-quote" :class="$style.quote"></i>
@@ -120,7 +120,7 @@
           <Mfm
             :text="getNoteSummary(notification.note.renote)"
             :plain="true"
-            :nowrap="!full"
+            :nowrap="true"
             :author="notification.note.renote.user"
           />
           <i class="ti ti-quote" :class="$style.quote"></i>
@@ -134,7 +134,7 @@
           <Mfm
             :text="getNoteSummary(notification.note)"
             :plain="true"
-            :nowrap="!full"
+            :nowrap="true"
             :author="notification.note.user"
           />
         </MkA>
@@ -147,7 +147,7 @@
           <Mfm
             :text="getNoteSummary(notification.note)"
             :plain="true"
-            :nowrap="!full"
+            :nowrap="true"
             :author="notification.note.user"
           />
         </MkA>
@@ -160,7 +160,7 @@
           <Mfm
             :text="getNoteSummary(notification.note)"
             :plain="true"
-            :nowrap="!full"
+            :nowrap="true"
             :author="notification.note.user"
           />
         </MkA>
@@ -174,7 +174,7 @@
           <Mfm
             :text="getNoteSummary(notification.note)"
             :plain="true"
-            :nowrap="!full"
+            :nowrap="true"
             :author="notification.note.user"
           />
           <i class="ti ti-quote" :class="$style.quote"></i>
@@ -188,25 +188,24 @@
             i18n.ts._achievements._types["_" + notification.achievement].title
           }}
         </MkA>
-        <span
-          v-else-if="notification.type === 'follow'"
-          :class="$style.text"
-          style="opacity: 0.6"
-          >{{ i18n.ts.youGotNewFollower }}
+        <template v-else-if="notification.type === 'follow'">
+          <span :class="$style.text" style="opacity: 0.6">{{
+            i18n.ts.youGotNewFollower
+          }}</span>
           <div v-if="full">
-            <MkFollowButton :user="notification.user" :full="true" /></div
-        ></span>
+            <MkFollowButton :user="notification.user" :full="true" />
+          </div>
+        </template>
         <span
           v-else-if="notification.type === 'followRequestAccepted'"
           :class="$style.text"
           style="opacity: 0.6"
           >{{ i18n.ts.followRequestAccepted }}</span
         >
-        <span
-          v-else-if="notification.type === 'receiveFollowRequest'"
-          :class="$style.text"
-          style="opacity: 0.6"
-          >{{ i18n.ts.receiveFollowRequest }}
+        <template v-else-if="notification.type === 'receiveFollowRequest'">
+          <span :class="$style.text" style="opacity: 0.6">{{
+            i18n.ts.receiveFollowRequest
+          }}</span>
           <div v-if="full && !followRequestDone">
             <button class="_textButton" @click="acceptFollowRequest()">
               {{ i18n.ts.accept }}
@@ -215,14 +214,13 @@
             <button class="_textButton" @click="rejectFollowRequest()">
               {{ i18n.ts.reject }}
             </button>
-          </div></span
-        >
-        <span
-          v-else-if="notification.type === 'groupInvited'"
-          :class="$style.text"
-          style="opacity: 0.6"
-          >{{ i18n.ts.groupInvited }}:
-          <b>{{ notification.invitation.group.name }}</b>
+          </div>
+        </template>
+        <template v-else-if="notification.type === 'groupInvited'">
+          <span :class="$style.text" style="opacity: 0.6"
+            >{{ i18n.ts.groupInvited }}:
+            <b>{{ notification.invitation.group.name }}</b></span
+          >
           <div v-if="full && !groupInviteDone">
             <button class="_textButton" @click="acceptGroupInvitation()">
               {{ i18n.ts.accept }}
@@ -231,10 +229,10 @@
             <button class="_textButton" @click="rejectGroupInvitation()">
               {{ i18n.ts.reject }}
             </button>
-          </div></span
-        >
+          </div>
+        </template>
         <span v-else-if="notification.type === 'app'" :class="$style.text">
-          <Mfm :text="notification.body" :nowrap="!full" />
+          <Mfm :text="notification.body" :nowrap="false" />
         </span>
       </div>
     </div>
@@ -243,7 +241,7 @@
 
 <script lang="ts" setup>
 import { ref, shallowRef, onMounted, onUnmounted, watch } from "vue";
-import * as misskey from "yamisskey-js";
+import * as misskey from "misskey-js";
 import MkReactionIcon from "@/components/MkReactionIcon.vue";
 import MkFollowButton from "@/components/MkFollowButton.vue";
 import XReactionTooltip from "@/components/MkReactionTooltip.vue";
@@ -382,7 +380,7 @@ useTooltip(reactionRef, (showing) => {
   border-radius: 100%;
   background: var(--panel);
   box-shadow: 0 0 0 3px var(--panel);
-  font-size: 12px;
+  font-size: 11px;
   text-align: center;
   color: #fff;
 
@@ -432,7 +430,7 @@ useTooltip(reactionRef, (showing) => {
 
 .t_achievementEarned {
   padding: 3px;
-  background: #88a6b7;
+  background: #cb9a11;
   pointer-events: none;
 }
 

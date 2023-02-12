@@ -16,7 +16,7 @@ import darkTheme from "@/themes/_dark.json5";
 import { deepClone } from "./clone";
 import { miLocalStorage } from "@/local-storage";
 import { StatusBar, Style } from "@capacitor/status-bar";
-import { storedDeviceInfo } from "@/main";
+import { storedDeviceInfo } from "@/init.ts";
 
 export const themeProps = Object.keys(lightTheme.props).filter(
   (key) => !key.startsWith("X")

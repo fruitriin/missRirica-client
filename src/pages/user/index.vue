@@ -10,6 +10,7 @@
       <Transition name="fade" mode="out-in">
         <div v-if="user">
           <XHome v-if="tab === 'home'" :user="user" />
+          <XTimeline v-else-if="tab === 'notes'" :user="user" />
           <XActivity v-else-if="tab === 'activity'" :user="user" />
           <XAchievements v-else-if="tab === 'achievements'" :user="user" />
           <XReactions v-else-if="tab === 'reactions'" :user="user" />
@@ -25,20 +26,10 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  defineAsyncComponent,
-  computed,
-  inject,
-  onMounted,
-  onUnmounted,
-  watch,
-} from "vue";
-import calcAge from "s-age";
-import * as Acct from "yamisskey-js/built/acct";
-import * as misskey from "yamisskey-js";
-import { getScrollPosition } from "@/scripts/scroll";
-import number from "@/filters/number";
-import { userPage, acct as getAcct } from "@/filters/user";
+import { defineAsyncComponent, computed, watch } from "vue";
+import * as Acct from "misskey-js/built/acct";
+import * as misskey from "misskey-js";
+import { acct as getAcct } from "@/filters/user";
 import * as os from "@/os";
 import { useRouter } from "@/router";
 import { definePageMetadata } from "@/scripts/page-metadata";
@@ -46,6 +37,7 @@ import { i18n } from "@/i18n";
 import { $i } from "@/account";
 
 const XHome = defineAsyncComponent(() => import("./home.vue"));
+const XTimeline = defineAsyncComponent(() => import("./index.timeline.vue"));
 const XActivity = defineAsyncComponent(() => import("./activity.vue"));
 const XAchievements = defineAsyncComponent(() => import("./achievements.vue"));
 const XReactions = defineAsyncComponent(() => import("./reactions.vue"));
@@ -62,8 +54,6 @@ const props = withDefaults(
     page: "home",
   }
 );
-
-const router = useRouter();
 
 let tab = $ref(props.page);
 let user = $ref<null | misskey.entities.UserDetailed>(null);
@@ -96,6 +86,11 @@ const headerTabs = $computed(() =>
           icon: "ti ti-home",
         },
         {
+          key: "notes",
+          title: i18n.ts.notes,
+          icon: "ti ti-pencil",
+        },
+        {
           key: "activity",
           title: i18n.ts.activity,
           icon: "ti ti-chart-line",
@@ -105,7 +100,7 @@ const headerTabs = $computed(() =>
               {
                 key: "achievements",
                 title: i18n.ts.achievements,
-                icon: "ti ti-military-award",
+                icon: "ti ti-medal",
               },
             ]
           : []),

@@ -29,23 +29,29 @@
                 :data-physics-x="emoji.left"
                 :data-physics-y="emoji.top"
                 :class="{ _physics_circle_: !emoji.emoji.startsWith(':') }"
-                ><MkEmoji
+              >
+                <MkCustomEmoji
+                  v-if="emoji.emoji[0] === ':'"
                   class="emoji"
-                  :emoji="emoji.emoji"
-                  :is-reaction="false"
+                  :name="emoji.emoji"
                   :normal="true"
                   :no-style="true"
-              /></span>
+                />
+                <MkEmoji
+                  v-else
+                  class="emoji"
+                  :emoji="emoji.emoji"
+                  :normal="true"
+                  :no-style="true"
+                />
+              </span>
             </div>
             <button
               v-if="thereIsTreasure"
               class="_button treasure"
               @click="getTreasure"
             >
-              <img
-                src="https://misskey.io/fluent-emoji/1f3c6.png"
-                class="treasureImg"
-              />
+              <img src="/fluent-emoji/1f3c6.png" class="treasureImg" />
             </button>
           </div>
           <div style="text-align: center">
@@ -84,19 +90,73 @@
           </FormSection>
           <FormSection>
             <template #label>{{ i18n.ts._aboutMisskey.contributors }}</template>
-            <div class="_formLinksGrid">
-              <FormLink to="https://github.com/syuilo" external
-                >@syuilo</FormLink
+            <div :class="$style.contributors">
+              <a
+                href="https://github.com/syuilo"
+                target="_blank"
+                :class="$style.contributor"
               >
-              <FormLink to="https://github.com/tamaina" external
-                >@tamaina</FormLink
+                <img
+                  src="https://avatars.githubusercontent.com/u/4439005?v=4"
+                  :class="$style.contributorAvatar"
+                />
+                <span :class="$style.contributorUsername">@syuilo</span>
+              </a>
+              <a
+                href="https://github.com/tamaina"
+                target="_blank"
+                :class="$style.contributor"
               >
-              <FormLink to="https://github.com/acid-chicken" external
-                >@acid-chicken</FormLink
+                <img
+                  src="https://avatars.githubusercontent.com/u/7973572?v=4"
+                  :class="$style.contributorAvatar"
+                />
+                <span :class="$style.contributorUsername">@tamaina</span>
+              </a>
+              <a
+                href="https://github.com/acid-chicken"
+                target="_blank"
+                :class="$style.contributor"
               >
-              <FormLink to="https://github.com/rinsuki" external
-                >@rinsuki</FormLink
+                <img
+                  src="https://avatars.githubusercontent.com/u/20679825?v=4"
+                  :class="$style.contributorAvatar"
+                />
+                <span :class="$style.contributorUsername">@acid-chicken</span>
+              </a>
+              <a
+                href="https://github.com/rinsuki"
+                target="_blank"
+                :class="$style.contributor"
               >
+                <img
+                  src="https://avatars.githubusercontent.com/u/6533808?v=4"
+                  :class="$style.contributorAvatar"
+                />
+                <span :class="$style.contributorUsername">@rinsuki</span>
+              </a>
+              <a
+                href="https://github.com/mei23"
+                target="_blank"
+                :class="$style.contributor"
+              >
+                <img
+                  src="https://avatars.githubusercontent.com/u/30769358?v=4"
+                  :class="$style.contributorAvatar"
+                />
+                <span :class="$style.contributorUsername">@mei23</span>
+              </a>
+              <a
+                href="https://github.com/robflop"
+                target="_blank"
+                :class="$style.contributor"
+              >
+                <img
+                  src="https://avatars.githubusercontent.com/u/8159402?v=4"
+                  :class="$style.contributorAvatar"
+                />
+                <span :class="$style.contributorUsername">@robflop</span>
+              </a>
             </div>
             <template #caption
               ><MkLink
@@ -110,8 +170,18 @@
               ><Mfm text="$[jelly ❤]" />
               {{ i18n.ts._aboutMisskey.patrons }}</template
             >
+            <div :class="$style.patronsWithIcon">
+              <div
+                v-for="patron in patronsWithIcon"
+                :class="$style.patronWithIcon"
+              >
+                <img :src="patron.icon" :class="$style.patronIcon" />
+                <span :class="$style.patronName">{{ patron.name }}</span>
+              </div>
+            </div>
             <div
               style="
+                margin-top: 16px;
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
                 grid-gap: 12px;
@@ -141,6 +211,17 @@ import * as os from "@/os";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { claimAchievement, claimedAchievements } from "@/scripts/achievements";
 import { $i } from "@/account";
+
+const patronsWithIcon = [
+  {
+    name: "カイヤン",
+    icon: "https://misskey-hub.net/patrons/a2820716883e408cb87773e377ce7c8d.jpg",
+  },
+  {
+    name: "だれかさん",
+    icon: "https://misskey-hub.net/patrons/f7409b5e5a88477a9b9d740c408de125.jpg",
+  },
+];
 
 const patrons = [
   "まっちゃとーにゅ",
@@ -221,6 +302,7 @@ const patrons = [
   "蝉暮せせせ",
   "ThatOneCalculator",
   "pixeldesu",
+  "あめ玉",
 ];
 
 let thereIsTreasure = $ref(
@@ -362,5 +444,63 @@ definePageMetadata({
       }
     }
   }
+}
+</style>
+
+<style lang="scss" module>
+.contributors {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 12px;
+}
+
+.contributor {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: var(--buttonBg);
+  border-radius: 6px;
+
+  &:hover {
+    text-decoration: none;
+    background: var(--buttonHoverBg);
+  }
+
+  &.active {
+    color: var(--accent);
+    background: var(--buttonHoverBg);
+  }
+}
+
+.contributorAvatar {
+  width: 30px;
+  border-radius: 100%;
+}
+
+.contributorUsername {
+  margin-left: 12px;
+}
+
+.patronsWithIcon {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 12px;
+}
+
+.patronWithIcon {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: var(--buttonBg);
+  border-radius: 6px;
+}
+
+.patronIcon {
+  width: 24px;
+  border-radius: 100%;
+}
+
+.patronName {
+  margin-left: 12px;
 }
 </style>
