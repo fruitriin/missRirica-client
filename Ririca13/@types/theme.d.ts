@@ -1,7 +1,7 @@
-declare module "@/themes/*.json5" {
-  import { Theme } from "@/scripts/theme";
+declare module '@/themes/*.json5' {
+	import { Theme } from "@/scripts/theme";
 
-  const theme: Theme;
+	const theme: Theme;
 
-  export default theme;
+	export default theme;
 }
