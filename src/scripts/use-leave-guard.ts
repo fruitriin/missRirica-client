@@ -1,9 +1,9 @@
-import { inject, onUnmounted, Ref } from 'vue';
-import { i18n } from '@/i18n';
-import * as os from '@/os';
+import { inject, onUnmounted, Ref } from "vue";
+import { i18n } from "@/i18n";
+import * as os from "@/os";
 
 export function useLeaveGuard(enabled: Ref<boolean>) {
-	/* TODO
+  /* TODO
 	const setLeaveGuard = inject('setLeaveGuard');
 
 	if (setLeaveGuard) {
@@ -30,8 +30,7 @@ export function useLeaveGuard(enabled: Ref<boolean>) {
 		});
 	}
 	*/
-
-	/*
+  /*
 	function onBeforeLeave(ev: BeforeUnloadEvent) {
 		if (enabled.value) {
 			ev.preventDefault();
