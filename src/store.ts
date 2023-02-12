@@ -302,7 +302,7 @@ interface Watcher {
 import { miLocalStorage } from "./local-storage";
 import lightTheme from "@/themes/l-light.json5";
 import darkTheme from "@/themes/d-green-lime.json5";
-import { Note, UserDetailed } from "yamisskey-js/built/entities";
+import { Note, UserDetailed } from "misskey-js/built/entities";
 
 export class ColdDeviceStorage {
   public static default = {

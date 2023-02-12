@@ -1,9 +1,11 @@
 // TODO: なんでもかんでもos.tsに突っ込むのやめたいのでよしなに分割する
 
+import { pendingApiRequestsCount, api, apiGet } from "@/scripts/api";
+export { pendingApiRequestsCount, api, apiGet };
 import { Component, markRaw, Ref, ref, defineAsyncComponent } from "vue";
 import { EventEmitter } from "eventemitter3";
 import insertTextAtCursor from "insert-text-at-cursor";
-import * as Misskey from "yamisskey-js";
+import * as Misskey from "misskey-js";
 import { i18n } from "./i18n";
 import MkPostFormDialog from "@/components/MkPostFormDialog.vue";
 import MkWaitingDialog from "@/components/MkWaitingDialog.vue";
@@ -16,46 +18,10 @@ import MkPopupMenu from "@/components/MkPopupMenu.vue";
 import MkContextMenu from "@/components/MkContextMenu.vue";
 import { MenuItem } from "@/types/menu";
 
-import { $i } from "@/account";
 export const openingWindowsCount = ref(0);
 
-const apiClient = new Misskey.api.APIClient({
-  origin: $i?.instanceUrl,
-  credential: $i?.token,
-});
-
-export const noCredentialApi = new Misskey.api.APIClient({
-  origin: $i?.instanceUrl || window.location.origin,
-});
-
-export const api = ((
-  endpoint: keyof Misskey.Endpoints,
-  data: Record<string, any> = {}
-) => {
-  return apiClient.request(endpoint, data);
-}) as typeof apiClient.request;
-
-export const apiGet = ((
-  endpoint: keyof Misskey.Endpoints,
-  data: Record<string, any> = {}
-) => {
-  const query = new URLSearchParams(data);
-
-  const promise = new Promise((resolve, reject) => {
-    // Send request
-    apiClient
-      .request(endpoint, { ...data })
-      .then(async (res) => {
-        resolve(res);
-      })
-      .catch(reject);
-  });
-
-  return promise;
-}) as typeof apiClient.request;
-
 export const apiWithDialog = ((
-  endpoint: keyof Misskey.Endpoints,
+  endpoint: string,
   data: Record<string, any> = {},
   token?: string | null | undefined
 ) => {
