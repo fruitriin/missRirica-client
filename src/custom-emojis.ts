@@ -18,24 +18,27 @@ export const customEmojiCategories = computed<[...string[], null]>(() => {
   return markRaw([...Array.from(categories), null]);
 });
 
-stream.on("emojiAdded", (emojiData) => {
-  customEmojis.value = [emojiData.emoji, ...customEmojis.value];
-});
+export function streamEmojis(stream){
 
-stream.on("emojiUpdated", (emojiData) => {
-  customEmojis.value = customEmojis.value.map(
-    (item) =>
-      (emojiData.emojis.find(
-        (search) => search.name === item.name
-      ) as Misskey.entities.CustomEmoji) ?? item
-  );
-});
+  stream.on("emojiAdded", (emojiData) => {
+    customEmojis.value = [emojiData.emoji, ...customEmojis.value];
+  });
 
-stream.on("emojiDeleted", (emojiData) => {
-  customEmojis.value = customEmojis.value.filter(
-    (item) => !emojiData.emojis.some((search) => search.name === item.name)
-  );
-});
+  stream.on("emojiUpdated", (emojiData) => {
+    customEmojis.value = customEmojis.value.map(
+      (item) =>
+        (emojiData.emojis.find(
+          (search) => search.name === item.name
+        ) as Misskey.entities.CustomEmoji) ?? item
+    );
+  });
+
+  stream.on("emojiDeleted", (emojiData) => {
+    customEmojis.value = customEmojis.value.filter(
+      (item) => !emojiData.emojis.some((search) => search.name === item.name)
+    );
+  });
+}
 
 export async function fetchCustomEmojis(force = false) {
   const now = Date.now();

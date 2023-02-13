@@ -53,7 +53,7 @@ import { getAccountFromId } from "@/scripts/get-account-from-id";
 import { deckStore } from "./ui/deck/deck-store";
 import { miLocalStorage } from "./local-storage";
 import { claimAchievement, claimedAchievements } from "./scripts/achievements";
-import { fetchCustomEmojis } from "./custom-emojis";
+import { fetchCustomEmojis,streamEmojis } from "./custom-emojis";
 import { Device } from "@capacitor/device";
 import lightTheme from "@/themes/_light.json5";
 import OneSignal from "onesignal-cordova-plugin";
@@ -389,6 +389,7 @@ async function afterLoginSetup() {
     { immediate: true }
   );
 
+  streamEmojis(stream)
   let reloadDialogShowing = false;
   stream.on("_disconnected_", async () => {
     if (defaultStore.state.serverDisconnectedBehavior === "reload") {
