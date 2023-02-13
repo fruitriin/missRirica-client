@@ -338,7 +338,7 @@ bannerUrl: "Ссылка на изображение в шапке"
 backgroundImageUrl: "Ссылка на фоновое изображение"
 basicInfo: "Общая информация"
 pinnedUsers: "Прикреплённый пользователь"
-pinnedUsersDescription: "Перечислите по одному имени пользователя в строке. Пользователи, перечисленные здесь, будут привязаны к закладке \"Изучение\"."
+pinnedUsersDescription: 'Перечислите по одному имени пользователя в строке. Пользователи, перечисленные здесь, будут привязаны к закладке "Изучение".'
 pinnedPages: "Закрепленные страницы"
 pinnedPagesDescription: "Если хотите закрепить страницы на главной сайта, сюда можно добавить пути к ним, каждый в отдельной строке."
 pinnedClipId: "Идентификатор закреплённой подборки"
@@ -901,7 +901,7 @@ unsubscribePushNotification: "Выключить push-уведомления"
 pushNotificationAlreadySubscribed: "Push-уведомления уже включены"
 pushNotificationNotSupported: "Push-уведмления не поддерживаются инстансом или браузером"
 sendPushNotificationReadMessage: "Удалять push-уведомления когда сообщение или прочитано"
-sendPushNotificationReadMessageCaption: "На мгновение появится уведомление \"{emptyPushNotificationMessage}\". Расход заряда батареи может увеличиться "
+sendPushNotificationReadMessageCaption: 'На мгновение появится уведомление "{emptyPushNotificationMessage}". Расход заряда батареи может увеличиться '
 windowMaximize: "Развернуть"
 windowRestore: "Восстановить"
 caption: "Подпись (Automatic Translation)"
@@ -1239,8 +1239,8 @@ _plugin:
 _preferencesBackups:
   saveConfirm: "Сохранить бэкап как {name}?"
   deleteConfirm: "Удалить резервную копию {name}?"
-  renameConfirm: "Переименовать резервную копию с \"{old}\" на \"{new}\"?"
-  noBackups: "Резервной копии не существует. Вы можете создать резервную копию в настройках на этом инстансе с помощью \"Создать новую резервную копию\"."
+  renameConfirm: 'Переименовать резервную копию с "{old}" на "{new}"?'
+  noBackups: 'Резервной копии не существует. Вы можете создать резервную копию в настройках на этом инстансе с помощью "Создать новую резервную копию".'
 _registry:
   scope: "Область"
   key: "Ключ"

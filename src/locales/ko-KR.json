@@ -1995,16 +1995,16 @@
       "direct": "다이렉트"
     }
   },
-  "ririca" : {
+  "ririca": {
     "name": "MissRirica",
     "description": "MissRirica는 iOS/Android를 위한 Misskey 클라이언트입니다.  로그인하기 위해서 액세스 토큰을 준비해주세요.",
     "term": "개인정보 처리방침 및 이용 약관에 동의 ",
     "termLink": "개인정보 처리방침 및 이용 약관을 읽기",
     "login": "로그인",
     "instance": "인스턴스",
-    "makeToken" : "액세스 토큰을 만드는 방법(일본어)",
+    "makeToken": "액세스 토큰을 만드는 방법(일본어)",
     "selectInstanceYourself": "인스턴스의 url을 입력하기",
     "accessToken": "액세스 토큰",
-    "howToCreateToken" : "액세스 토큰을 만드는 방법(일본어)"
+    "howToCreateToken": "액세스 토큰을 만드는 방법(일본어)"
   }
 }
