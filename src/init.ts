@@ -61,12 +61,18 @@ import { App } from "@capacitor/app";
 export let storedDeviceInfo: Object;
 
 (async () => {
+  const res = await Device.getInfo();
+  console.log(res);
+  storedDeviceInfo = res;
   console.info(`Misskey v${version}`);
   const lang = await setLanguage(
     localStorage.getItem("lang") ||
     (await Device.getLanguageCode().value) ||
     "ja-JP"
   );
+  if(localStorage.getItem("lang") == null) {
+    localStorage.setItem("lang", lang)
+  }
 if (_DEV_) {
   console.warn("Development mode!!!");
 
@@ -122,9 +128,6 @@ if (["smartphone", "tablet"].includes(deviceKind)) {
   const html = document.documentElement;
 
   html.setAttribute("lang", lang);
-  const res = await Device.getInfo();
-  console.log(res);
-  storedDeviceInfo = res;
   html.setAttribute("class", res.platform);
 
   const css = localStorage.getItem("customCss") || "";
@@ -632,4 +635,40 @@ async function afterLoginSetup() {
 // shortcut
   document.addEventListener("keydown", makeHotkey(hotkeys));
 
+
+  if (storedDeviceInfo.platform == "web") return
+  OneSignal.setAppId(import.meta.env.VITE_ONE_SIGNAL_APP_ID);
+  const deviceId = await Device.getId()
+  OneSignal.setExternalUserId(deviceId.uuid);
+  const res = await fetch(
+    import.meta.env.VITE_NOTIFICATION_TOKEN_ENDPOINT,
+    {
+      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      mode: "cors", // no-cors, *cors, same-origin
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "same-origin", // include, *same-origin, omit
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow", // manual, *follow, error
+      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: JSON.stringify({
+        misskey_token: $i.token,
+        device_id: deviceId.uuid,
+        instance_url: $i.instanceUrl
+      }), // 本体のデータ型は "Content-Type" ヘッダーと一致させる必要があります
+    }
+  ).catch((err) => {
+    console.error(err);
+    // throw err
+  });
+  console.info(res);
+  OneSignal.setNotificationOpenedHandler(function (jsonData) {
+    console.log("notificationOpenedCallback: " + JSON.stringify(jsonData));
+  });
+  // Prompts the user for notification permissions.
+  //    * Since this shows a generic native prompt, we recommend instead using an In-App Message to prompt for notification permission (See step 7) to better communicate to your users what notifications they will get.
+  OneSignal.promptForPushNotificationsWithUserResponse(function (accepted) {
+    console.log("User accepted notifications: " + accepted);
+  });
 }

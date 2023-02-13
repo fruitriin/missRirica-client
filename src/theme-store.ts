@@ -13,13 +13,13 @@ export function getThemes(): Theme[] {
 export async function fetchThemes(): Promise<void> {
   if ($i == null) return;
 
-  try {
+  // try {
     // const themes = await api('i/registry/get', { scope: ['client'], key: 'themes' });
-    miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
-  } catch (err) {
-    if (err.code === "NO_SUCH_KEY") return;
-    throw err;
-  }
+  //   miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
+  // } catch (err) {
+  //   if (err.code === "NO_SUCH_KEY") return;
+  //   throw err;
+  // }
 }
 
 export async function addTheme(theme: Theme): Promise<void> {
