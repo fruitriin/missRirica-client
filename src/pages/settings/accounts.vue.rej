@@ -1,0 +1,43 @@
+@@ -43,25 +43,28 @@
+ } from "@/account";
+ import { i18n } from "@/i18n";
+ import { definePageMetadata } from "@/scripts/page-metadata";
++import { api } from "yamisskey-js";
+ 
+ const storedAccounts = ref<any>(null);
+-const accounts = ref<any>(null);
++const accounts = ref<any>([]);
+ 
+ const init = async () => {
+-  getAccounts()
+-    .then((accounts) => {
+-      storedAccounts.value = accounts.filter((x) => x.id !== $i!.id);
+-
+-      console.log(storedAccounts.value);
+-
+-      return os.api("users/show", {
+-        userIds: storedAccounts.value.map((x) => x.id),
++  await getAccounts().then(async (ac) => {
++    return ac
++      .filter((x) => x.id !== $i!.id)
++      .forEach(async (a) => {
++        accounts.value.push({
++          ...(await new api.APIClient({
++            origin: a.instanceUrl,
++            credential: a.token,
++          }).request("users/show", {
++            userId: a.id,
++          })),
++          host: a.instanceUrl,
++        });
+       });
+-    })
+-    .then((response) => {
+-      accounts.value = response;
+-      console.log(accounts.value);
+-    });
++  });
++  return Promise.resolve();
+ };
+ 
+ function menu(account, ev) {

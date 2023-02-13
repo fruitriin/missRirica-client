@@ -134,6 +134,8 @@ if (["smartphone", "tablet"].includes(deviceKind)) {
     cssNode.appendChild(cssTextNode);
     document.body.appendChild(cssNode);
   }
+
+  applyTheme(lightTheme);
 //#endregion
 
 //#region loginId
