@@ -12,7 +12,11 @@
     ]"
     @click="toggleReaction()"
   >
-    <MkReactionIcon :class="$style.icon" :reaction="reaction" />
+    <MkReactionIcon
+      :class="$style.icon"
+      :reaction="reaction"
+      :emoji-url="note.reactionEmojis[reaction.substr(1, reaction.length - 2)]"
+    />
     <span :class="$style.count">{{ count }}</span>
   </button>
 </template>
@@ -127,7 +131,7 @@ useTooltip(
   border-radius: 4px;
 
   &.canToggle {
-    background: rgba(0, 0, 0, 0.05);
+    background: var(--buttonBg);
 
     &:hover {
       background: rgba(0, 0, 0, 0.1);

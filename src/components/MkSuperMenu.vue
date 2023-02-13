@@ -13,7 +13,9 @@
             class="_button item"
             :class="{ danger: item.danger, active: item.active }"
           >
-            <i v-if="item.icon" class="icon ti-fw" :class="item.icon"></i>
+            <span v-if="item.icon" class="icon"
+              ><i :class="item.icon" class="ti-fw"></i
+            ></span>
             <span class="text">{{ item.text }}</span>
           </a>
           <button
@@ -24,7 +26,9 @@
             :disabled="item.active"
             @click="(ev) => item.action(ev)"
           >
-            <i v-if="item.icon" class="icon ti-fw" :class="item.icon"></i>
+            <span v-if="item.icon" class="icon"
+              ><i :class="item.icon" class="ti-fw"></i
+            ></span>
             <span class="text">{{ item.text }}</span>
           </button>
           <MkA
@@ -34,7 +38,9 @@
             class="_button item"
             :class="{ danger: item.danger, active: item.active }"
           >
-            <i v-if="item.icon" class="icon ti-fw" :class="item.icon"></i>
+            <span v-if="item.icon" class="icon"
+              ><i :class="item.icon" class="ti-fw"></i
+            ></span>
             <span class="text">{{ item.text }}</span>
           </MkA>
         </template>

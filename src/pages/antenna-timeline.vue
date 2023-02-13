@@ -122,6 +122,7 @@ definePageMetadata(
     top: calc(var(--stickyTop, 0px) + 16px);
     z-index: 1000;
     width: 100%;
+    margin: calc(-0.675em - 8px - var(--margin)) 0 calc(-0.675em - 8px);
 
     > button {
       display: block;

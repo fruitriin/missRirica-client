@@ -29,13 +29,22 @@
                 :data-physics-x="emoji.left"
                 :data-physics-y="emoji.top"
                 :class="{ _physics_circle_: !emoji.emoji.startsWith(':') }"
-                ><MkEmoji
+              >
+                <MkCustomEmoji
+                  v-if="emoji.emoji[0] === ':'"
                   class="emoji"
-                  :emoji="emoji.emoji"
-                  :is-reaction="false"
+                  :name="emoji.emoji"
                   :normal="true"
                   :no-style="true"
-              /></span>
+                />
+                <MkEmoji
+                  v-else
+                  class="emoji"
+                  :emoji="emoji.emoji"
+                  :normal="true"
+                  :no-style="true"
+                />
+              </span>
             </div>
             <button
               v-if="thereIsTreasure"
@@ -110,8 +119,18 @@
               ><Mfm text="$[jelly ❤]" />
               {{ i18n.ts._aboutMisskey.patrons }}</template
             >
+            <div :class="$style.patronsWithIcon">
+              <div
+                v-for="patron in patronsWithIcon"
+                :class="$style.patronWithIcon"
+              >
+                <img :src="patron.icon" :class="$style.patronIcon" />
+                <span :class="$style.patronName">{{ patron.name }}</span>
+              </div>
+            </div>
             <div
               style="
+                margin-top: 16px;
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
                 grid-gap: 12px;
@@ -141,6 +160,17 @@ import * as os from "@/os";
 import { definePageMetadata } from "@/scripts/page-metadata";
 import { claimAchievement, claimedAchievements } from "@/scripts/achievements";
 import { $i } from "@/account";
+
+const patronsWithIcon = [
+  {
+    name: "カイヤン",
+    icon: "https://misskey-hub.net/patrons/a2820716883e408cb87773e377ce7c8d.jpg",
+  },
+  {
+    name: "だれかさん",
+    icon: "https://misskey-hub.net/patrons/f7409b5e5a88477a9b9d740c408de125.jpg",
+  },
+];
 
 const patrons = [
   "まっちゃとーにゅ",
@@ -221,6 +251,7 @@ const patrons = [
   "蝉暮せせせ",
   "ThatOneCalculator",
   "pixeldesu",
+  "あめ玉",
 ];
 
 let thereIsTreasure = $ref(
@@ -362,5 +393,28 @@ definePageMetadata({
       }
     }
   }
+}
+
+.patronsWithIcon {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 12px;
+}
+
+.patronWithIcon {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: var(--buttonBg);
+  border-radius: 6px;
+}
+
+.patronIcon {
+  width: 24px;
+  border-radius: 100%;
+}
+
+.patronName {
+  margin-left: 12px;
 }
 </style>

@@ -142,6 +142,7 @@
                 :text="appearNote.text"
                 :author="appearNote.user"
                 :i="$i"
+                :emoji-urls="appearNote.emojis"
               />
               <a v-if="appearNote.renote != null" class="rp">RN:</a>
               <div v-if="translating || translation" class="translation">
@@ -154,6 +155,7 @@
                     :text="translation.text"
                     :author="appearNote.user"
                     :i="$i"
+                    :emoji-urls="appearNote.emojis"
                   />
                 </div>
               </div>
@@ -294,6 +296,7 @@ import { useNoteCapture } from "@/scripts/use-note-capture";
 import { deepClone } from "@/scripts/clone";
 import { useTooltip } from "@/scripts/use-tooltip";
 import { claimAchievement } from "@/scripts/achievements";
+import { MenuItem } from "@/types/menu";
 
 const props = defineProps<{
   note: misskey.entities.Note;
@@ -389,32 +392,59 @@ useTooltip(renoteButton, async (showing) => {
 
 function renote(viaKeyboard = false) {
   pleaseLogin();
-  os.popupMenu(
-    [
+
+  let items = [] as MenuItem[];
+
+  if (appearNote.channel) {
+    items = items.concat([
       {
-        text: i18n.ts.renote,
+        text: i18n.ts.inChannelRenote,
         icon: "ti ti-repeat",
         action: () => {
           os.api("notes/create", {
             renoteId: appearNote.id,
+            channelId: appearNote.channelId,
           });
         },
       },
       {
-        text: i18n.ts.quote,
+        text: i18n.ts.inChannelQuote,
         icon: "ti ti-quote",
         action: () => {
           os.post({
             renote: appearNote,
+            channel: appearNote.channel,
           });
         },
       },
-    ],
-    renoteButton.value,
+      null,
+    ]);
+  }
+
+  items = items.concat([
     {
-      viaKeyboard,
-    }
-  );
+      text: i18n.ts.renote,
+      icon: "ti ti-repeat",
+      action: () => {
+        os.api("notes/create", {
+          renoteId: appearNote.id,
+        });
+      },
+    },
+    {
+      text: i18n.ts.quote,
+      icon: "ti ti-quote",
+      action: () => {
+        os.post({
+          renote: appearNote,
+        });
+      },
+    },
+  ]);
+
+  os.popupMenu(items, renoteButton.value, {
+    viaKeyboard,
+  });
 }
 
 function reply(viaKeyboard = false): void {

@@ -1,6 +1,6 @@
 <template>
-  <XPostForm
-    class="_panel mkw-postForm data-cy-mkw-postForm"
+  <MkPostForm
+    class="_panel mkw-post-form data-cy-mkw-postForm"
     :fixed="true"
     :autofocus="false"
   />
@@ -8,7 +8,6 @@
 
 <script lang="ts" setup>
 import {} from "vue";
-import { GetFormResultType } from "@/scripts/form";
 import {
   useWidgetPropsManager,
   Widget,
@@ -16,7 +15,8 @@ import {
   WidgetComponentExpose,
   WidgetComponentProps,
 } from "./widget";
-import XPostForm from "@/components/MkPostForm.vue";
+import { GetFormResultType } from "@/scripts/form";
+import MkPostForm from "@/components/MkPostForm.vue";
 
 const name = "postForm";
 

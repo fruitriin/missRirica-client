@@ -1,7 +1,6 @@
 <template>
   <header :class="$style.root">
     <MkA
-      v-once
       v-user-preview="note.user.id"
       :class="$style.name"
       :to="userPage(note.user)"
@@ -10,6 +9,15 @@
     </MkA>
     <div v-if="note.user.isBot" :class="$style.isBot">bot</div>
     <div :class="$style.username"><MkAcct :user="note.user" /></div>
+    <div v-if="note.user.badgeRoles" :class="$style.badgeRoles">
+      <img
+        v-for="role in note.user.badgeRoles"
+        :key="role.id"
+        v-tooltip="role.name"
+        :class="$style.badgeRole"
+        :src="role.iconUrl"
+      />
+    </div>
     <div :class="$style.info">
       <MkA :to="notePage(note)">
         <MkTime :time="note.createdAt" />
@@ -94,5 +102,18 @@ defineProps<{
   flex-shrink: 0;
   margin-left: auto;
   font-size: 0.9em;
+}
+
+.badgeRoles {
+  margin: 0 0.5em 0 0;
+}
+
+.badgeRole {
+  height: 1.3em;
+  vertical-align: -20%;
+
+  & + .badgeRole {
+    margin-left: 0.2em;
+  }
 }
 </style>

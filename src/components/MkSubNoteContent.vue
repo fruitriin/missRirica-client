@@ -15,10 +15,10 @@
       ></MkA>
       <Mfm
         v-if="note.text"
-        v-once
         :text="note.text"
         :author="note.user"
         :i="$i"
+        :emoji-urls="note.emojis"
       />
       <MkA
         v-if="note.renoteId"

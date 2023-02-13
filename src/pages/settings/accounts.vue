@@ -1,32 +1,32 @@
 <template>
-  <div class="">
-    <FormSuspense :p="init">
-      <div class="_gaps">
-        <MkButton primary @click="addAccount"
-          ><i class="ti ti-plus"></i> {{ i18n.ts.addAccount }}</MkButton
-        >
+<div class="">
+	<FormSuspense :p="init">
+		<div class="_gaps">
+			<MkButton primary @click="addAccount">
+				<i class="ti ti-plus"></i> {{ i18n.ts.addAccount }}
+			</MkButton>
 
-        <div
-          v-for="account in accounts"
-          :key="account.id"
-          class="_panel _button lcjjdxlm"
-          @click="menu(account, $event)"
-        >
-          <div class="avatar">
-            <MkAvatar :user="account" class="avatar" />
-          </div>
-          <div class="body">
-            <div class="name">
-              <MkUserName :user="account" />
-            </div>
-            <div class="acct">
-              <MkAcct :user="account" :detail="true" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </FormSuspense>
-  </div>
+			<div
+				v-for="account in accounts"
+				:key="account.id"
+				class="_panel _button lcjjdxlm"
+				@click="menu(account, $event)"
+			>
+				<div class="avatar">
+					<MkAvatar :user="account" class="avatar"/>
+				</div>
+				<div class="body">
+					<div class="name">
+						<MkUserName :user="account"/>
+					</div>
+					<div class="acct">
+						<MkAcct :user="account" :detail="true"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</FormSuspense>
+</div>
 </template>
 
 <script lang="ts" setup>
@@ -43,7 +43,7 @@ import {
 } from "@/account";
 import { i18n } from "@/i18n";
 import { definePageMetadata } from "@/scripts/page-metadata";
-import { api } from "yamisskey-js";
+import { api } from "misskey-js"
 
 const storedAccounts = ref<any>(null);
 const accounts = ref<any>([]);

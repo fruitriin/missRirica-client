@@ -20,6 +20,7 @@ export type Column = {
     | "notifications"
     | "tl"
     | "antenna"
+    | "channel"
     | "list"
     | "mentions"
     | "direct";
@@ -30,6 +31,7 @@ export type Column = {
   flexible?: boolean;
   antennaId?: string;
   listId?: string;
+  channelId?: string;
   includingTypes?: (typeof notificationTypes)[number][];
   tl?: "home" | "local" | "social" | "global";
 };

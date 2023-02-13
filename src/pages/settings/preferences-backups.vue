@@ -80,6 +80,7 @@ const defaultStoreSaveKeys: (keyof (typeof defaultStore)["state"])[] = [
   "nsfw",
   "animation",
   "animatedMfm",
+  "advancedMfm",
   "loadRawImages",
   "imageNewTab",
   "disableShowingAnimatedImages",

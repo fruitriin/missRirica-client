@@ -1,45 +1,46 @@
 <template>
-  <MkStickyContainer>
-    <template #header
-      ><MkPageHeader
-        v-model:tab="src"
-        :actions="headerActions"
-        :tabs="headerTabs"
-        :display-my-avatar="true"
-    /></template>
-    <MkSpacer :content-max="800">
-      <div ref="rootEl" v-hotkey.global="keymap">
-        <XPostForm
-          v-if="$store.reactiveState.showFixedPostForm.value"
-          :class="$style.postForm"
-          class="post-form _panel"
-          fixed
-          style="margin-bottom: var(--margin)"
-        />
+<MkStickyContainer>
+	<template #header>
+		<MkPageHeader
+			v-model:tab="src"
+			:actions="headerActions"
+			:tabs="$i ? headerTabs : headerTabsWhenNotLogin"
+			:display-my-avatar="true"
+		/>
+	</template>
+	<MkSpacer :content-max="800">
+		<div ref="rootEl" v-hotkey.global="keymap">
+			<MkPostForm
+				v-if="$store.reactiveState.showFixedPostForm.value"
+				:class="$style.postForm"
+				class="post-form _panel"
+				fixed
+				style="margin-bottom: var(--margin)"
+			/>
 
-        <div v-if="queue > 0" :class="$style.new">
-          <button class="_buttonPrimary" @click="top()">
-            {{ i18n.ts.newNoteRecived }}
-          </button>
-        </div>
-        <div :class="$style.tl">
-          <XTimeline
-            ref="tlComponent"
-            :key="src"
-            :src="src"
-            :sound="true"
-            @queue="queueUpdated"
-          />
-        </div>
-      </div>
-    </MkSpacer>
-  </MkStickyContainer>
+			<div v-if="queue > 0" :class="$style.new">
+				<button class="_buttonPrimary" @click="top()">
+					{{ i18n.ts.newNoteRecived }}
+				</button>
+			</div>
+			<div :class="$style.tl">
+				<XTimeline
+					ref="tlComponent"
+					:key="src"
+					:src="src"
+					:sound="true"
+					@queue="queueUpdated"
+				/>
+			</div>
+		</div>
+	</MkSpacer>
+</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, computed, watch } from "vue";
+import { defineAsyncComponent, computed, watch, provide } from "vue";
 import XTimeline from "@/components/MkTimeline.vue";
-import XPostForm from "@/components/MkPostForm.vue";
+import MkPostForm from "@/components/MkPostForm.vue";
 import { scroll } from "@/scripts/scroll";
 import * as os from "@/os";
 import { defaultStore } from "@/store";
@@ -47,14 +48,15 @@ import { i18n } from "@/i18n";
 import { instance } from "@/instance";
 import { $i } from "@/account";
 import { definePageMetadata } from "@/scripts/page-metadata";
+import type { Tab } from "@/components/global/MkPageHeader.tabs.vue";
 import { Camera } from "@capacitor/camera";
+
+provide("shouldOmitHeaderTitle", true);
 
 const XTutorial = defineAsyncComponent(() => import("./timeline.tutorial.vue"));
 
-const isLocalTimelineAvailable =
-  ($i == null && instance.policies.ltlAvailable) || $i != null;
-const isGlobalTimelineAvailable =
-  ($i == null && instance.policies.gtlAvailable) || $i != null;
+const isLocalTimelineAvailable = ($i == null && instance.policies.ltlAvailable) ||$i != null;
+const isGlobalTimelineAvailable = ($i == null && instance.policies.gtlAvailable) || $i != null;
 const keymap = {
   t: focus,
 };
@@ -63,8 +65,9 @@ const tlComponent = $shallowRef<InstanceType<typeof XTimeline>>();
 const rootEl = $shallowRef<HTMLElement>();
 
 let queue = $ref(0);
+let srcWhenNotSignin = $ref(isLocalTimelineAvailable ? "local" : "global");
 const src = $computed({
-  get: () => defaultStore.reactiveState.tl.value.src,
+  get: () => ($i ? defaultStore.reactiveState.tl.value.src : srcWhenNotSignin),
   set: (x) => saveSrc(x),
 });
 
@@ -75,7 +78,7 @@ function queueUpdated(q: number): void {
 }
 
 function top(): void {
-  scroll(rootEl, { top: 0 });
+  if (rootEl) scroll(rootEl, { top: 0 });
 }
 
 async function chooseList(ev: MouseEvent): Promise<void> {
@@ -115,6 +118,7 @@ function saveSrc(newSrc: "home" | "local" | "social" | "global"): void {
     ...defaultStore.state.tl,
     src: newSrc,
   });
+  srcWhenNotSignin = newSrc;
 }
 
 async function timetravel(): Promise<void> {
@@ -132,58 +136,87 @@ function focus(): void {
 
 const headerActions = $computed(() => []);
 
-const headerTabs = $computed(() => [
-  {
-    key: "home",
-    title: i18n.ts._timelines.home,
-    icon: "ti ti-home",
-    iconOnly: true,
-  },
-  ...(isLocalTimelineAvailable
-    ? [
-        {
-          key: "local",
-          title: i18n.ts._timelines.local,
-          icon: "ti ti-planet",
-          iconOnly: true,
-        },
-        {
-          key: "social",
-          title: i18n.ts._timelines.social,
-          icon: "ti ti-rocket",
-          iconOnly: true,
-        },
-      ]
-    : []),
-  ...(isGlobalTimelineAvailable
-    ? [
-        {
-          key: "global",
-          title: i18n.ts._timelines.global,
-          icon: "ti ti-whirl",
-          iconOnly: true,
-        },
-      ]
-    : []),
-  {
-    icon: "ti ti-list",
-    title: i18n.ts.lists,
-    iconOnly: true,
-    onClick: chooseList,
-  },
-  {
-    icon: "ti ti-antenna",
-    title: i18n.ts.antennas,
-    iconOnly: true,
-    onClick: chooseAntenna,
-  },
-  {
-    icon: "ti ti-device-tv",
-    title: i18n.ts.channel,
-    iconOnly: true,
-    onClick: chooseChannel,
-  },
-]);
+const headerTabs = $computed(
+  () =>
+    [
+      {
+        key: "home",
+        title: i18n.ts._timelines.home,
+        icon: "ti ti-home",
+        iconOnly: true,
+      },
+      ...(isLocalTimelineAvailable
+        ? [
+            {
+              key: "local",
+              title: i18n.ts._timelines.local,
+              icon: "ti ti-planet",
+              iconOnly: true,
+            },
+            {
+              key: "social",
+              title: i18n.ts._timelines.social,
+              icon: "ti ti-rocket",
+              iconOnly: true,
+            },
+          ]
+        : []),
+      ...(isGlobalTimelineAvailable
+        ? [
+            {
+              key: "global",
+              title: i18n.ts._timelines.global,
+              icon: "ti ti-whirl",
+              iconOnly: true,
+            },
+          ]
+        : []),
+      {
+        icon: "ti ti-list",
+        title: i18n.ts.lists,
+        iconOnly: true,
+        onClick: chooseList,
+      },
+      {
+        icon: "ti ti-antenna",
+        title: i18n.ts.antennas,
+        iconOnly: true,
+        onClick: chooseAntenna,
+      },
+      {
+        icon: "ti ti-device-tv",
+        title: i18n.ts.channel,
+        iconOnly: true,
+        onClick: chooseChannel,
+      },
+    ] as Tab[]
+);
+
+const headerTabsWhenNotLogin = $computed(
+  () =>
+    [
+      ...(isLocalTimelineAvailable
+        ? [
+            {
+              key: "local",
+              title: i18n.ts._timelines.local,
+              icon: "ti ti-planet",
+              iconOnly: true,
+            },
+          ]
+        : []),
+      ...(isGlobalTimelineAvailable
+        ? [
+            {
+              key: "global",
+              title: i18n.ts._timelines.global,
+              icon: "ti ti-whirl",
+              iconOnly: true,
+            },
+          ]
+        : []),
+    ] as Tab[]
+);
 
 definePageMetadata(
   computed(() => ({
@@ -211,6 +244,11 @@ if (!permissionState.camera) {
   top: calc(var(--stickyTop, 0px) + 16px);
   z-index: 1000;
   width: 100%;
+  margin: calc(-0.675em - 8px) 0;
+
+  &:first-child {
+    margin-top: calc(-0.675em - 8px - var(--margin));
+  }
 
   > button {
     display: block;

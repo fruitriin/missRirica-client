@@ -92,7 +92,7 @@
           @click="openAccountMenu"
         >
           <MkAvatar :user="$i" class="avatar" /><MkAcct
-            class="text"
+            class="text _nowrap"
             :user="$i"
           />
         </button>
@@ -247,19 +247,24 @@ function more() {
         display: flex;
         align-items: center;
         padding-left: 30px;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
         width: 100%;
         text-align: left;
         box-sizing: border-box;
         margin-top: 16px;
 
         > .avatar {
+          display: block;
+          flex-shrink: 0;
           position: relative;
           width: 32px;
           aspect-ratio: 1;
           margin-right: 8px;
+        }
+
+        > .text {
+          display: block;
+          flex-shrink: 1;
+          padding-right: 8px;
         }
       }
     }

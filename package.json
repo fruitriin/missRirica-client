@@ -50,7 +50,7 @@
     "mfm-js": "0.23.3",
     "misskey-js": "^0.0.15",
     "photoswipe": "5.3.5",
-    "prismjs": "1.29.0",
+    "prismjs": "^1.29.0",
     "punycode": "2.3.0",
     "querystring": "0.2.1",
     "rndstr": "1.0.0",

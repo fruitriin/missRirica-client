@@ -180,15 +180,24 @@
         >
       </template>
     </MkInput>
-    <MkSwitch v-if="instance.tosUrl" v-model="ToSAgreement" class="tou">
-      <I18n :src="i18n.ts.agreeTo">
-        <template #0>
-          <a :href="instance.tosUrl" class="_link" target="_blank">{{
-            i18n.ts.tos
-          }}</a>
-        </template>
-      </I18n>
+    <MkSwitch v-model="ToSAgreement" class="tou">
+      <template #label>{{ i18n.ts.agreeBelow }}</template>
     </MkSwitch>
+    <ul style="margin: 0; padding-left: 2em">
+      <li v-if="instance.tosUrl">
+        <a :href="instance.tosUrl" class="_link" target="_blank">{{
+          i18n.ts.tos
+        }}</a>
+      </li>
+      <li>
+        <a
+          href="https://misskey-hub.net/docs/notes.html"
+          class="_link"
+          target="_blank"
+          >{{ i18n.ts.basicNotesBeforeCreateAccount }}</a
+        >
+      </li>
+    </ul>
     <MkCaptcha
       v-if="instance.enableHcaptcha"
       ref="hcaptcha"

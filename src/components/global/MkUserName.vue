@@ -4,6 +4,7 @@
     :author="user"
     :plain="true"
     :nowrap="nowrap"
+    :emoji-urls="user.emojis"
   />
 </template>
 
