@@ -11,7 +11,7 @@
   @media (max-width: 500px) {
     --margin: var(--marginHalf);
     --minBottomSpacing: calc(
-            72px + max(12px, env(safe-area-inset-bottom, 0px))
+      72px + max(12px, env(safe-area-inset-bottom, 0px))
     );
   }
 
@@ -34,7 +34,7 @@ html {
   overflow: auto;
   overflow-wrap: break-word;
   font-family: "Hiragino Maru Gothic Pro", "BIZ UDGothic", Roboto, HelveticaNeue,
-  Arial, sans-serif;
+    Arial, sans-serif;
   font-size: 14px;
   line-height: 1.35;
   text-size-adjust: 100%;
@@ -235,9 +235,9 @@ hr {
   @extend ._buttonPrimary;
   color: var(--fgOnAccent);
   background: linear-gradient(
-                  90deg,
-                  var(--buttonGradateA),
-                  var(--buttonGradateB)
+    90deg,
+    var(--buttonGradateA),
+    var(--buttonGradateB)
   );
 
   &:not(:disabled):hover {

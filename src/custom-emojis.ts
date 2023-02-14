@@ -18,8 +18,7 @@ export const customEmojiCategories = computed<[...string[], null]>(() => {
   return markRaw([...Array.from(categories), null]);
 });
 
-export function streamEmojis(stream){
-
+export function streamEmojis(stream) {
   stream.on("emojiAdded", (emojiData) => {
     customEmojis.value = [emojiData.emoji, ...customEmojis.value];
   });

@@ -1,48 +1,48 @@
 <template>
-<component
-	:is="popup.component"
-	v-for="popup in popups"
-	:key="popup.id"
-	v-bind="popup.props"
-	v-on="popup.events"
-/>
+  <component
+    :is="popup.component"
+    v-for="popup in popups"
+    :key="popup.id"
+    v-bind="popup.props"
+    v-on="popup.events"
+  />
 
-<XUpload v-if="uploads.length > 0"/>
+  <XUpload v-if="uploads.length > 0" />
 
-<TransitionGroup
-	tag="div"
-	:class="$style.notifications"
-	:move-class="
-		$store.state.animation ? $style.transition_notification_move : ''
-	"
-	:enter-active-class="
-		$store.state.animation ? $style.transition_notification_enterActive : ''
-	"
-	:leave-active-class="
-		$store.state.animation ? $style.transition_notification_leaveActive : ''
-	"
-	:enter-from-class="
-		$store.state.animation ? $style.transition_notification_enterFrom : ''
-	"
-	:leave-to-class="
-		$store.state.animation ? $style.transition_notification_leaveTo : ''
-	"
->
-	<XNotification
-		v-for="notification in notifications"
-		:key="notification.id"
-		:notification="notification"
-		:class="$style.notification"
-	/>
-</TransitionGroup>
+  <TransitionGroup
+    tag="div"
+    :class="$style.notifications"
+    :move-class="
+      $store.state.animation ? $style.transition_notification_move : ''
+    "
+    :enter-active-class="
+      $store.state.animation ? $style.transition_notification_enterActive : ''
+    "
+    :leave-active-class="
+      $store.state.animation ? $style.transition_notification_leaveActive : ''
+    "
+    :enter-from-class="
+      $store.state.animation ? $style.transition_notification_enterFrom : ''
+    "
+    :leave-to-class="
+      $store.state.animation ? $style.transition_notification_leaveTo : ''
+    "
+  >
+    <XNotification
+      v-for="notification in notifications"
+      :key="notification.id"
+      :notification="notification"
+      :class="$style.notification"
+    />
+  </TransitionGroup>
 
-<!--<XStreamIndicator/>-->
+  <!--<XStreamIndicator/>-->
 
-<div v-if="dev" id="devTicker"><span>DEV BUILD</span></div>
+  <div v-if="dev" id="devTicker"><span>DEV BUILD</span></div>
 
-<div v-if="$i && $i.isBot" id="botWarn">
-	<span>{{ i18n.ts.loggedInAsBot }}</span>
-</div>
+  <div v-if="$i && $i.isBot" id="botWarn">
+    <span>{{ i18n.ts.loggedInAsBot }}</span>
+  </div>
 </template>
 
 <script lang="ts" setup>

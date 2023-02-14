@@ -14,7 +14,7 @@ export async function fetchThemes(): Promise<void> {
   if ($i == null) return;
 
   // try {
-    // const themes = await api('i/registry/get', { scope: ['client'], key: 'themes' });
+  // const themes = await api('i/registry/get', { scope: ['client'], key: 'themes' });
   //   miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
   // } catch (err) {
   //   if (err.code === "NO_SUCH_KEY") return;

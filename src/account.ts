@@ -50,8 +50,8 @@ export async function getAccounts(): Promise<
 
 export async function addAccount(
   id: Account["id"],
-    token: Account["token"],
-    instanceUrl: string
+  token: Account["token"],
+  instanceUrl: string
 ) {
   const accounts = await getAccounts();
   if (!accounts.some((x) => x.id === id)) {

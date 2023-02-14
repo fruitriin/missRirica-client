@@ -1,40 +1,40 @@
 <template>
-<MkStickyContainer>
-	<template #header>
-		<MkPageHeader
-			v-model:tab="src"
-			:actions="headerActions"
-			:tabs="$i ? headerTabs : headerTabsWhenNotLogin"
-			:display-my-avatar="true"
-		/>
-	</template>
-	<MkSpacer :content-max="800">
-		<div ref="rootEl" v-hotkey.global="keymap">
-			<MkPostForm
-				v-if="$store.reactiveState.showFixedPostForm.value"
-				:class="$style.postForm"
-				class="post-form _panel"
-				fixed
-				style="margin-bottom: var(--margin)"
-			/>
+  <MkStickyContainer>
+    <template #header>
+      <MkPageHeader
+        v-model:tab="src"
+        :actions="headerActions"
+        :tabs="$i ? headerTabs : headerTabsWhenNotLogin"
+        :display-my-avatar="true"
+      />
+    </template>
+    <MkSpacer :content-max="800">
+      <div ref="rootEl" v-hotkey.global="keymap">
+        <MkPostForm
+          v-if="$store.reactiveState.showFixedPostForm.value"
+          :class="$style.postForm"
+          class="post-form _panel"
+          fixed
+          style="margin-bottom: var(--margin)"
+        />
 
-			<div v-if="queue > 0" :class="$style.new">
-				<button class="_buttonPrimary" @click="top()">
-					{{ i18n.ts.newNoteRecived }}
-				</button>
-			</div>
-			<div :class="$style.tl">
-				<XTimeline
-					ref="tlComponent"
-					:key="src"
-					:src="src"
-					:sound="true"
-					@queue="queueUpdated"
-				/>
-			</div>
-		</div>
-	</MkSpacer>
-</MkStickyContainer>
+        <div v-if="queue > 0" :class="$style.new">
+          <button class="_buttonPrimary" @click="top()">
+            {{ i18n.ts.newNoteRecived }}
+          </button>
+        </div>
+        <div :class="$style.tl">
+          <XTimeline
+            ref="tlComponent"
+            :key="src"
+            :src="src"
+            :sound="true"
+            @queue="queueUpdated"
+          />
+        </div>
+      </div>
+    </MkSpacer>
+  </MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
@@ -55,8 +55,10 @@ provide("shouldOmitHeaderTitle", true);
 
 const XTutorial = defineAsyncComponent(() => import("./timeline.tutorial.vue"));
 
-const isLocalTimelineAvailable = ($i == null && instance.policies.ltlAvailable) ||$i != null;
-const isGlobalTimelineAvailable = ($i == null && instance.policies.gtlAvailable) || $i != null;
+const isLocalTimelineAvailable =
+  ($i == null && instance.policies.ltlAvailable) || $i != null;
+const isGlobalTimelineAvailable =
+  ($i == null && instance.policies.gtlAvailable) || $i != null;
 const keymap = {
   t: focus,
 };

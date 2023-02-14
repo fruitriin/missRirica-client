@@ -293,6 +293,24 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
+"@deno/shim-crypto@~0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@deno/shim-crypto/-/shim-crypto-0.3.1.tgz#416155b2b6f9ad728f80ebcb422c803efc1023c2"
+  integrity sha512-ed4pNnfur6UbASEgF34gVxR9p7Mc3qF+Ygbmjiil8ws5IhNFhPDFy5vE5hQAUA9JmVsSxXPcVLM5Rf8LOZqQ5Q==
+
+"@deno/shim-deno-test@^0.3.2":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@deno/shim-deno-test/-/shim-deno-test-0.3.3.tgz#2dd014a2649507477f904d0172dd88341354086d"
+  integrity sha512-Ge0Tnl7zZY0VvEfgsyLhjid8DzI1d0La0dgm+3m0/A8gZXgp5xwlyIyue5e4SCUuVB/3AH/0lun9LcJhhTwmbg==
+
+"@deno/shim-deno@~0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@deno/shim-deno/-/shim-deno-0.10.0.tgz#14d5a092b235644a2d807f858e9acb658266f28b"
+  integrity sha512-E7rQ0Hk33V45xQXKEnCxizdSP5C+hhqw1H3xWXsct3kYFWgG93B5gN3LKlyvcxbckt8d67jVa6s+y5duRYawvg==
+  dependencies:
+    "@deno/shim-deno-test" "^0.3.2"
+    which "^2.0.2"
+
 "@discordapp/twemoji@14.0.2":
   version "14.0.2"
   resolved "https://registry.yarnpkg.com/@discordapp/twemoji/-/twemoji-14.0.2.tgz#50cc19f6f3769dc6b36eb251421b5f5d4629e837"
@@ -3941,6 +3959,14 @@ mfm-js@0.23.3:
   dependencies:
     twemoji-parser "14.0.0"
 
+miauth-js@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/miauth-js/-/miauth-js-0.0.1.tgz#a93d6773a7f07f9c92c4975a531bcac0e610a11e"
+  integrity sha512-wlf0zI5w8eh4kNJts6ZUYeaDsFKuv8iuBKjL9Oi4AF7YpLvmaodjgctH5jKQAILTq47S5dXO9LZ9xX0tyOAx5w==
+  dependencies:
+    "@deno/shim-crypto" "~0.3.1"
+    "@deno/shim-deno" "~0.10.0"
+
 micromatch@^4.0.4:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-4.0.5.tgz#bc8999a7cbbf77cdc89f132f6e467051b49090c6"
@@ -5811,7 +5837,7 @@ which-typed-array@^1.1.9:
     has-tostringtag "^1.0.0"
     is-typed-array "^1.1.10"
 
-which@^2.0.1:
+which@^2.0.1, which@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/which/-/which-2.0.2.tgz#7c6a8dd0a636a0327e10b59c9286eee93f3f51b1"
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==

@@ -1,33 +1,33 @@
 <template>
-<div class="timctyfi" :class="{ disabled, easing }">
-	<div class="label"><slot name="label"></slot></div>
-	<div v-adaptive-border class="body">
-		<div ref="containerEl" class="container">
-			<div class="track">
-				<div
-					class="highlight"
-					:style="{ width: steppedRawValue * 100 + '%' }"
-				></div>
-			</div>
-			<div v-if="steps && showTicks" class="ticks">
-				<div
-					v-for="i in steps + 1"
-					class="tick"
-					:style="{ left: ((i - 1) / steps) * 100 + '%' }"
-				></div>
-			</div>
-			<div
-				ref="thumbEl"
-				v-tooltip="textConverter(finalValue)"
-				class="thumb"
-				:style="{ left: thumbPosition + 'px' }"
-				@mousedown="onMousedown"
-				@touchstart="onMousedown"
-			></div>
-		</div>
-	</div>
-	<div class="caption"><slot name="caption"></slot></div>
-</div>
+  <div class="timctyfi" :class="{ disabled, easing }">
+    <div class="label"><slot name="label"></slot></div>
+    <div v-adaptive-border class="body">
+      <div ref="containerEl" class="container">
+        <div class="track">
+          <div
+            class="highlight"
+            :style="{ width: steppedRawValue * 100 + '%' }"
+          ></div>
+        </div>
+        <div v-if="steps && showTicks" class="ticks">
+          <div
+            v-for="i in steps + 1"
+            class="tick"
+            :style="{ left: ((i - 1) / steps) * 100 + '%' }"
+          ></div>
+        </div>
+        <div
+          ref="thumbEl"
+          v-tooltip="textConverter(finalValue)"
+          class="thumb"
+          :style="{ left: thumbPosition + 'px' }"
+          @mousedown="onMousedown"
+          @touchstart="onMousedown"
+        ></div>
+      </div>
+    </div>
+    <div class="caption"><slot name="caption"></slot></div>
+  </div>
 </template>
 
 <script lang="ts" setup>

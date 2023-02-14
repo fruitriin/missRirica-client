@@ -1,75 +1,81 @@
 <template>
-<div class="rsqzvsbo">
-	<div class="top">
-		<div class="shape1"></div>
-		<div class="shape2"></div>
-		<img src="/client-assets/misskey.svg" class="misskey"/>
-		<div class="emojis">
-			<MkEmoji :normal="true" :no-style="true" emoji="👍"/>
-			<MkEmoji :normal="true" :no-style="true" emoji="❤"/>
-			<MkEmoji :normal="true" :no-style="true" emoji="😆"/>
-			<MkEmoji :normal="true" :no-style="true" emoji="🎉"/>
-			<MkEmoji :normal="true" :no-style="true" emoji="🍮"/>
-		</div>
-		<div class="main">
-			<button class="_button _acrylic menu" @click="showMenu">
-				<i class="ti ti-dots"></i>
-			</button>
+  <div class="rsqzvsbo">
+    <div class="top">
+      <div class="shape1"></div>
+      <div class="shape2"></div>
+      <img src="/client-assets/misskey.svg" class="misskey" />
+      <div class="emojis">
+        <MkEmoji :normal="true" :no-style="true" emoji="👍" />
+        <MkEmoji :normal="true" :no-style="true" emoji="❤" />
+        <MkEmoji :normal="true" :no-style="true" emoji="😆" />
+        <MkEmoji :normal="true" :no-style="true" emoji="🎉" />
+        <MkEmoji :normal="true" :no-style="true" emoji="🍮" />
+      </div>
+      <div class="main">
+        <button class="_button _acrylic menu" @click="showMenu">
+          <i class="ti ti-dots"></i>
+        </button>
 
-			<div class="fg">
-				<h1 style="pointer-events: none">
-					<!-- 背景色によってはロゴが見えなくなるのでとりあえず無効に -->
-					<!-- <img class="logo" v-if="meta.logoImageUrl" :src="meta.logoImageUrl"><span v-else class="text">{{ instanceName }}</span> -->
-					<span class="text">{{ $ts.ririca.name }}</span>
-				</h1>
-				<div class="about">
-					<!-- eslint-disable-next-line vue/no-v-html -->
-					<div class="desc" v-html="$ts.ririca.description"></div>
-				</div>
-				<div class="action">
-					<div>
-						<input id="term" v-model="isTerm" type="checkbox"/><label
-							for="term"
-						>
-							{{ $ts.ririca.term }}</label><br/>
-						<a href="https://riinswork.space/missRirica/privacy/">{{
-							$ts.ririca.termLink
-						}}</a>
-					</div>
+        <div class="fg">
+          <h1 style="pointer-events: none">
+            <!-- 背景色によってはロゴが見えなくなるのでとりあえず無効に -->
+            <!-- <img class="logo" v-if="meta.logoImageUrl" :src="meta.logoImageUrl"><span v-else class="text">{{ instanceName }}</span> -->
+            <span class="text">{{ $ts.ririca.name }}</span>
+          </h1>
+          <div class="about">
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div class="desc" v-html="$ts.ririca.description"></div>
+          </div>
+          <div class="action">
+            <div>
+              <input id="term" v-model="isTerm" type="checkbox" /><label
+                for="term"
+              >
+                {{ $ts.ririca.term }}</label
+              ><br />
+              <a href="https://riinswork.space/missRirica/privacy/">{{
+                $ts.ririca.termLink
+              }}</a>
+            </div>
 
-					<!--					<MkButton inline rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.signup }}</MkButton>-->
-					<MkButton
-						inline
-						rounded
-						data-cy-signin
-						:disabled="!isTerm"
-						@click="signin()"
-					>
-						{{ i18n.ts.login }}
-					</MkButton>
+            <!--					<MkButton inline rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.signup }}</MkButton>-->
+            <MkButton
+              inline
+              rounded
+              data-cy-signin
+              :disabled="!isTerm"
+              @click="signin()"
+            >
+              {{ i18n.ts.login }}
+            </MkButton>
 
-					<MkSelect v-model="lang">
-						<template #label>{{ i18n.ts.uiLanguage }}</template>
-						<p>{{ lang }}</p>
-						<p>{{ langs }}</p>
-						<option v-for="x in langs" :key="x[0]" :value="x[0]" :selected="x[0] === lang">
-							{{ x[1] }}
-						</option>
-						<template #caption>
-							<I18n :src="i18n.ts.i18nInfo" tag="span">
-								<template #link>
-									<MkLink url="https://crowdin.com/project/misskey">
-										Crowdin
-									</MkLink>
-								</template>
-							</I18n>
-						</template>
-					</MkSelect>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+            <MkSelect v-model="lang">
+              <template #label>{{ i18n.ts.uiLanguage }}</template>
+              <p>{{ lang }}</p>
+              <p>{{ langs }}</p>
+              <option
+                v-for="x in langs"
+                :key="x[0]"
+                :value="x[0]"
+                :selected="x[0] === lang"
+              >
+                {{ x[1] }}
+              </option>
+              <template #caption>
+                <I18n :src="i18n.ts.i18nInfo" tag="span">
+                  <template #link>
+                    <MkLink url="https://crowdin.com/project/misskey">
+                      Crowdin
+                    </MkLink>
+                  </template>
+                </I18n>
+              </template>
+            </MkSelect>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>

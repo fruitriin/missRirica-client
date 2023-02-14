@@ -53,7 +53,7 @@ import { getAccountFromId } from "@/scripts/get-account-from-id";
 import { deckStore } from "./ui/deck/deck-store";
 import { miLocalStorage } from "./local-storage";
 import { claimAchievement, claimedAchievements } from "./scripts/achievements";
-import { fetchCustomEmojis,streamEmojis } from "./custom-emojis";
+import { fetchCustomEmojis, streamEmojis } from "./custom-emojis";
 import { Device } from "@capacitor/device";
 import lightTheme from "@/themes/_light.json5";
 import OneSignal from "onesignal-cordova-plugin";
@@ -67,64 +67,64 @@ export let storedDeviceInfo: Object;
   console.info(`Misskey v${version}`);
   const lang = await setLanguage(
     localStorage.getItem("lang") ||
-    (await Device.getLanguageCode().value) ||
-    "ja-JP"
+      (await Device.getLanguageCode().value) ||
+      "ja-JP"
   );
-  if(localStorage.getItem("lang") == null) {
-    localStorage.setItem("lang", lang)
+  if (localStorage.getItem("lang") == null) {
+    localStorage.setItem("lang", lang);
   }
-if (_DEV_) {
-  console.warn("Development mode!!!");
+  if (_DEV_) {
+    console.warn("Development mode!!!");
 
-  console.info(`vue ${vueVersion}`);
+    console.info(`vue ${vueVersion}`);
 
-  (window as any).$i = $i;
-  (window as any).$store = defaultStore;
+    (window as any).$i = $i;
+    (window as any).$store = defaultStore;
 
-  window.addEventListener("error", (event) => {
-    console.error(event);
-    /*
+    window.addEventListener("error", (event) => {
+      console.error(event);
+      /*
 		alert({
 			type: 'error',
 			title: 'DEV: Unhandled error',
 			text: event.message
 		});
 		*/
-  });
+    });
 
-  window.addEventListener("unhandledrejection", (event) => {
-    console.error(event);
-    /*
+    window.addEventListener("unhandledrejection", (event) => {
+      console.error(event);
+      /*
 		alert({
 			type: 'error',
 			title: 'DEV: Unhandled promise rejection',
 			text: event.reason
 		});
 		*/
+    });
+  }
+
+  // タッチデバイスでCSSの:hoverを機能させる
+  document.addEventListener("touchend", () => {}, { passive: true });
+
+  // 一斉リロード
+  reloadChannel.addEventListener("message", (path) => {
+    if (path !== null) location.href = path;
+    else location.reload();
   });
-}
 
-// タッチデバイスでCSSの:hoverを機能させる
-document.addEventListener("touchend", () => {}, { passive: true });
+  // If mobile, insert the viewport meta tag
+  if (["smartphone", "tablet"].includes(deviceKind)) {
+    const viewport = document.getElementsByName("viewport").item(0);
+    viewport.setAttribute(
+      "content",
+      `${viewport.getAttribute(
+        "content"
+      )}, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover`
+    );
+  }
 
-// 一斉リロード
-reloadChannel.addEventListener("message", (path) => {
-  if (path !== null) location.href = path;
-  else location.reload();
-});
-
-// If mobile, insert the viewport meta tag
-if (["smartphone", "tablet"].includes(deviceKind)) {
-  const viewport = document.getElementsByName("viewport").item(0);
-  viewport.setAttribute(
-    "content",
-    `${viewport.getAttribute(
-      "content"
-    )}, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover`
-  );
-}
-
-//#region Set lang attr
+  //#region Set lang attr
   const html = document.documentElement;
 
   html.setAttribute("lang", lang);
@@ -139,163 +139,163 @@ if (["smartphone", "tablet"].includes(deviceKind)) {
   }
 
   applyTheme(lightTheme);
-//#endregion
+  //#endregion
 
-//#region loginId
-const params = new URLSearchParams(location.search);
-const loginId = params.get("loginId");
+  //#region loginId
+  const params = new URLSearchParams(location.search);
+  const loginId = params.get("loginId");
 
-if (loginId) {
-  const target = getUrlWithoutLoginId(location.href);
+  if (loginId) {
+    const target = getUrlWithoutLoginId(location.href);
 
-  if (!$i || $i.id !== loginId) {
-    const account = await getAccountFromId(loginId);
-    if (account) {
-      await login(account.token, target);
-      await afterLoginSetup();
-    }
-  }
-
-  history.replaceState({ misskey: "loginId" }, "", target);
-}
-
-//#endregion
-
-//#region Fetch user
-if ($i && $i.token) {
-  if (_DEV_) {
-    console.log("account cache found. refreshing...");
-  }
-
-  await refreshAccount();
-  await afterLoginSetup();
-} else {
-  if (_DEV_) {
-    console.log("no account cache found.");
-  }
-
-  // 連携ログインの場合用にCookieを参照する
-  const i = (document.cookie.match(/igi=(\w+)/) ?? [null, null])[1];
-
-  if (i != null && i !== "null") {
-    if (_DEV_) {
-      console.log("signing...");
-    }
-
-    try {
-      document.body.innerHTML = "<div>Please wait...</div>";
-      await login(i);
-    } catch (err) {
-      // Render the error screen
-      // TODO: ちゃんとしたコンポーネントをレンダリングする(v10とかのトラブルシューティングゲーム付きのやつみたいな)
-      document.body.innerHTML = '<div id="err">Oops!</div>';
-    }
-  } else {
-    if (_DEV_) {
-      console.log("not signed in");
-    }
-    applyTheme(lightTheme);
-  }
-}
-//#endregion
-
-const app = createApp(
-  window.location.search === "?zen"
-    ? defineAsyncComponent(() => import("@/ui/zen.vue"))
-    : !$i
-      ? defineAsyncComponent(() => import("@/ui/visitor.vue"))
-      : ui === "deck"
-        ? defineAsyncComponent(() => import("@/ui/deck.vue"))
-        : ui === "classic"
-          ? defineAsyncComponent(() => import("@/ui/classic.vue"))
-          : defineAsyncComponent(() => import("@/ui/universal.vue"))
-);
-
-if (_DEV_) {
-  app.config.performance = true;
-  app.config.errorHandler = function (err, instance, info) {
-    console.error(info, err, instance);
-  };
-}
-
-// TODO: 廃止
-app.config.globalProperties = {
-  $i,
-  $store: defaultStore,
-  $instance: instance,
-  $t: i18n.t,
-  $ts: i18n.ts,
-};
-
-widgets(app);
-directives(app);
-components(app);
-
-const splash = document.getElementById("splash");
-// 念のためnullチェック(HTMLが古い場合があるため(そのうち消す))
-if (splash)
-  splash.addEventListener("transitionend", () => {
-    splash.remove();
-  });
-
-await deckStore.ready;
-
-// https://github.com/misskey-dev/misskey/pull/8575#issuecomment-1114239210
-// なぜかinit.tsの内容が2回実行されることがあるため、mountするdivを1つに制限する
-const rootEl = (() => {
-  const MISSKEY_MOUNT_DIV_ID = "misskey_app";
-
-  const currentEl = document.getElementById(MISSKEY_MOUNT_DIV_ID);
-
-  if (currentEl) {
-    console.warn("multiple import detected");
-    return currentEl;
-  }
-
-  const rootEl = document.createElement("div");
-  rootEl.id = MISSKEY_MOUNT_DIV_ID;
-  document.body.appendChild(rootEl);
-  return rootEl;
-})();
-
-app.mount(rootEl);
-
-// boot.jsのやつを解除
-window.onerror = null;
-window.onunhandledrejection = null;
-
-reactionPicker.init();
-
-if (splash) {
-  splash.style.opacity = "0";
-  splash.style.pointerEvents = "none";
-}
-
-// クライアントが更新されたか？
-const lastVersion = miLocalStorage.getItem("lastVersion");
-if (lastVersion !== version) {
-  miLocalStorage.setItem("lastVersion", version);
-
-  // テーマリビルドするため
-  miLocalStorage.removeItem("theme");
-
-  try {
-    // 変なバージョン文字列来るとcompareVersionsでエラーになるため
-    if (lastVersion != null && compareVersions(version, lastVersion) === 1) {
-      // ログインしてる場合だけ
-      if ($i) {
-        popup(
-          defineAsyncComponent(() => import("@/components/MkUpdated.vue")),
-          {},
-          {},
-          "closed"
-        );
+    if (!$i || $i.id !== loginId) {
+      const account = await getAccountFromId(loginId);
+      if (account) {
+        await login(account.token, target);
+        await afterLoginSetup();
       }
     }
-  } catch (err) {}
-}
 
-await defaultStore.ready;
+    history.replaceState({ misskey: "loginId" }, "", target);
+  }
+
+  //#endregion
+
+  //#region Fetch user
+  if ($i && $i.token) {
+    if (_DEV_) {
+      console.log("account cache found. refreshing...");
+    }
+
+    await refreshAccount();
+    await afterLoginSetup();
+  } else {
+    if (_DEV_) {
+      console.log("no account cache found.");
+    }
+
+    // 連携ログインの場合用にCookieを参照する
+    const i = (document.cookie.match(/igi=(\w+)/) ?? [null, null])[1];
+
+    if (i != null && i !== "null") {
+      if (_DEV_) {
+        console.log("signing...");
+      }
+
+      try {
+        document.body.innerHTML = "<div>Please wait...</div>";
+        await login(i);
+      } catch (err) {
+        // Render the error screen
+        // TODO: ちゃんとしたコンポーネントをレンダリングする(v10とかのトラブルシューティングゲーム付きのやつみたいな)
+        document.body.innerHTML = '<div id="err">Oops!</div>';
+      }
+    } else {
+      if (_DEV_) {
+        console.log("not signed in");
+      }
+      applyTheme(lightTheme);
+    }
+  }
+  //#endregion
+
+  const app = createApp(
+    window.location.search === "?zen"
+      ? defineAsyncComponent(() => import("@/ui/zen.vue"))
+      : !$i
+      ? defineAsyncComponent(() => import("@/ui/visitor.vue"))
+      : ui === "deck"
+      ? defineAsyncComponent(() => import("@/ui/deck.vue"))
+      : ui === "classic"
+      ? defineAsyncComponent(() => import("@/ui/classic.vue"))
+      : defineAsyncComponent(() => import("@/ui/universal.vue"))
+  );
+
+  if (_DEV_) {
+    app.config.performance = true;
+    app.config.errorHandler = function (err, instance, info) {
+      console.error(info, err, instance);
+    };
+  }
+
+  // TODO: 廃止
+  app.config.globalProperties = {
+    $i,
+    $store: defaultStore,
+    $instance: instance,
+    $t: i18n.t,
+    $ts: i18n.ts,
+  };
+
+  widgets(app);
+  directives(app);
+  components(app);
+
+  const splash = document.getElementById("splash");
+  // 念のためnullチェック(HTMLが古い場合があるため(そのうち消す))
+  if (splash)
+    splash.addEventListener("transitionend", () => {
+      splash.remove();
+    });
+
+  await deckStore.ready;
+
+  // https://github.com/misskey-dev/misskey/pull/8575#issuecomment-1114239210
+  // なぜかinit.tsの内容が2回実行されることがあるため、mountするdivを1つに制限する
+  const rootEl = (() => {
+    const MISSKEY_MOUNT_DIV_ID = "misskey_app";
+
+    const currentEl = document.getElementById(MISSKEY_MOUNT_DIV_ID);
+
+    if (currentEl) {
+      console.warn("multiple import detected");
+      return currentEl;
+    }
+
+    const rootEl = document.createElement("div");
+    rootEl.id = MISSKEY_MOUNT_DIV_ID;
+    document.body.appendChild(rootEl);
+    return rootEl;
+  })();
+
+  app.mount(rootEl);
+
+  // boot.jsのやつを解除
+  window.onerror = null;
+  window.onunhandledrejection = null;
+
+  reactionPicker.init();
+
+  if (splash) {
+    splash.style.opacity = "0";
+    splash.style.pointerEvents = "none";
+  }
+
+  // クライアントが更新されたか？
+  const lastVersion = miLocalStorage.getItem("lastVersion");
+  if (lastVersion !== version) {
+    miLocalStorage.setItem("lastVersion", version);
+
+    // テーマリビルドするため
+    miLocalStorage.removeItem("theme");
+
+    try {
+      // 変なバージョン文字列来るとcompareVersionsでエラーになるため
+      if (lastVersion != null && compareVersions(version, lastVersion) === 1) {
+        // ログインしてる場合だけ
+        if ($i) {
+          popup(
+            defineAsyncComponent(() => import("@/components/MkUpdated.vue")),
+            {},
+            {},
+            "closed"
+          );
+        }
+      }
+    } catch (err) {}
+  }
+
+  await defaultStore.ready;
 
   App.addListener("backButton", (canGoBack) => {
     if (canGoBack) {
@@ -357,7 +357,7 @@ async function afterLoginSetup() {
     }
   });
 
-//#region Sync dark mode
+  //#region Sync dark mode
   if (ColdDeviceStorage.get("syncDeviceDarkMode")) {
     defaultStore.set("darkMode", isDeviceDarkmode());
   }
@@ -367,7 +367,7 @@ async function afterLoginSetup() {
       defaultStore.set("darkMode", mql.matches);
     }
   });
-//#endregion
+  //#endregion
 
   watch(
     defaultStore.reactiveState.useBlurEffectForModal,
@@ -392,7 +392,7 @@ async function afterLoginSetup() {
     { immediate: true }
   );
 
-  streamEmojis(stream)
+  streamEmojis(stream);
   let reloadDialogShowing = false;
   stream.on("_disconnected_", async () => {
     if (defaultStore.state.serverDisconnectedBehavior === "reload") {
@@ -412,12 +412,13 @@ async function afterLoginSetup() {
     }
   });
 
-  for (const plugin of ColdDeviceStorage.get("plugins").filter((p) => p.active)) {
+  for (const plugin of ColdDeviceStorage.get("plugins").filter(
+    (p) => p.active
+  )) {
     import("./plugin").then(({ install }) => {
       install(plugin);
     });
   }
-
 
   if ($i) {
     // only add post shortcuts if logged in
@@ -537,7 +538,9 @@ async function afterLoginSetup() {
     const latestDonationInfoShownAt = miLocalStorage.getItem(
       "latestDonationInfoShownAt"
     );
-    const neverShowDonationInfo = miLocalStorage.getItem("neverShowDonationInfo");
+    const neverShowDonationInfo = miLocalStorage.getItem(
+      "neverShowDonationInfo"
+    );
     if (
       neverShowDonationInfo !== "true" &&
       new Date($i.createdAt).getTime() < Date.now() - 1000 * 60 * 60 * 24 * 3
@@ -545,7 +548,7 @@ async function afterLoginSetup() {
       if (
         latestDonationInfoShownAt == null ||
         new Date(latestDonationInfoShownAt).getTime() <
-        Date.now() - 1000 * 60 * 60 * 24 * 30
+          Date.now() - 1000 * 60 * 60 * 24 * 30
       ) {
         popup(
           defineAsyncComponent(() => import("@/components/MkDonation.vue")),
@@ -632,33 +635,29 @@ async function afterLoginSetup() {
     });
   }
 
-// shortcut
+  // shortcut
   document.addEventListener("keydown", makeHotkey(hotkeys));
 
-
-  if (storedDeviceInfo.platform == "web") return
+  if (storedDeviceInfo.platform == "web") return;
   OneSignal.setAppId(import.meta.env.VITE_ONE_SIGNAL_APP_ID);
-  const deviceId = await Device.getId()
+  const deviceId = await Device.getId();
   OneSignal.setExternalUserId(deviceId.uuid);
-  const res = await fetch(
-    import.meta.env.VITE_NOTIFICATION_TOKEN_ENDPOINT,
-    {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      mode: "cors", // no-cors, *cors, same-origin
-      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: "same-origin", // include, *same-origin, omit
-      headers: {
-        "Content-Type": "application/json",
-      },
-      redirect: "follow", // manual, *follow, error
-      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify({
-        misskey_token: $i.token,
-        device_id: deviceId.uuid,
-        instance_url: $i.instanceUrl
-      }), // 本体のデータ型は "Content-Type" ヘッダーと一致させる必要があります
-    }
-  ).catch((err) => {
+  const res = await fetch(import.meta.env.VITE_NOTIFICATION_TOKEN_ENDPOINT, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow", // manual, *follow, error
+    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: JSON.stringify({
+      misskey_token: $i.token,
+      device_id: deviceId.uuid,
+      instance_url: $i.instanceUrl,
+    }), // 本体のデータ型は "Content-Type" ヘッダーと一致させる必要があります
+  }).catch((err) => {
     console.error(err);
     // throw err
   });
