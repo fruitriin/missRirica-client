@@ -31,8 +31,12 @@ jobs:
           key: node-modules-${{ runner.os }}-${{ matrix.node-version }}-missRirica-client
       - name: Install Packages
         run: test -d node_modules && echo "node_modules exists" || yarn install --frozen-lockfile
-      - name: Build
-        run: yarn build
+      - name: Build Node project and Echo Secret
+        env:
+          google_services: ${{ secrets.GOOGLE_SERVICE }}
+        run: |
+          yarn build
+          echo ${google_services} > android/app/google-services.json
 # Java/Gradle part
       - name: Set up Java Env
         uses: actions/setup-java@v3
