@@ -15,7 +15,7 @@ dependencies {
     implementation project(':capacitor-push-notifications')
     implementation project(':capacitor-status-bar')
     implementation project(':capacitor-camera')
-    implementation "com.onesignal:OneSignal:4.8.4"
+    implementation "com.onesignal:OneSignal:4.8.2"
 }
 apply from: "../../node_modules/onesignal-cordova-plugin/build-extras-onesignal.gradle"
 
