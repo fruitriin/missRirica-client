@@ -70,6 +70,8 @@ export let storedDeviceInfo: Object;
   if (localStorage.getItem("lang") == null) {
     localStorage.setItem("lang", lang);
   }
+
+   defaultStore.state.darkMode
   if (_DEV_) {
     console.warn("Development mode!!!");
 
@@ -77,6 +79,8 @@ export let storedDeviceInfo: Object;
 
     (window as any).$i = $i;
     (window as any).$store = defaultStore;
+
+
 
     window.addEventListener("error", (event) => {
       console.error(event);
@@ -135,7 +139,13 @@ export let storedDeviceInfo: Object;
     document.body.appendChild(cssNode);
   }
 
-  applyTheme(lightTheme);
+
+  if(defaultStore.reactiveState.darkMode.value){
+    const style = document.createElement("style")
+    style.innerText = `    --bg: rgb(12, 18, 16);`
+    document.head.appendChild(style)
+  }
+
   //#endregion
 
   //#region loginId
@@ -312,7 +322,11 @@ async function afterLoginSetup() {
     s: search,
     ["p|n"]: post,
   };
-
+  applyTheme(
+    defaultStore.state.darkMode
+      ? ColdDeviceStorage.get("darkTheme")
+      : ColdDeviceStorage.get("lightTheme")
+  );
   // shortcut
   document.addEventListener("keydown", makeHotkey(hotkeys));
   reactionPicker.init();
