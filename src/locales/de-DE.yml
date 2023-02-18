@@ -2,7 +2,7 @@
 _lang_: "Deutsch"
 headlineMisskey: "Ein durch Notizen verbundenes Netzwerk"
 introMisskey: "Willkommen! Misskey ist eine dezentralisierte Open-Source Microblogging-Platform.\nVerfasse „Notizen“ um mitzuteilen, was gerade passiert oder um Ereignisse mit anderen zu teilen. 📡\nMit „Reaktionen“ kannst du außerdem schnell deine Gefühle über Notizen anderer Benutzer zum Ausdruck bringen. 👍\nEine neue Welt wartet auf dich! 🚀"
-poweredByMisskeyDescription: "{name} ist einer der durch die Open-Source-Plattform <b>Misskey</b> betriebenen Dienste (meist als \"Misskey-Instanz\" bezeichnet)."
+poweredByMisskeyDescription: '{name} ist einer der durch die Open-Source-Plattform <b>Misskey</b> betriebenen Dienste (meist als "Misskey-Instanz" bezeichnet).'
 monthAndDay: "{day}.{month}."
 search: "Suchen"
 notifications: "Benachrichtigungen"
@@ -338,7 +338,7 @@ bannerUrl: "Banner-URL"
 backgroundImageUrl: "Hintergrundbild-URL"
 basicInfo: "Grundlegende Informationen"
 pinnedUsers: "Angeheftete Benutzer"
-pinnedUsersDescription: "Gib durch Leerzeichen getrennte Benutzer an, die an die \"Erkunden\"-Seite angeheftet werden sollen."
+pinnedUsersDescription: 'Gib durch Leerzeichen getrennte Benutzer an, die an die "Erkunden"-Seite angeheftet werden sollen.'
 pinnedPages: "Angeheftete Seiten"
 pinnedPagesDescription: "Gib durch Leerzeilen getrennte Pfäde zu Seiten an, die an die Startseite dieser Instanz angeheftet werden sollen.\n"
 pinnedClipId: "ID des anzuheftenden Clips"
@@ -362,7 +362,7 @@ name: "Name"
 antennaSource: "Antennenquelle"
 antennaKeywords: "Zu beobachtende Schlüsselwörter"
 antennaExcludeKeywords: "Zu ignorierende Schlüsselwörter"
-antennaKeywordsDescription: "Zum Nutzen einer \"UND\"-Verknüpfung Einträge mit Leerzeichen trennen, zum Nutzen einer \"ODER\"-Verknüpfung Einträge mit einem Zeilenumbruch trennen"
+antennaKeywordsDescription: 'Zum Nutzen einer "UND"-Verknüpfung Einträge mit Leerzeichen trennen, zum Nutzen einer "ODER"-Verknüpfung Einträge mit einem Zeilenumbruch trennen'
 notifyAntenna: "Über neue Notizen benachrichtigen"
 withFileAntenna: "Nur Notizen mit Dateien"
 enableServiceworker: "Push-Benachrichtigungen im Browser aktivieren"
@@ -505,7 +505,7 @@ objectStorageUseSSL: "SSL verwenden"
 objectStorageUseSSLDesc: "Deaktiviere dies, falls du für API-Verbindungen kein HTTPS verwenden wirst"
 objectStorageUseProxy: "Über Proxy verbinden"
 objectStorageUseProxyDesc: "Deaktiviere dies, falls du für Verbindungen zur API keinen Proxy verwenden wirst"
-objectStorageSetPublicRead: "Bei Upload auf \"public-read\" stellen"
+objectStorageSetPublicRead: 'Bei Upload auf "public-read" stellen'
 serverLogs: "Serverprotokolle"
 deleteAll: "Alle löschen"
 showFixedPostForm: "Bereich zum Schreiben neuer Notizen am Anfang der Chronik anzeigen"
@@ -657,7 +657,7 @@ createNew: "Neu erstellen"
 optional: "Optional"
 createNewClip: "Neuen Clip erstellen"
 unclip: "Aus Clip entfernen"
-confirmToUnclipAlreadyClippedNote: "Diese Notiz ist bereits im \"{name}\" Clip enthalten. Möchtest du sie aus diesem Clip entfernen?"
+confirmToUnclipAlreadyClippedNote: 'Diese Notiz ist bereits im "{name}" Clip enthalten. Möchtest du sie aus diesem Clip entfernen?'
 public: "Öffentlich"
 i18nInfo: "Misskey wird durch freiwillige Helfer in viele verschiedene Sprachen übersetzt. Auf {link} kannst du mithelfen."
 manageAccessTokens: "Zugriffstokens verwalten"
@@ -679,7 +679,7 @@ driveFilesCount: "Anzahl der Dateien in Drive"
 driveUsage: "Drive-Auslastung"
 noCrawle: "Crawler-Indexierung ablehnen"
 noCrawleDescription: "Suchmaschinen bitten, die eigene Profilseite, Notizen, Seiten usw. nicht zu indexieren."
-lockedAccountInfo: "Auch wenn du Follow-Anfragen auf manuelle Bestätigung setzt, wird jede deiner Notizen öffentlich sichtbar sein, sofern du ihre Notizsichtbarkeit nicht auf \"Nur Follower\" setzt."
+lockedAccountInfo: 'Auch wenn du Follow-Anfragen auf manuelle Bestätigung setzt, wird jede deiner Notizen öffentlich sichtbar sein, sofern du ihre Notizsichtbarkeit nicht auf "Nur Follower" setzt.'
 alwaysMarkSensitive: "Medien standardmäßig als NSFW markieren"
 loadRawImages: "Anstatt Vorschaubilder immer Originalbilder anzeigen"
 disableShowingAnimatedImages: "Animierte Bilder nicht abspielen"
@@ -687,8 +687,8 @@ verificationEmailSent: "Eine Bestätigungsmail wurde an deine Email-Adresse vers
 notSet: "Nicht konfiguriert"
 emailVerified: "Email-Adresse bestätigt"
 noteFavoritesCount: "Anzahl an als Favorit markierter Notizen"
-pageLikesCount: "Anzahl an als \"Gefällt mir\" markierter Seiten"
-pageLikedCount: "Anzahl erhaltener \"Gefällt mir\" auf Seiten"
+pageLikesCount: 'Anzahl an als "Gefällt mir" markierter Seiten'
+pageLikedCount: 'Anzahl erhaltener "Gefällt mir" auf Seiten'
 contact: "Kontakt"
 useSystemFont: "Standardschriftart des Systems verwenden"
 clips: "Clips"
@@ -746,11 +746,11 @@ showingPastTimeline: "Es wird eine alte Chronik angezeigt"
 clear: "Zurückkehren"
 markAllAsRead: "Alle als gelesen markieren"
 goBack: "Zurück"
-unlikeConfirm: "\"Gefällt mir\" wirklich entfernen?"
+unlikeConfirm: '"Gefällt mir" wirklich entfernen?'
 fullView: "Vollansicht"
 quitFullView: "Vollansicht verlassen"
 addDescription: "Beschreibung hinzufügen"
-userPagePinTip: "Um Notizen hier erscheinen zu lassen, drücke \"An dein Profil anheften\" im Menü individueller Notizen."
+userPagePinTip: 'Um Notizen hier erscheinen zu lassen, drücke "An dein Profil anheften" im Menü individueller Notizen.'
 notSpecifiedMentionWarning: "Diese Notiz enthält Erwähnungen von Nutzern, die nicht als Empfänger ausgewählt sind"
 info: "Über"
 userInfo: "Benutzerinformation"
@@ -909,7 +909,7 @@ unsubscribePushNotification: "Push-Benachrichtigungen deaktivieren"
 pushNotificationAlreadySubscribed: "Push-Benachrichtigungen sind bereits aktiviert"
 pushNotificationNotSupported: "Entweder dein Browser oder deine Instanz unterstützt Push-Benachrichtigungen nicht"
 sendPushNotificationReadMessage: "Push-Benachrichtigungen löschen, sobald die relevanten Benachrichtigungen oder Nachrichten gelesen wurden"
-sendPushNotificationReadMessageCaption: "Eine Push-Benachrichtigungen mit dem Inhalt \"{emptyPushNotificationMessage}\" wird kurz eingeblendet. Dies kann gegebenenfalls den Batterieverbrauch deines Gerätes erhöhen."
+sendPushNotificationReadMessageCaption: 'Eine Push-Benachrichtigungen mit dem Inhalt "{emptyPushNotificationMessage}" wird kurz eingeblendet. Dies kann gegebenenfalls den Batterieverbrauch deines Gerätes erhöhen.'
 windowMaximize: "Maximieren"
 windowRestore: "Wiederherstellen"
 caption: "Beschreibung"
@@ -918,8 +918,8 @@ tools: "Werkzeuge"
 cannotLoad: "Kann nicht geladen werden"
 numberOfProfileView: "Profilaufrufe"
 like: "Gefällt mir"
-unlike: "\"Gefällt mir\" entfernen"
-numberOfLikes: "\"Gefällt mir\"-Anzahl"
+unlike: '"Gefällt mir" entfernen'
+numberOfLikes: '"Gefällt mir"-Anzahl'
 show: "Anzeigen"
 neverShow: "Nicht wieder anzeigen"
 remindMeLater: "Vielleicht später"
@@ -1102,7 +1102,7 @@ _achievements:
       description: "Schau dir die Liste deiner Errungenschaften für mindestens 3 Minuten an"
     _iLoveMisskey:
       title: "I Love Misskey"
-      description: "Sende \"I ❤ #Misskey\""
+      description: 'Sende "I ❤ #Misskey"'
       flavor: "Danke, dass du Misskey verwendest! - vom Entwicklerteam"
     _client30min:
       title: "Kleine Pause"
@@ -1126,7 +1126,7 @@ _achievements:
       description: "Deine Startseitenchronik erreicht eine Geschwindigkeit von 20 npm (Notizen pro Minute)"
     _outputHelloWorldOnScratchpad:
       title: "Hallo Welt!"
-      description: "Gib \"hello world\" in der Testumgebung aus"
+      description: 'Gib "hello world" in der Testumgebung aus'
     _open3windows:
       title: "Splitscreen"
       description: "Habe zur gleichen Zeit mindestens 3 Fenster offen"
@@ -1144,7 +1144,7 @@ _achievements:
       description: "Kann alle 10 Sekunden mit einer Warscheinlichkeit von 0.01% erhalten werden"
     _setNameToSyuilo:
       title: "Gottkomplex"
-      description: "Setze deinen Namen auf \"syuilo\""
+      description: 'Setze deinen Namen auf "syuilo"'
     _passedSinceAccountCreated1:
       title: "Einjahresjubiläum"
       description: "Seit der Erstellung deines Kontos ist 1 Jahr vergangen"
@@ -1265,9 +1265,9 @@ _forgotPassword:
   contactAdmin: "Diese Instanz unterstützt die Verwendung von Email-Adressen nicht. Wende dich an den Administrator, um dein Passwort zurückzusetzen."
 _gallery:
   my: "Meine Galerie"
-  liked: "Mit \"Gefällt mir\" markierte Beiträge"
+  liked: 'Mit "Gefällt mir" markierte Beiträge'
   like: "Gefällt mir"
-  unlike: "\"Gefällt mir\" entfernen"
+  unlike: '"Gefällt mir" entfernen'
 _email:
   _follow:
     title: "Du hast einen neuen Follower"
@@ -1285,12 +1285,12 @@ _preferencesBackups:
   save: "Speichern"
   inputName: "Gib einen Namen für dieses Backup ein"
   cannotSave: "Speichern fehlgeschlagen"
-  nameAlreadyExists: "Es existiert bereits ein Backup unter dem Namen \"{name}\". Bitte gib einen anderen Namen ein."
-  applyConfirm: "Wirklich das Backup \"{name}\" auf dieses Gerät anwenden? Bestehende Einstellungen darauf werden überschrieben."
+  nameAlreadyExists: 'Es existiert bereits ein Backup unter dem Namen "{name}". Bitte gib einen anderen Namen ein.'
+  applyConfirm: 'Wirklich das Backup "{name}" auf dieses Gerät anwenden? Bestehende Einstellungen darauf werden überschrieben.'
   saveConfirm: "Als {name} speichern?"
   deleteConfirm: "Das Backup {name} löschen?"
-  renameConfirm: "Soll dieses Backup von \"{old}\" zu \"{new}\" umbenannt werden?"
-  noBackups: "Keine Backups existieren. Backups können über \"Neu erstellen\" erstelllt werden."
+  renameConfirm: 'Soll dieses Backup von "{old}" zu "{new}" umbenannt werden?'
+  noBackups: 'Keine Backups existieren. Backups können über "Neu erstellen" erstelllt werden.'
   createdAt: "Erstellt am: {date} {time}"
   updatedAt: "Aktualisiert am: {date} {time}"
   cannotLoad: "Laden fehlgeschlagen"
@@ -1351,7 +1351,7 @@ _mfm:
   jelly: "Animation (Dehnen)"
   jellyDescription: "Verleiht Inhalt eine sich dehnende Animation."
   tada: "Animation (Tada)"
-  tadaDescription: "Verleiht Inhalt eine Animation mit \"Tada!\"-Gefühl"
+  tadaDescription: 'Verleiht Inhalt eine Animation mit "Tada!"-Gefühl'
   jump: "Animation (Sprung)"
   jumpDescription: "Verleiht Inhalt eine springende Animation."
   bounce: "Animation (Federn)"
@@ -1405,7 +1405,7 @@ _menuDisplay:
   hide: "Ausblenden"
 _wordMute:
   muteWords: "Stummgeschaltete Wörter"
-  muteWordsDescription: "Zum Nutzen einer \"UND\"-Verknüpfung Einträge mit Leerzeichen trennen, zum Nutzen einer \"ODER\"-Verknüpfung Einträge mit einem Zeilenumbruch trennen."
+  muteWordsDescription: 'Zum Nutzen einer "UND"-Verknüpfung Einträge mit Leerzeichen trennen, zum Nutzen einer "ODER"-Verknüpfung Einträge mit einem Zeilenumbruch trennen.'
   muteWordsDescription2: "Umgib Schlüsselworter mit Schrägstrichen, um Reguläre Ausdrücke zu verwenden."
   softDescription: "Notizen, die die angegebenen Konditionen erfüllen, in der Chronik ausblenden."
   hardDescription: "Verhindern, dass Notizen, die die angegebenen Konditionen erfüllen, der Chronik hinzugefügt werden. Zudem werden diese Notizen auch nicht der Chronik hinzugefügt, falls die Konditionen geändert werden."
@@ -1524,12 +1524,12 @@ _tutorial:
   step3_1: "Mit dem Einrichten deines Profils fertig?"
   step3_2: "Dann lass uns als nächstes versuchen, eine Notiz zu schreiben. Dies kannst du tun, indem du auf den Knopf mit dem Stift-Icon auf dem Bildschirm drückst."
   step3_3: "Fülle das Fenster aus und drücke auf den Knopf oben rechts zum Senden."
-  step3_4: "Fällt dir nichts ein, das du schreiben möchtest? Versuch's mit \"Hallo Misskey!\""
+  step3_4: 'Fällt dir nichts ein, das du schreiben möchtest? Versuch''s mit "Hallo Misskey!"'
   step4_1: "Fertig mit dem Senden deiner ersten Notiz?"
   step4_2: "Falls deine Notiz nun in deiner Chronik auftaucht, hast du alles richtig gemacht."
   step5_1: "Lass uns nun deiner Chronik etwas mehr Leben einhauchen, indem du einigen anderen Benutzern folgst."
   step5_2: "{featured} zeigt dir beliebte Notizen dieser Instanz. In {explore} kannst du beliebte Benutzer finden. Schau dort, ob du Benutzer findest, die dich interessieren."
-  step5_3: "Klicke zum Anzeigen des Profils eines Benutzers auf dessen Profilbild und dann auf den \"Folgen\"-Knopf, um diesem zu folgen."
+  step5_3: 'Klicke zum Anzeigen des Profils eines Benutzers auf dessen Profilbild und dann auf den "Folgen"-Knopf, um diesem zu folgen.'
   step5_4: "Je nach Benutzer kann es etwas Zeit in Anspruch nehmen, bis dieser deine Follow-Anfrage bestätigt."
   step6_1: "Wenn du nun auch die Notizen anderer Benutzer in deiner Chronik siehst, hast du auch diesmal alles richtig gemacht."
   step6_2: "Du kannst ebenso „Reaktionen“ verwenden, um schnell auf Notizen anderer Benutzer zu reagieren."
@@ -1581,8 +1581,8 @@ _permissions:
   "write:channels": "Kanäle bedienen"
   "read:gallery": "Beiträge deiner Galerie lesen"
   "write:gallery": "Deine Galerie bearbeiten"
-  "read:gallery-likes": "Liste deiner mit \"Gefällt mir\" markierten Galerie-Beiträge lesen"
-  "write:gallery-likes": "Liste deiner mit \"Gefällt mir\" markierten Galerie-Beiträge bearbeiten"
+  "read:gallery-likes": 'Liste deiner mit "Gefällt mir" markierten Galerie-Beiträge lesen'
+  "write:gallery-likes": 'Liste deiner mit "Gefällt mir" markierten Galerie-Beiträge bearbeiten'
 _auth:
   shareAccess: "Möchtest du „{name}“ authorisieren, auf dieses Benutzerkonto zugreifen zu können?"
   shareAccessAsk: "Bist du dir sicher, dass du diese Anwendung authorisieren möchtest, auf dein Benutzerkonto zugreifen zu können?"
@@ -1745,7 +1745,7 @@ _play:
   editThisPage: "Dieses Play bearbeiten"
   viewSource: "Quelltext anzeigen"
   my: "Meine Plays"
-  liked: "Mit \"Gefällt mir\" markierte Plays"
+  liked: 'Mit "Gefällt mir" markierte Plays'
   featured: "Beliebt"
   title: "Titel"
   script: "Skript"
@@ -1765,7 +1765,7 @@ _pages:
   viewSource: "Quelltext anzeigen"
   viewPage: "Seite anschauen"
   like: "Gefällt mir"
-  unlike: "\"Gefällt mir\" entfernen"
+  unlike: '"Gefällt mir" entfernen'
   my: "Meine Seiten"
   liked: "Seiten, die mir gefallen"
   featured: "Beliebt"
@@ -1852,7 +1852,7 @@ _deck:
   deleteProfile: "Profil löschen"
   introduction: "Erstelle eine auf dich zugeschneiderte Benutzeroberfläche durch das Aneinanderreihen von Spalten!"
   introduction2: "Klicke auf das + rechts um wann immer du möchtest neue Spalten hinzuzufügen."
-  widgetsIntroduction: "Drücke bitte \"Widgets bearbeiten\" im Spaltenmenü und füge ein Widget hinzu."
+  widgetsIntroduction: 'Drücke bitte "Widgets bearbeiten" im Spaltenmenü und füge ein Widget hinzu.'
   _columns:
     main: "Hauptspalte"
     widgets: "Widgets"

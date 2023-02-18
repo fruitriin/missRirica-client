@@ -1,30 +1,30 @@
 <template>
-<MkWindow
-	ref="window"
-	:initial-width="800"
-	:initial-height="500"
-	:can-resize="true"
-	@closed="emit('closed')"
->
-	<template #header>
-		{{ i18n.ts.drive }}
-	</template>
-	<XDrive :initial-folder="initialFolder"/>
-</MkWindow>
+  <MkWindow
+    ref="window"
+    :initial-width="800"
+    :initial-height="500"
+    :can-resize="true"
+    @closed="emit('closed')"
+  >
+    <template #header>
+      {{ i18n.ts.drive }}
+    </template>
+    <XDrive :initial-folder="initialFolder" />
+  </MkWindow>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
-import * as Misskey from 'yamisskey-js';
-import XDrive from '@/components/MkDrive.vue';
-import MkWindow from '@/components/MkWindow.vue';
-import { i18n } from '@/i18n';
+import {} from "vue";
+import * as Misskey from "yamisskey-js";
+import XDrive from "@/components/MkDrive.vue";
+import MkWindow from "@/components/MkWindow.vue";
+import { i18n } from "@/i18n";
 
 defineProps<{
-	initialFolder?: Misskey.entities.DriveFolder;
+  initialFolder?: Misskey.entities.DriveFolder;
 }>();
 
 const emit = defineEmits<{
-	(ev: 'closed'): void;
+  (ev: "closed"): void;
 }>();
 </script>
