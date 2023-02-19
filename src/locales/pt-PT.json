@@ -477,12 +477,6 @@
       "title": "Você tem um novo seguidor"
     }
   },
-  "_mfm": {
-    "mention": "Menção",
-    "quote": "Citar",
-    "emoji": "Emoji personalizado",
-    "search": "Buscar"
-  },
   "_theme": {
     "keys": {
       "mention": "Menção",
