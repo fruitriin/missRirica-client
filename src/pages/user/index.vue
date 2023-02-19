@@ -1,11 +1,12 @@
 <template>
   <MkStickyContainer>
-    <template #header
-      ><MkPageHeader
+    <template #header>
+      <MkPageHeader
         v-model:tab="tab"
         :actions="headerActions"
         :tabs="headerTabs"
-    /></template>
+      />
+    </template>
     <div>
       <Transition name="fade" mode="out-in">
         <div v-if="user">
@@ -100,7 +101,7 @@ const headerTabs = $computed(() =>
               {
                 key: "achievements",
                 title: i18n.ts.achievements,
-                icon: "ti ti-military-award",
+                icon: "ti ti-medal",
               },
             ]
           : []),

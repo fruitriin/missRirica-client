@@ -24,6 +24,7 @@ async function follow(user): Promise<void> {
     userId: user.id,
   });
 }
+
 const acct = new URL(location.href).searchParams.get("acct");
 if (acct == null) {
   throw new Error("acct required");

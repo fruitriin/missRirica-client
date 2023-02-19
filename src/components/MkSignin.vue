@@ -1,43 +1,43 @@
 <template>
-<form class="eppvobhk" :class="{ signing }" @submit.prevent="onSubmit">
-	<div class="normal-signin">
-		{{ i18n.ts.ririca.instance }}
-		<MkSelect v-model="instanceUrl" large model-value="misskey.io">
-			<option key="misskey.io" value="misskey.io" :selected="true">
-				Misskey.io
-			</option>
-			<option value="other">
-				{{ i18n.ts.ririca.selectInstanceYourself }}
-			</option>
-		</MkSelect>
-		<template v-if="instanceUrl === 'other'">
-			URL
-			<MkInput
-				v-model="instanceUrlOther"
-				:spellcheck="false"
-				autofocus
-				required
-			/>
-		</template>
-		{{ i18n.ts.ririca.accessToken }}
-		<MkInput
-			v-model="token"
-			:spellcheck="false"
-			autofocus
-			required
-			data-cy-signin-username
-		></MkInput>
-		<MkButton
-			class="_formBlock"
-			type="submit"
-			primary
-			:disabled="signing"
-			style="margin: 0 auto"
-		>
-			{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}
-		</MkButton>
-	</div>
-</form>
+  <form class="eppvobhk" :class="{ signing }" @submit.prevent="onSubmit">
+    <div class="normal-signin">
+      {{ i18n.ts.ririca.instance }}
+      <MkSelect v-model="instanceUrl" large model-value="misskey.io">
+        <option key="misskey.io" value="misskey.io" :selected="true">
+          Misskey.io
+        </option>
+        <option value="other">
+          {{ i18n.ts.ririca.selectInstanceYourself }}
+        </option>
+      </MkSelect>
+      <template v-if="instanceUrl === 'other'">
+        URL
+        <MkInput
+          v-model="instanceUrlOther"
+          :spellcheck="false"
+          autofocus
+          required
+        />
+      </template>
+      {{ i18n.ts.ririca.accessToken }}
+      <MkInput
+        v-model="token"
+        :spellcheck="false"
+        autofocus
+        required
+        data-cy-signin-username
+      ></MkInput>
+      <MkButton
+        class="_formBlock"
+        type="submit"
+        primary
+        :disabled="signing"
+        style="margin: 0 auto"
+      >
+        {{ signing ? i18n.ts.loggingIn : i18n.ts.login }}
+      </MkButton>
+    </div>
+  </form>
 </template>
 
 <script lang="ts" setup>
@@ -229,7 +229,6 @@ function resetPassword() {
     "closed"
   );
 }
-
 </script>
 
 <style lang="scss" scoped>
