@@ -113,7 +113,14 @@ export async function login(
 ) {
   waiting();
   if (_DEV_) console.log("logging as token ", token, instanceUrl);
-  const me = await fetchAccount(token, instanceUrl);
+  const me = await fetchAccount(token, instanceUrl).catch(async res => {
+    await alert({
+      type: "error",
+      title: i18n.ts.failedToFetchAccountInformation,
+      text: JSON.stringify(res.error),
+    })
+    unisonReload()
+  })
   miLocalStorage.setItem("account", JSON.stringify(me));
   miLocalStorage.setItem(
     "instance",
