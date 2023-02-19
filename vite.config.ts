@@ -4,6 +4,7 @@ import vue from "@vitejs/plugin-vue";
 import pluginJson5 from "./vite.json5";
 import meta from "./package.json";
 // https://vitejs.dev/config/
+import { resolve } from 'path'
 
 const extensions = [
   ".ts",
@@ -31,8 +32,10 @@ export default defineConfig({
     },
   },
   build: {
+    target: 'esnext',
     outDir: "dist",
   },
+
 
   define: {
     _VERSION_: JSON.stringify(meta.version),

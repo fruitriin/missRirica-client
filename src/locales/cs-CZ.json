@@ -652,20 +652,6 @@
     "allContributors": "Všichni přispěvatelé",
     "source": "Zdrojový kód"
   },
-  "_mfm": {
-    "mention": "Zmínění",
-    "hashtag": "Hashtag",
-    "link": "Odkaz",
-    "bold": "Tučně",
-    "quote": "Citovat",
-    "emoji": "Vlastní emoji",
-    "search": "Vyhledávání",
-    "flip": "Otočit",
-    "tada": "Animace (tadá)",
-    "blur": "Rozmazání",
-    "font": "Font",
-    "rainbow": "Duha"
-  },
   "_channel": {
     "featured": "Trendy"
   },
@@ -841,19 +827,20 @@
       "tl": "Časová osa",
       "antenna": "Antény",
       "list": "Seznamy",
+      "channel": "Kanály",
       "mentions": "Zmínění"
     }
   },
-  "ririca" : {
+  "ririca": {
     "name": "MissRirica",
     "description": "MissRirica is Misskey Client for iOS/Android.  Please prepare access token for login",
     "term": "Agree Privacy Policy and Term of Uses ",
     "termLink": "Link: Privacy Policy and Term of Uses",
     "login": "login",
     "instance": "Instance",
-    "makeToken" : "How to make access token (JP)",
+    "makeToken": "How to make access token (JP)",
     "selectInstanceYourself": "Input instance url instead select one",
     "accessToken": "AccessToken",
-    "howToCreateToken" : "How to make access token (JP)"
+    "howToCreateToken": "How to make access token (JP)"
   }
 }

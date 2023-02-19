@@ -455,7 +455,6 @@
   "joinOrCreateGroup": "Primește o invitație într-un grup sau creează unul nou.",
   "noHistory": "Nu există istoric",
   "signinHistory": "Istoric autentificări",
-  "disableAnimatedMfm": "Dezactivează MFM cu animații",
   "doing": "Se procesează...",
   "category": "Categorie",
   "tags": "Etichete",
@@ -659,12 +658,6 @@
       "title": "te-a urmărit"
     }
   },
-  "_mfm": {
-    "mention": "Mențiune",
-    "quote": "Citează",
-    "emoji": "Emoji personalizat",
-    "search": "Caută"
-  },
   "_theme": {
     "description": "Descriere",
     "keys": {
@@ -743,19 +736,20 @@
       "tl": "Cronologie",
       "antenna": "Antene",
       "list": "Liste",
+      "channel": "Canale",
       "mentions": "Mențiuni"
     }
   },
-  "ririca" : {
+  "ririca": {
     "name": "MissRirica",
     "description": "MissRirica is Misskey Client for iOS/Android.  Please prepare access token for login",
     "term": "Agree Privacy Policy and Term of Uses ",
     "termLink": "Link: Privacy Policy and Term of Uses",
     "login": "login",
     "instance": "Instance",
-    "makeToken" : "How to make access token (JP)",
+    "makeToken": "How to make access token (JP)",
     "selectInstanceYourself": "Input instance url instead select one",
     "accessToken": "AccessToken",
-    "howToCreateToken" : "How to make access token (JP)"
+    "howToCreateToken": "How to make access token (JP)"
   }
 }

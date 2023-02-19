@@ -1,0 +1,2997 @@
+diff --color=auto -ru Ririca13/src/account.ts src/account.ts
+--- Ririca13/src/account.ts	2023-02-13 09:01:19
++++ src/account.ts	2023-02-13 09:01:11
+@@ -4,7 +4,6 @@
+ import { i18n } from "./i18n";
+ import { miLocalStorage } from "./local-storage";
+ import { del, get, set } from "@/scripts/idb-proxy";
+-import { apiUrl } from "@/config";
+ import { waiting, api, popup, popupMenu, success, alert } from "@/os";
+ import { unisonReload, reloadChannel } from "@/scripts/unison-reload";
+ 
+@@ -12,12 +11,16 @@
+ 
+ type Account = misskey.entities.MeDetailed;
+ 
+-const accountData = miLocalStorage.getItem("account");
++let accountData = null;
++try {
++  accountData = JSON.parse(miLocalStorage.getItem("account"));
++} catch (e) {
++  miLocalStorage.removeItem("account");
++  window.location.reload();
++}
+ 
+ // TODO: 外部からはreadonlyに
+-export const $i = accountData
+-  ? reactive(JSON.parse(accountData) as Account)
+-  : null;
++export const $i = accountData ? reactive(accountData as Account) : null;
+ 
+ export const iAmModerator = $i != null && ($i.isAdmin || $i.isModerator);
+ export const iAmAdmin = $i != null && $i.isAdmin;
+@@ -34,52 +37,26 @@
+   await removeAccount($i.id);
+ 
+   const accounts = await getAccounts();
+-
+-  //#region Remove service worker registration
+-  try {
+-    if (navigator.serviceWorker.controller) {
+-      const registration = await navigator.serviceWorker.ready;
+-      const push = await registration.pushManager.getSubscription();
+-      if (push) {
+-        await window.fetch(`${apiUrl}/sw/unregister`, {
+-          method: "POST",
+-          body: JSON.stringify({
+-            i: $i.token,
+-            endpoint: push.endpoint,
+-          }),
+-          headers: {
+-            "Content-Type": "application/json",
+-          },
+-        });
+-      }
+-    }
+-
+-    if (accounts.length === 0) {
+-      await navigator.serviceWorker.getRegistrations().then((registrations) => {
+-        return Promise.all(
+-          registrations.map((registration) => registration.unregister())
+-        );
+-      });
+-    }
+-  } catch (err) {}
+-  //#endregion
+-
+   document.cookie = "igi=; path=/";
+ 
+-  if (accounts.length > 0) login(accounts[0].token);
++  if (accounts.length > 0) login(accounts[0].token, accounts[0].instanceUrl);
+   else unisonReload("/");
+ }
+ 
+ export async function getAccounts(): Promise<
+-  { id: Account["id"]; token: Account["token"] }[]
++  { id: Account["id"]; token: Account["token"]; instanceUrl: string }[]
+ > {
+   return (await get("accounts")) || [];
+ }
+ 
+-export async function addAccount(id: Account["id"], token: Account["token"]) {
++export async function addAccount(
++  id: Account["id"],
++  token: Account["token"],
++  instanceUrl: string
++) {
+   const accounts = await getAccounts();
+   if (!accounts.some((x) => x.id === id)) {
+-    await set("accounts", accounts.concat([{ id, token }]));
++    await set("accounts", accounts.concat([{ id, token, instanceUrl }]));
+   }
+ }
+ 
+@@ -94,43 +71,32 @@
+   else await del("accounts");
+ }
+ 
+-function fetchAccount(token: string): Promise<Account> {
+-  return new Promise((done, fail) => {
+-    // Fetch user
+-    window
+-      .fetch(`${apiUrl}/i`, {
+-        method: "POST",
+-        body: JSON.stringify({
+-          i: token,
+-        }),
+-        headers: {
+-          "Content-Type": "application/json",
+-        },
+-      })
+-      .then((res) => res.json())
+-      .then((res) => {
+-        if (res.error) {
+-          if (res.error.id === "a8c724b3-6e9c-4b46-b1a8-bc3ed6258370") {
+-            showSuspendedDialog().then(() => {
+-              signout();
+-            });
+-          } else {
+-            alert({
+-              type: "error",
+-              title: i18n.ts.failedToFetchAccountInformation,
+-              text: JSON.stringify(res.error),
+-            });
+-          }
+-        } else {
+-          res.token = token;
+-          done(res);
+-        }
+-      })
+-      .catch(fail);
+-  });
++function fetchAccount(
++  token: string,
++  instanceUrl: string
++): Promise<Account & { instanceUrl: string }> {
++  return new misskey.api.APIClient({ origin: instanceUrl, credential: token })
++    .request("i")
++    .then((res) => {
++      return { ...(res as Account), token, instanceUrl };
++    })
++    .catch((res) => {
++      if (res.error.id === "a8c724b3-6e9c-4b46-b1a8-bc3ed6258370") {
++        showSuspendedDialog().then(() => {
++          signout();
++        });
++      } else {
++        alert({
++          type: "error",
++          title: i18n.ts.failedToFetchAccountInformation,
++          text: JSON.stringify(res.error),
++        });
++      }
++      return Promise.reject(res);
++    });
+ }
+ 
+-export function updateAccount(accountData) {
++export function updateAccount(accountData: Object) {
+   for (const [key, value] of Object.entries(accountData)) {
+     $i[key] = value;
+   }
+@@ -138,16 +104,29 @@
+ }
+ 
+ export function refreshAccount() {
+-  return fetchAccount($i.token).then(updateAccount);
++  return fetchAccount($i.token, $i.instanceUrl).then(updateAccount);
+ }
+ 
+-export async function login(token: Account["token"], redirect?: string) {
++export async function login(
++  token: Account["token"],
++  instanceUrl: string,
++  redirect?: string
++) {
+   waiting();
+-  if (_DEV_) console.log("logging as token ", token);
+-  const me = await fetchAccount(token);
++  if (_DEV_) console.log("logging as token ", token, instanceUrl);
++  const me = await fetchAccount(token, instanceUrl);
+   miLocalStorage.setItem("account", JSON.stringify(me));
++  miLocalStorage.setItem(
++    "instance",
++    JSON.stringify(
++      await new misskey.api.APIClient({
++        origin: instanceUrl,
++        credential: token,
++      }).request("meta")
++    )
++  );
+   document.cookie = `token=${token}; path=/; max-age=31536000`; // bull dashboardの認証とかで使う
+-  await addAccount(me.id, token);
++  await addAccount(me.id, token, instanceUrl);
+ 
+   if (redirect) {
+     // 他のタブは再読み込みするだけ
+@@ -175,7 +154,7 @@
+       {},
+       {
+         done: (res) => {
+-          addAccount(res.id, res.i);
++          addAccount(res.id, res.i, res.instanceUrl);
+           success();
+         },
+       },
+@@ -189,8 +168,8 @@
+       {},
+       {
+         done: (res) => {
+-          addAccount(res.id, res.i);
+-          switchAccountWithToken(res.i);
++          addAccount(res.id, res.i, res.instanceUrl);
++          switchAccountWithToken(res.i, res.instanceUrl);
+         },
+       },
+       "closed"
+@@ -199,12 +178,13 @@
+ 
+   async function switchAccount(account: misskey.entities.UserDetailed) {
+     const storedAccounts = await getAccounts();
+-    const token = storedAccounts.find((x) => x.id === account.id).token;
+-    switchAccountWithToken(token);
++    const acc = storedAccounts.find((x) => x.id === account.id);
++    miLocalStorage.removeItem("lastEmojisFetchedAt");
++    switchAccountWithToken(acc.token, acc.instanceUrl);
+   }
+ 
+-  function switchAccountWithToken(token: string) {
+-    login(token);
++  function switchAccountWithToken(token: string, instanceUrl: string) {
++    login(token, instanceUrl);
+   }
+ 
+   const storedAccounts = await getAccounts().then((accounts) =>
+@@ -232,11 +212,23 @@
+   const accountItemPromises = storedAccounts.map(
+     (a) =>
+       new Promise((res) => {
+-        accountsPromise.then((accounts) => {
+-          const account = accounts.find((x) => x.id === a.id);
+-          if (account == null) return res(null);
+-          res(createItem(account));
++        const client = new misskey.api.APIClient({
++          origin: a.instanceUrl,
++          credential: a.token,
+         });
++
++        client
++          .request("users/show", {
++            userIds: [a.id],
++          })
++          .then((accounts) => {
++            const account = accounts.find((x) => x.id === a.id);
++            if (account == null) return res(null);
++
++            client.request("meta").then((meta) => {
++              res(createItem({ ...account, host: meta.name }));
++            });
++          });
+       })
+   );
+ 
+@@ -262,12 +254,6 @@
+                 text: i18n.ts.existingAccount,
+                 action: () => {
+                   showSigninDialog();
+-                },
+-              },
+-              {
+-                text: i18n.ts.createAccount,
+-                action: () => {
+-                  createAccount();
+                 },
+               },
+             ],
+Only in src: assets
+diff --color=auto -ru Ririca13/src/components/MkAchievements.vue src/components/MkAchievements.vue
+--- Ririca13/src/components/MkAchievements.vue	2023-02-13 09:01:20
++++ src/components/MkAchievements.vue	2023-02-13 09:01:11
+@@ -41,17 +41,11 @@
+           </div>
+           <div :class="$style.description">
+             {{
+-              withDescription
+-                ? i18n.ts._achievements._types["_" + achievement.name]
+-                    .description
+-                : "???"
++              i18n.ts._achievements._types["_" + achievement.name].description
+             }}
+           </div>
+           <div
+-            v-if="
+-              i18n.ts._achievements._types['_' + achievement.name].flavor &&
+-              withDescription
+-            "
++            v-if="i18n.ts._achievements._types['_' + achievement.name].flavor"
+             :class="$style.flavor"
+           >
+             {{ i18n.ts._achievements._types["_" + achievement.name].flavor }}
+@@ -97,11 +91,9 @@
+   defineProps<{
+     user: misskey.entities.User;
+     withLocked: boolean;
+-    withDescription: boolean;
+   }>(),
+   {
+     withLocked: true,
+-    withDescription: true,
+   }
+ );
+ 
+diff --color=auto -ru Ririca13/src/components/MkClickerGame.vue src/components/MkClickerGame.vue
+--- Ririca13/src/components/MkClickerGame.vue	2023-02-13 09:01:20
++++ src/components/MkClickerGame.vue	2023-02-13 09:01:12
+@@ -12,7 +12,7 @@
+         :class="$style.button"
+         @click="onClick"
+       >
+-        <img src="/client-assets/cookie.png" :class="$style.img" />
++        <!--			<img src="/client-assets/cookie.png" :class="$style.img">-->
+       </button>
+     </div>
+     <div v-else>
+diff --color=auto -ru Ririca13/src/components/MkFileListForAdmin.vue src/components/MkFileListForAdmin.vue
+--- Ririca13/src/components/MkFileListForAdmin.vue	2023-02-13 09:01:20
++++ src/components/MkFileListForAdmin.vue	2023-02-13 09:01:12
+@@ -47,7 +47,7 @@
+ 
+ <script lang="ts" setup>
+ import { computed } from "vue";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import MkPagination from "@/components/MkPagination.vue";
+ import MkDriveFileThumbnail from "@/components/MkDriveFileThumbnail.vue";
+ import bytes from "@/filters/bytes";
+diff --color=auto -ru Ririca13/src/components/MkMention.vue src/components/MkMention.vue
+--- Ririca13/src/components/MkMention.vue	2023-02-13 09:01:20
++++ src/components/MkMention.vue	2023-02-13 09:01:12
+@@ -5,7 +5,11 @@
+     :to="url"
+     :style="{ background: bgCss }"
+   >
+-    <img :class="$style.icon" :src="`/avatar/@${username}@${host}`" alt="" />
++    <img
++      :class="$style.icon"
++      :src="`${$i.instanceUrl}/avatar/@${username}@${host}`"
++      alt=""
++    />
+     <span>
+       <span :class="$style.username">@{{ username }}</span>
+       <span
+diff --color=auto -ru Ririca13/src/components/MkMenu.vue src/components/MkMenu.vue
+--- Ririca13/src/components/MkMenu.vue	2023-02-13 09:01:20
++++ src/components/MkMenu.vue	2023-02-13 09:01:12
+@@ -89,6 +89,7 @@
+           <MkAvatar :user="item.user" :class="$style.avatar" /><MkUserName
+             :user="item.user"
+           />
++          [{{ item.user.host }}]
+           <span v-if="item.indicate" :class="$style.indicator"
+             ><i class="_indicatorCircle"></i
+           ></span>
+diff --color=auto -ru Ririca13/src/components/MkNotification.vue src/components/MkNotification.vue
+--- Ririca13/src/components/MkNotification.vue	2023-02-13 09:01:21
++++ src/components/MkNotification.vue	2023-02-13 09:01:13
+@@ -55,7 +55,7 @@
+         ></i>
+         <i
+           v-else-if="notification.type === 'achievementEarned'"
+-          class="ti ti-medal"
++          class="ti ti-military-award"
+         ></i>
+         <!-- notification.reaction が null になることはまずないが、ここでoptional chaining使うと一部ブラウザで刺さるので念の為 -->
+         <MkReactionIcon
+@@ -432,7 +432,7 @@
+ 
+ .t_achievementEarned {
+   padding: 3px;
+-  background: #cb9a11;
++  background: #88a6b7;
+   pointer-events: none;
+ }
+ 
+diff --color=auto -ru Ririca13/src/components/MkPostForm.vue src/components/MkPostForm.vue
+--- Ririca13/src/components/MkPostForm.vue	2023-02-13 09:01:21
++++ src/components/MkPostForm.vue	2023-02-13 09:01:13
+@@ -252,7 +252,7 @@
+ import insertTextAtCursor from "insert-text-at-cursor";
+ import { length } from "stringz";
+ import { toASCII } from "punycode/";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import { throttle } from "throttle-debounce";
+ import MkNoteSimple from "@/components/MkNoteSimple.vue";
+ import XNotePreview from "@/components/MkNotePreview.vue";
+@@ -811,7 +811,7 @@
+       visibility: visibility,
+       localOnly: localOnly,
+       files: files,
+-      poll: poll,
++      poll: poll || undefined,
+     },
+   };
+ 
+diff --color=auto -ru Ririca13/src/components/MkReactionsViewer.reaction.vue src/components/MkReactionsViewer.reaction.vue
+--- Ririca13/src/components/MkReactionsViewer.reaction.vue	2023-02-13 09:01:21
++++ src/components/MkReactionsViewer.reaction.vue	2023-02-13 09:01:13
+@@ -27,7 +27,6 @@
+ import { $i } from "@/account";
+ import MkReactionEffect from "@/components/MkReactionEffect.vue";
+ import { claimAchievement } from "@/scripts/achievements";
+-import { defaultStore } from "@/store";
+ 
+ const props = defineProps<{
+   reaction: string;
+@@ -72,7 +71,6 @@
+ 
+ const anime = () => {
+   if (document.hidden) return;
+-  if (!defaultStore.state.animation) return;
+ 
+   const rect = buttonEl.value.getBoundingClientRect();
+   const x = rect.left + 16;
+diff --color=auto -ru Ririca13/src/components/MkSignin.vue src/components/MkSignin.vue
+--- Ririca13/src/components/MkSignin.vue	2023-02-13 09:01:21
++++ src/components/MkSignin.vue	2023-02-13 09:01:13
+@@ -1,134 +1,55 @@
+ <template>
+-  <form
+-    class="eppvobhk"
+-    :class="{ signing, totpLogin }"
+-    @submit.prevent="onSubmit"
+-  >
+-    <div class="auth _gaps_m">
+-      <div
+-        v-show="withAvatar"
+-        class="avatar"
+-        :style="{
+-          backgroundImage: user ? `url('${user.avatarUrl}')` : null,
+-          marginBottom: message ? '1.5em' : null,
+-        }"
+-      ></div>
+-      <MkInfo v-if="message">
+-        {{ message }}
+-      </MkInfo>
+-      <div v-if="!totpLogin" class="normal-signin _gaps_m">
++  <form class="eppvobhk" :class="{ signing }" @submit.prevent="onSubmit">
++    <div class="normal-signin">
++      {{ i18n.ts.ririca.instance }}
++      <MkSelect v-model="instanceUrl" large :model-value="instances[0]?.url">
++        <option value="other">
++          {{ i18n.ts.ririca.selectInstanceYourself }}
++        </option>
++        <option
++          v-for="(instance, i) in instances"
++          :key="instance.url"
++          :value="instance.url"
++          :selected="i === 0"
++        >
++          {{ instance.name }}
++        </option>
++      </MkSelect>
++      <template v-if="instanceUrl === 'other'">
++        URL
+         <MkInput
+-          v-model="username"
+-          :placeholder="i18n.ts.username"
+-          type="text"
+-          pattern="^[a-zA-Z0-9_]+$"
++          v-model="instanceUrlOther"
+           :spellcheck="false"
+-          autocomplete="username"
+           autofocus
+           required
+-          data-cy-signin-username
+-          @update:model-value="onUsernameChange"
+-        >
+-          <template #prefix>@</template>
+-          <template #suffix>@{{ host }}</template>
+-        </MkInput>
+-        <MkInput
+-          v-if="!user || (user && !user.usePasswordLessLogin)"
+-          v-model="password"
+-          :placeholder="i18n.ts.password"
+-          type="password"
+-          :with-password-toggle="true"
+-          required
+-          data-cy-signin-password
+-        >
+-          <template #prefix><i class="ti ti-lock"></i></template>
+-          <template #caption
+-            ><button class="_textButton" type="button" @click="resetPassword">
+-              {{ i18n.ts.forgotPassword }}
+-            </button></template
+-          >
+-        </MkInput>
+-        <MkButton
+-          type="submit"
+-          large
+-          primary
+-          rounded
+-          :disabled="signing"
+-          style="margin: 0 auto"
+-          >{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}</MkButton
+-        >
+-      </div>
+-      <div
+-        v-if="totpLogin"
+-        class="2fa-signin"
+-        :class="{ securityKeys: user && user.securityKeys }"
++        />
++      </template>
++      {{ i18n.ts.ririca.accessToken }}
++      <MkInput
++        v-model="token"
++        :spellcheck="false"
++        autofocus
++        required
++        data-cy-signin-username
++      ></MkInput>
++      <MkButton
++        class="_formBlock"
++        type="submit"
++        primary
++        :disabled="signing"
++        style="margin: 0 auto"
+       >
+-        <div v-if="user && user.securityKeys" class="twofa-group tap-group">
+-          <p>{{ i18n.ts.tapSecurityKey }}</p>
+-          <MkButton v-if="!queryingKey" @click="queryKey">
+-            {{ i18n.ts.retry }}
+-          </MkButton>
+-        </div>
+-        <div v-if="user && user.securityKeys" class="or-hr">
+-          <p class="or-msg">{{ i18n.ts.or }}</p>
+-        </div>
+-        <div class="twofa-group totp-group">
+-          <p style="margin-bottom: 0">{{ i18n.ts.twoStepAuthentication }}</p>
+-          <MkInput
+-            v-if="user && user.usePasswordLessLogin"
+-            v-model="password"
+-            type="password"
+-            :with-password-toggle="true"
+-            required
+-          >
+-            <template #label>{{ i18n.ts.password }}</template>
+-            <template #prefix><i class="ti ti-lock"></i></template>
+-          </MkInput>
+-          <MkInput
+-            v-model="token"
+-            type="text"
+-            pattern="^[0-9]{6}$"
+-            autocomplete="off"
+-            :spellcheck="false"
+-            required
+-          >
+-            <template #label>{{ i18n.ts.token }}</template>
+-            <template #prefix><i class="ti ti-123"></i></template>
+-          </MkInput>
+-          <MkButton
+-            type="submit"
+-            :disabled="signing"
+-            large
+-            primary
+-            rounded
+-            style="margin: 0 auto"
+-            >{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}</MkButton
+-          >
+-        </div>
+-      </div>
++        {{ signing ? i18n.ts.loggingIn : i18n.ts.login }}
++      </MkButton>
+     </div>
+-    <div class="social">
++
++    <div style="display: flex; justify-content: center">
+       <a
+-        v-if="meta && meta.enableTwitterIntegration"
+-        class="_borderButton _margin"
+-        :href="`${apiUrl}/signin/twitter`"
+-        ><i class="ti ti-brand-twitter" style="margin-right: 4px"></i
+-        >{{ $t("signinWith", { x: "Twitter" }) }}</a
++        href="https://misskey.io/notes/99l9jqqun2"
++        target="_blank"
++        style="color: var(--link); text-align: center"
++        >{{ i18n.ts.ririca.howToCreateToken }}</a
+       >
+-      <a
+-        v-if="meta && meta.enableGithubIntegration"
+-        class="_borderButton _margin"
+-        :href="`${apiUrl}/signin/github`"
+-        ><i class="ti ti-brand-github" style="margin-right: 4px"></i
+-        >{{ $t("signinWith", { x: "GitHub" }) }}</a
+-      >
+-      <a
+-        v-if="meta && meta.enableDiscordIntegration"
+-        class="_borderButton _margin"
+-        :href="`${apiUrl}/signin/discord`"
+-        ><i class="ti ti-brand-discord" style="margin-right: 4px"></i
+-        >{{ $t("signinWith", { x: "Discord" }) }}</a
+-      >
+     </div>
+   </form>
+ </template>
+@@ -140,7 +61,7 @@
+ import MkButton from "@/components/MkButton.vue";
+ import MkInput from "@/components/MkInput.vue";
+ import MkInfo from "@/components/MkInfo.vue";
+-import { apiUrl, host as configHost } from "@/config";
++import MkSelect from "@/components/MkSelect.vue";
+ import { byteify, hexify } from "@/scripts/2fa";
+ import * as os from "@/os";
+ import { login } from "@/account";
+@@ -152,14 +73,15 @@
+ let username = $ref("");
+ let password = $ref("");
+ let token = $ref("");
+-let host = $ref(toUnicode(configHost));
+-let totpLogin = $ref(false);
+ let credential = $ref(null);
+ let challengeData = $ref(null);
+ let queryingKey = $ref(false);
+ let hCaptchaResponse = $ref(null);
+ let reCaptchaResponse = $ref(null);
+ 
++const instanceUrl = $ref("");
++const instanceUrlOther = $ref("");
++
+ const meta = $computed(() => instance);
+ 
+ const emit = defineEmits<{
+@@ -197,12 +119,21 @@
+   );
+ }
+ 
+-function onLogin(res) {
++function onLogin(res: any) {
+   if (props.autoSet) {
+-    return login(res.i);
++    return login(res.i, res.instance);
+   }
+ }
+ 
++const instanceUrlResult = $computed(() => {
++  if (instanceUrl === "other") {
++    // うっかりhttps://を入れてもreplaceされるから大丈夫
++    // new URL.origin
++    return new URL("https://" + instanceUrlOther.replace("https://", ""))
++      .origin;
++  }
++  return "https://" + instanceUrl;
++});
+ function queryKey() {
+   queryingKey = true;
+   return navigator.credentials
+@@ -237,8 +168,8 @@
+       });
+     })
+     .then((res) => {
+-      emit("login", res);
+-      return onLogin(res);
++      emit("login", { ...res, instance: instanceUrl });
++      return onLogin({ ...res, instance: instanceUrl });
+     })
+     .catch((err) => {
+       if (err === null) return;
+@@ -253,38 +184,9 @@
+ function onSubmit() {
+   signing = true;
+   console.log("submit");
+-  if (!totpLogin && user && user.twoFactorEnabled) {
+-    if (window.PublicKeyCredential && user.securityKeys) {
+-      os.api("signin", {
+-        username,
+-        password,
+-        "hcaptcha-response": hCaptchaResponse,
+-        "g-recaptcha-response": reCaptchaResponse,
+-      })
+-        .then((res) => {
+-          totpLogin = true;
+-          signing = false;
+-          challengeData = res;
+-          return queryKey();
+-        })
+-        .catch(loginFailed);
+-    } else {
+-      totpLogin = true;
+-      signing = false;
+-    }
+-  } else {
+-    os.api("signin", {
+-      username,
+-      password,
+-      "hcaptcha-response": hCaptchaResponse,
+-      "g-recaptcha-response": reCaptchaResponse,
+-      token: user && user.twoFactorEnabled ? token : undefined,
+-    })
+-      .then((res) => {
+-        emit("login", res);
+-        onLogin(res);
+-      })
+-      .catch(loginFailed);
++  if (!token.value) {
++    login(token, instanceUrlResult);
++    signing = false;
+   }
+ }
+ 
+@@ -341,6 +243,13 @@
+     "closed"
+   );
+ }
++
++let instances = $ref([]);
++fetch("https://instanceapp.misskey.page/instances.json").then((res) => {
++  res.json().then((data) => {
++    instances = data.instancesInfos;
++  });
++});
+ </script>
+ 
+ <style lang="scss" scoped>
+diff --color=auto -ru Ririca13/src/components/MkUserPreview.vue src/components/MkUserPreview.vue
+--- Ririca13/src/components/MkUserPreview.vue	2023-02-13 09:01:21
++++ src/components/MkUserPreview.vue	2023-02-13 09:01:13
+@@ -77,7 +77,7 @@
+ 
+ <script lang="ts" setup>
+ import { onMounted } from "vue";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import * as misskey from "misskey-js";
+ import MkFollowButton from "@/components/MkFollowButton.vue";
+ import { userPage } from "@/filters/user";
+diff --color=auto -ru Ririca13/src/components/global/MkAd.vue src/components/global/MkAd.vue
+--- Ririca13/src/components/global/MkAd.vue	2023-02-13 09:01:19
++++ src/components/global/MkAd.vue	2023-02-13 09:01:11
+@@ -26,7 +26,7 @@
+           >{{ $ts._ad.reduceFrequencyOfThisAd }}</MkButton
+         >
+         <MkButton
+-          v-if="$i && $i.policies.canHideAds"
++          v-if="$i && $i?.policies?.canHideAds"
+           :class="$style.menuButton"
+           @click="hide"
+           >{{ $ts._ad.hide }}</MkButton
+@@ -111,7 +111,7 @@
+ let shouldHide = $ref(
+   chosen.value &&
+     $i &&
+-    $i.policies.canHideAds &&
++    $i?.policies?.canHideAds &&
+     defaultStore.state.hiddenAds.includes(chosen.value.id)
+ );
+ 
+diff --color=auto -ru Ririca13/src/components/global/MkAvatar.vue src/components/global/MkAvatar.vue
+--- Ririca13/src/components/global/MkAvatar.vue	2023-02-13 09:01:19
++++ src/components/global/MkAvatar.vue	2023-02-13 09:01:11
+@@ -48,6 +48,7 @@
+ import { acct, userPage } from "@/filters/user";
+ import MkUserOnlineIndicator from "@/components/MkUserOnlineIndicator.vue";
+ import { defaultStore } from "@/store";
++import { $i } from "@/account";
+ 
+ const props = withDefaults(
+   defineProps<{
+diff --color=auto -ru Ririca13/src/components/global/MkEmoji.vue src/components/global/MkEmoji.vue
+--- Ririca13/src/components/global/MkEmoji.vue	2023-02-13 09:01:19
++++ src/components/global/MkEmoji.vue	2023-02-13 09:01:11
+@@ -16,7 +16,7 @@
+   <img
+     v-else-if="char && !useOsNativeEmojis"
+     :class="$style.root"
+-    :src="url"
++    :src="char2path(char)"
+     :alt="alt"
+     decoding="async"
+     @pointerenter="computeTitle"
+@@ -40,6 +40,7 @@
+ import { defaultStore } from "@/store";
+ import { getEmojiName } from "@/scripts/emojilist";
+ import { customEmojis } from "@/custom-emojis";
++import { url as instanceUrl } from "@/config";
+ 
+ const props = defineProps<{
+   emoji: string;
+@@ -64,14 +65,13 @@
+ );
+ const url = computed(() => {
+   if (char.value) {
+-    return char2path(char.value);
+   } else if (props.host == null && !customEmojiName.includes("@")) {
+     const found = customEmojis.find((x) => x.name === customEmojiName);
+     return found ? found.url : null;
+   } else {
+     const rawUrl = props.host
+-      ? `/emoji/${customEmojiName}@${props.host}.webp`
+-      : `/emoji/${customEmojiName}.webp`;
++      ? `${instanceUrl}/emoji/${customEmojiName}@${props.host}.webp`
++      : `${instanceUrl}/emoji/${customEmojiName}.webp`;
+     return defaultStore.state.disableShowingAnimatedImages
+       ? getStaticImageUrl(rawUrl)
+       : rawUrl;
+diff --color=auto -ru Ririca13/src/components/global/MkStickyContainer.vue src/components/global/MkStickyContainer.vue
+--- Ririca13/src/components/global/MkStickyContainer.vue	2023-02-13 09:01:20
++++ src/components/global/MkStickyContainer.vue	2023-02-13 09:01:11
+@@ -24,7 +24,10 @@
+ 
+ let headerHeight = $ref<string | undefined>();
+ let childStickyTop = $ref(0);
+-const parentStickyTop = inject<Ref<number>>(CURRENT_STICKY_TOP, ref(0));
++const parentStickyTop = inject<Ref<number>>(
++  CURRENT_STICKY_TOP,
++  ref(document.querySelector<HTMLElement>("#header")?.offsetHeight)
++);
+ provide(CURRENT_STICKY_TOP, $$(childStickyTop));
+ 
+ const calc = () => {
+diff --color=auto -ru Ririca13/src/config.ts src/config.ts
+--- Ririca13/src/config.ts	2023-02-13 09:01:22
++++ src/config.ts	2023-02-13 09:01:13
+@@ -1,24 +1,19 @@
+ import { miLocalStorage } from "./local-storage";
++import { $i } from "@/account";
++import { langNames } from "@/i18n";
+ 
+-const address = new URL(location.href);
++const address = $i ? new URL($i.instanceUrl) : null;
+ const siteName = (
+   document.querySelector('meta[property="og:site_name"]') as HTMLMetaElement
+ )?.content;
+ 
+-export const host = address.host;
+-export const hostname = address.hostname;
+-export const url = address.origin;
++export const host = address?.host;
++export const hostname = address?.hostname;
++export const url = $i?.instanceUrl;
+ export const apiUrl = url + "/api";
+-export const wsUrl =
+-  url.replace("http://", "ws://").replace("https://", "wss://") + "/streaming";
+ export const lang = miLocalStorage.getItem("lang");
+-export const langs = _LANGS_;
+-export let locale = JSON.parse(miLocalStorage.getItem("locale"));
++export const langs = langNames;
+ export const version = _VERSION_;
+ export const instanceName = siteName === "Misskey" ? host : siteName;
+ export const ui = miLocalStorage.getItem("ui");
+ export const debug = miLocalStorage.getItem("debug") === "true";
+-
+-export function updateLocale(newLocale) {
+-  locale = newLocale;
+-}
+diff --color=auto -ru Ririca13/src/filters/user.ts src/filters/user.ts
+--- Ririca13/src/filters/user.ts	2023-02-13 09:01:22
++++ src/filters/user.ts	2023-02-13 09:01:14
+@@ -1,5 +1,5 @@
+ import * as misskey from "misskey-js";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import { url } from "@/config";
+ 
+ export const acct = (user: misskey.Acct) => {
+diff --color=auto -ru Ririca13/src/i18n.ts src/i18n.ts
+--- Ririca13/src/i18n.ts	2023-02-13 09:01:22
++++ src/i18n.ts	2023-02-13 09:01:14
+@@ -1,9 +1,75 @@
+-import { markRaw } from "vue";
+-import { locale } from "@/config";
+ import { I18n } from "@/scripts/i18n";
++import arSA from "@/locales/ar-SA.json";
++import csCZ from "@/locales/cs-CZ.json";
++import daDK from "@/locales/da-DK.json";
++import deDE from "@/locales/de-DE.json";
++import enUS from "@/locales/en-US.json";
++import esES from "@/locales/es-ES.json";
++import frFR from "@/locales/fr-FR.json";
++import idID from "@/locales/id-ID.json";
++import itIT from "@/locales/it-IT.json";
++import jaJP from "@/locales/ja-JP.json";
++import jaKS from "@/locales/ja-KS.json";
++import kabKAB from "@/locales/kab-KAB.json";
++import knIN from "@/locales/kn-IN.json";
++import koKR from "@/locales/ko-KR.json";
++import nlNL from "@/locales/nl-NL.json";
++import noNO from "@/locales/no-NO.json";
++import plPL from "@/locales/pl-PL.json";
++import ptPT from "@/locales/pt-PT.json";
++import ruRU from "@/locales/ru-RU.json";
++import skSK from "@/locales/sk-SK.json";
++import ugCN from "@/locales/ug-CN.json";
++import ukUA from "@/locales/uk-UA.json";
++import viVN from "@/locales/vi-VN.json";
++import zhCN from "@/locales/zh-CN.json";
++import zhTW from "@/locales/zh-TW.json";
+ 
+-export const i18n = markRaw(new I18n(locale));
++import Fuse from "fuse.js";
+ 
+-export function updateI18n(newLocale) {
+-  i18n.ts = newLocale;
++const languages = {
++  "ar-SA": arSA,
++  "cs-CZ": csCZ,
++  "da-DK": daDK,
++  "de-DE": deDE,
++  "en-US": enUS,
++  "es-ES": esES,
++  "fr-FR": frFR,
++  "id-ID": idID,
++  "it-IT": itIT,
++  "ja-JP": jaJP,
++  "ja-KS": jaKS,
++  "kab-KAB": kabKAB,
++  "kn-IN": knIN,
++  "ko-KR": koKR,
++  "nl-NL": nlNL,
++  "no-NO": noNO,
++  "pl-PL": plPL,
++  "pt-PT": ptPT,
++  "ru-RU": ruRU,
++  "sk-SK": skSK,
++  "ug-CN": ugCN,
++  "uk-UA": ukUA,
++  "vi-VN": viVN,
++  "zh-CN": zhCN,
++  "zh-TW": zhTW,
++} as const;
++
++export let langNames = Object.keys(languages).map((l) => {
++  return [l, languages[l]._lang_];
++});
++
++export function setLanguage(lang: keyof typeof languages) {
++  console.log(lang);
++  if (Object.keys(languages).includes(lang)) {
++    i18n = new I18n(languages[lang]);
++    return lang;
++  } else {
++    const fuse = new Fuse(Object.keys(languages));
++    const results = fuse.search(lang);
++    i18n = new I18n(languages[results[0].item]);
++    console.log(results[0]);
++    return results[0].item;
++  }
+ }
++export let i18n = new I18n(languages["ja-JP"]);
+diff --color=auto -ru Ririca13/src/init.ts src/init.ts
+--- Ririca13/src/init.ts	2023-02-13 09:01:22
++++ src/init.ts	2023-02-13 09:01:14
+@@ -32,10 +32,10 @@
+ import widgets from "@/widgets";
+ import directives from "@/directives";
+ import components from "@/components";
+-import { version, ui, lang, host, updateLocale } from "@/config";
++import { version, ui } from "@/config";
+ import { applyTheme } from "@/scripts/theme";
+ import { isDeviceDarkmode } from "@/scripts/is-device-darkmode";
+-import { i18n, updateI18n } from "@/i18n";
++import { i18n, setLanguage } from "@/i18n";
+ import { confirm, alert, post, popup, toast } from "@/os";
+ import { stream } from "@/stream";
+ import * as sound from "@/scripts/sound";
+@@ -53,9 +53,19 @@
+ import { miLocalStorage } from "./local-storage";
+ import { claimAchievement, claimedAchievements } from "./scripts/achievements";
+ import { fetchCustomEmojis } from "./custom-emojis";
++import { Device } from "@capacitor/device";
++import lightTheme from "@/themes/_light.json5";
++import OneSignal from "onesignal-cordova-plugin";
++import { App } from "@capacitor/app";
++export let storedDeviceInfo: Object;
+ 
+ (async () => {
+   console.info(`Misskey v${version}`);
++  const lang = await setLanguage(
++    localStorage.getItem("lang") ||
++      (await Device.getLanguageCode().value) ||
++      "ja-JP"
++  );
+ 
+   if (_DEV_) {
+     console.warn("Development mode!!!");
+@@ -88,22 +98,6 @@
+     });
+   }
+ 
+-  //#region Detect language & fetch translations
+-  const localeVersion = miLocalStorage.getItem("localeVersion");
+-  const localeOutdated = localeVersion == null || localeVersion !== version;
+-  if (localeOutdated) {
+-    const res = await window.fetch(`/assets/locales/${lang}.${version}.json`);
+-    if (res.status === 200) {
+-      const newLocale = await res.text();
+-      const parsedNewLocale = JSON.parse(newLocale);
+-      miLocalStorage.setItem("locale", newLocale);
+-      miLocalStorage.setItem("localeVersion", version);
+-      updateLocale(parsedNewLocale);
+-      updateI18n(parsedNewLocale);
+-    }
+-  }
+-  //#endregion
+-
+   // タッチデバイスでCSSの:hoverを機能させる
+   document.addEventListener("touchend", () => {}, { passive: true });
+ 
+@@ -126,7 +120,20 @@
+ 
+   //#region Set lang attr
+   const html = document.documentElement;
++
+   html.setAttribute("lang", lang);
++  const res = await Device.getInfo();
++  console.log(res);
++  storedDeviceInfo = res;
++  html.setAttribute("class", res.platform);
++
++  const css = localStorage.getItem("customCss") || "";
++  if (css) {
++    const cssNode = document.createElement("style");
++    const cssTextNode = document.createTextNode(css);
++    cssNode.appendChild(cssTextNode);
++    document.body.appendChild(cssNode);
++  }
+   //#endregion
+ 
+   //#region loginId
+@@ -140,6 +147,7 @@
+       const account = await getAccountFromId(loginId);
+       if (account) {
+         await login(account.token, target);
++        await afterLoginSetup();
+       }
+     }
+ 
+@@ -154,7 +162,8 @@
+       console.log("account cache found. refreshing...");
+     }
+ 
+-    refreshAccount();
++    await refreshAccount();
++    await afterLoginSetup();
+   } else {
+     if (_DEV_) {
+       console.log("no account cache found.");
+@@ -180,23 +189,11 @@
+       if (_DEV_) {
+         console.log("not signed in");
+       }
++      applyTheme(lightTheme);
+     }
+   }
+   //#endregion
+ 
+-  const fetchInstanceMetaPromise = fetchInstance();
+-
+-  fetchInstanceMetaPromise.then(() => {
+-    miLocalStorage.setItem("v", instance.version);
+-
+-    // Init service worker
+-    initializeSw();
+-  });
+-
+-  try {
+-    await fetchCustomEmojis();
+-  } catch (err) {}
+-
+   const app = createApp(
+     window.location.search === "?zen"
+       ? defineAsyncComponent(() => import("@/ui/zen.vue"))
+@@ -211,6 +208,9 @@
+ 
+   if (_DEV_) {
+     app.config.performance = true;
++    app.config.errorHandler = function (err, instance, info) {
++      console.error(info, err, instance);
++    };
+   }
+ 
+   // TODO: 廃止
+@@ -257,8 +257,6 @@
+   window.onerror = null;
+   window.onunhandledrejection = null;
+ 
+-  reactionPicker.init();
+-
+   if (splash) {
+     splash.style.opacity = "0";
+     splash.style.pointerEvents = "none";
+@@ -288,6 +286,45 @@
+     } catch (err) {}
+   }
+ 
++  App.addListener("backButton", (canGoBack) => {
++    if (canGoBack) {
++      history.back();
++    } else {
++      App.exitApp();
++    }
++  });
++})();
++
++async function afterLoginSetup() {
++  if (!$i) return;
++  const hotkeys = {
++    d: (): void => {
++      defaultStore.set("darkMode", !defaultStore.state.darkMode);
++    },
++    s: search,
++    ["p|n"]: post,
++  };
++
++  // shortcut
++  document.addEventListener("keydown", makeHotkey(hotkeys));
++  reactionPicker.init();
++  const fetchInstanceMetaPromise = fetchInstance();
++
++  fetchInstanceMetaPromise.then(() => {
++    miLocalStorage.setItem("v", instance.version);
++  });
++  try {
++    await fetchCustomEmojis();
++  } catch (err) {
++    console.error(err);
++  }
++
++  applyTheme(
++    defaultStore.reactiveState.darkMode.value
++      ? ColdDeviceStorage.get("darkTheme")
++      : ColdDeviceStorage.get("lightTheme")
++  );
++
+   // NOTE: この処理は必ず↑のクライアント更新時処理より後に来ること(テーマ再構築のため)
+   watch(
+     defaultStore.reactiveState.darkMode,
+@@ -300,7 +337,6 @@
+     },
+     { immediate: miLocalStorage.getItem("theme") == null }
+   );
+-
+   const darkTheme = computed(ColdDeviceStorage.makeGetterSetter("darkTheme"));
+   const lightTheme = computed(ColdDeviceStorage.makeGetterSetter("lightTheme"));
+ 
+@@ -328,22 +364,6 @@
+   });
+   //#endregion
+ 
+-  fetchInstanceMetaPromise.then(() => {
+-    if (defaultStore.state.themeInitial) {
+-      if (instance.defaultLightTheme != null)
+-        ColdDeviceStorage.set(
+-          "lightTheme",
+-          JSON5.parse(instance.defaultLightTheme)
+-        );
+-      if (instance.defaultDarkTheme != null)
+-        ColdDeviceStorage.set(
+-          "darkTheme",
+-          JSON5.parse(instance.defaultDarkTheme)
+-        );
+-      defaultStore.set("themeInitial", false);
+-    }
+-  });
+-
+   watch(
+     defaultStore.reactiveState.useBlurEffectForModal,
+     (v) => {
+@@ -399,228 +419,215 @@
+     });
+   }
+ 
+-  const hotkeys = {
+-    d: (): void => {
+-      defaultStore.set("darkMode", !defaultStore.state.darkMode);
+-    },
+-    s: search,
+-  };
++  const now = new Date();
++  const m = now.getMonth() + 1;
++  const d = now.getDate();
+ 
+-  if ($i) {
+-    // only add post shortcuts if logged in
+-    hotkeys["p|n"] = post;
+-
+-    if ($i.isDeleted) {
+-      alert({
+-        type: "warning",
+-        text: i18n.ts.accountDeletionInProgress,
+-      });
++  if ($i.birthday) {
++    const bm = parseInt($i.birthday.split("-")[1]);
++    const bd = parseInt($i.birthday.split("-")[2]);
++    if (m === bm && d === bd) {
++      claimAchievement("loggedInOnBirthday");
+     }
++  }
+ 
+-    const now = new Date();
+-    const m = now.getMonth() + 1;
+-    const d = now.getDate();
++  if (m === 1 && d === 1) {
++    claimAchievement("loggedInOnNewYearsDay");
++  }
+ 
+-    if ($i.birthday) {
+-      const bm = parseInt($i.birthday.split("-")[1]);
+-      const bd = parseInt($i.birthday.split("-")[2]);
+-      if (m === bm && d === bd) {
+-        claimAchievement("loggedInOnBirthday");
+-      }
+-    }
++  if ($i.loggedInDays >= 3) claimAchievement("login3");
++  if ($i.loggedInDays >= 7) claimAchievement("login7");
++  if ($i.loggedInDays >= 15) claimAchievement("login15");
++  if ($i.loggedInDays >= 30) claimAchievement("login30");
++  if ($i.loggedInDays >= 60) claimAchievement("login60");
++  if ($i.loggedInDays >= 100) claimAchievement("login100");
++  if ($i.loggedInDays >= 200) claimAchievement("login200");
++  if ($i.loggedInDays >= 300) claimAchievement("login300");
++  if ($i.loggedInDays >= 400) claimAchievement("login400");
++  if ($i.loggedInDays >= 500) claimAchievement("login500");
++  if ($i.loggedInDays >= 600) claimAchievement("login600");
++  if ($i.loggedInDays >= 700) claimAchievement("login700");
++  if ($i.loggedInDays >= 800) claimAchievement("login800");
++  if ($i.loggedInDays >= 900) claimAchievement("login900");
++  if ($i.loggedInDays >= 1000) claimAchievement("login1000");
+ 
+-    if (m === 1 && d === 1) {
+-      claimAchievement("loggedInOnNewYearsDay");
+-    }
++  if ($i.notesCount > 0) claimAchievement("notes1");
++  if ($i.notesCount >= 10) claimAchievement("notes10");
++  if ($i.notesCount >= 100) claimAchievement("notes100");
++  if ($i.notesCount >= 500) claimAchievement("notes500");
++  if ($i.notesCount >= 1000) claimAchievement("notes1000");
++  if ($i.notesCount >= 5000) claimAchievement("notes5000");
++  if ($i.notesCount >= 10000) claimAchievement("notes10000");
++  if ($i.notesCount >= 20000) claimAchievement("notes20000");
++  if ($i.notesCount >= 30000) claimAchievement("notes30000");
++  if ($i.notesCount >= 40000) claimAchievement("notes40000");
++  if ($i.notesCount >= 50000) claimAchievement("notes50000");
++  if ($i.notesCount >= 60000) claimAchievement("notes60000");
++  if ($i.notesCount >= 70000) claimAchievement("notes70000");
++  if ($i.notesCount >= 80000) claimAchievement("notes80000");
++  if ($i.notesCount >= 90000) claimAchievement("notes90000");
++  if ($i.notesCount >= 100000) claimAchievement("notes100000");
+ 
+-    if ($i.loggedInDays >= 3) claimAchievement("login3");
+-    if ($i.loggedInDays >= 7) claimAchievement("login7");
+-    if ($i.loggedInDays >= 15) claimAchievement("login15");
+-    if ($i.loggedInDays >= 30) claimAchievement("login30");
+-    if ($i.loggedInDays >= 60) claimAchievement("login60");
+-    if ($i.loggedInDays >= 100) claimAchievement("login100");
+-    if ($i.loggedInDays >= 200) claimAchievement("login200");
+-    if ($i.loggedInDays >= 300) claimAchievement("login300");
+-    if ($i.loggedInDays >= 400) claimAchievement("login400");
+-    if ($i.loggedInDays >= 500) claimAchievement("login500");
+-    if ($i.loggedInDays >= 600) claimAchievement("login600");
+-    if ($i.loggedInDays >= 700) claimAchievement("login700");
+-    if ($i.loggedInDays >= 800) claimAchievement("login800");
+-    if ($i.loggedInDays >= 900) claimAchievement("login900");
+-    if ($i.loggedInDays >= 1000) claimAchievement("login1000");
++  if ($i.followersCount > 0) claimAchievement("followers1");
++  if ($i.followersCount >= 10) claimAchievement("followers10");
++  if ($i.followersCount >= 50) claimAchievement("followers50");
++  if ($i.followersCount >= 100) claimAchievement("followers100");
++  if ($i.followersCount >= 300) claimAchievement("followers300");
++  if ($i.followersCount >= 500) claimAchievement("followers500");
++  if ($i.followersCount >= 1000) claimAchievement("followers1000");
+ 
+-    if ($i.notesCount > 0) claimAchievement("notes1");
+-    if ($i.notesCount >= 10) claimAchievement("notes10");
+-    if ($i.notesCount >= 100) claimAchievement("notes100");
+-    if ($i.notesCount >= 500) claimAchievement("notes500");
+-    if ($i.notesCount >= 1000) claimAchievement("notes1000");
+-    if ($i.notesCount >= 5000) claimAchievement("notes5000");
+-    if ($i.notesCount >= 10000) claimAchievement("notes10000");
+-    if ($i.notesCount >= 20000) claimAchievement("notes20000");
+-    if ($i.notesCount >= 30000) claimAchievement("notes30000");
+-    if ($i.notesCount >= 40000) claimAchievement("notes40000");
+-    if ($i.notesCount >= 50000) claimAchievement("notes50000");
+-    if ($i.notesCount >= 60000) claimAchievement("notes60000");
+-    if ($i.notesCount >= 70000) claimAchievement("notes70000");
+-    if ($i.notesCount >= 80000) claimAchievement("notes80000");
+-    if ($i.notesCount >= 90000) claimAchievement("notes90000");
+-    if ($i.notesCount >= 100000) claimAchievement("notes100000");
++  if (
++    Date.now() - new Date($i.createdAt).getTime() >
++    1000 * 60 * 60 * 24 * 365
++  ) {
++    claimAchievement("passedSinceAccountCreated1");
++  }
++  if (
++    Date.now() - new Date($i.createdAt).getTime() >
++    1000 * 60 * 60 * 24 * 365 * 2
++  ) {
++    claimAchievement("passedSinceAccountCreated2");
++  }
++  if (
++    Date.now() - new Date($i.createdAt).getTime() >
++    1000 * 60 * 60 * 24 * 365 * 3
++  ) {
++    claimAchievement("passedSinceAccountCreated3");
++  }
+ 
+-    if ($i.followersCount > 0) claimAchievement("followers1");
+-    if ($i.followersCount >= 10) claimAchievement("followers10");
+-    if ($i.followersCount >= 50) claimAchievement("followers50");
+-    if ($i.followersCount >= 100) claimAchievement("followers100");
+-    if ($i.followersCount >= 300) claimAchievement("followers300");
+-    if ($i.followersCount >= 500) claimAchievement("followers500");
+-    if ($i.followersCount >= 1000) claimAchievement("followers1000");
++  if (claimedAchievements.length >= 30) {
++    claimAchievement("collectAchievements30");
++  }
+ 
+-    if (
+-      Date.now() - new Date($i.createdAt).getTime() >
+-      1000 * 60 * 60 * 24 * 365
+-    ) {
+-      claimAchievement("passedSinceAccountCreated1");
++  window.setInterval(() => {
++    if (Math.floor(Math.random() * 10000) === 0) {
++      claimAchievement("justPlainLucky");
+     }
+-    if (
+-      Date.now() - new Date($i.createdAt).getTime() >
+-      1000 * 60 * 60 * 24 * 365 * 2
+-    ) {
+-      claimAchievement("passedSinceAccountCreated2");
+-    }
+-    if (
+-      Date.now() - new Date($i.createdAt).getTime() >
+-      1000 * 60 * 60 * 24 * 365 * 3
+-    ) {
+-      claimAchievement("passedSinceAccountCreated3");
+-    }
++  }, 1000 * 10);
+ 
+-    if (claimedAchievements.length >= 30) {
+-      claimAchievement("collectAchievements30");
+-    }
++  window.setTimeout(() => {
++    claimAchievement("client30min");
++  }, 1000 * 60 * 30);
+ 
+-    window.setInterval(() => {
+-      if (Math.floor(Math.random() * 10000) === 0) {
+-        claimAchievement("justPlainLucky");
+-      }
+-    }, 1000 * 10);
+-
+-    window.setTimeout(() => {
+-      claimAchievement("client30min");
+-    }, 1000 * 60 * 30);
+-
+-    const lastUsed = miLocalStorage.getItem("lastUsed");
+-    if (lastUsed) {
+-      const lastUsedDate = parseInt(lastUsed, 10);
+-      // 二時間以上前なら
+-      if (Date.now() - lastUsedDate > 1000 * 60 * 60 * 2) {
+-        toast(
+-          i18n.t("welcomeBackWithName", {
+-            name: $i.name || $i.username,
+-          })
+-        );
+-      }
++  const lastUsed = miLocalStorage.getItem("lastUsed");
++  if (lastUsed) {
++    const lastUsedDate = parseInt(lastUsed, 10);
++    // 二時間以上前なら
++    if (Date.now() - lastUsedDate > 1000 * 60 * 60 * 2) {
++      toast(
++        i18n.t("welcomeBackWithName", {
++          name: $i.name || $i.username,
++        })
++      );
+     }
+-    miLocalStorage.setItem("lastUsed", Date.now().toString());
++  }
++  miLocalStorage.setItem("lastUsed", Date.now().toString());
+ 
+-    const latestDonationInfoShownAt = miLocalStorage.getItem(
+-      "latestDonationInfoShownAt"
+-    );
+-    const neverShowDonationInfo = miLocalStorage.getItem(
+-      "neverShowDonationInfo"
+-    );
+-    if (
+-      neverShowDonationInfo !== "true" &&
+-      new Date($i.createdAt).getTime() < Date.now() - 1000 * 60 * 60 * 24 * 3
+-    ) {
+-      if (
+-        latestDonationInfoShownAt == null ||
+-        new Date(latestDonationInfoShownAt).getTime() <
+-          Date.now() - 1000 * 60 * 60 * 24 * 30
+-      ) {
+-        popup(
+-          defineAsyncComponent(() => import("@/components/MkDonation.vue")),
+-          {},
+-          {},
+-          "closed"
+-        );
+-      }
++  if ("Notification" in window) {
++    // 許可を得ていなかったらリクエスト
++    if (Notification.permission === "default") {
++      Notification.requestPermission();
+     }
++  }
+ 
+-    if ("Notification" in window) {
+-      // 許可を得ていなかったらリクエスト
+-      if (Notification.permission === "default") {
+-        Notification.requestPermission();
+-      }
+-    }
++  const main = markRaw(stream.useChannel("main", null, "System"));
+ 
+-    const main = markRaw(stream.useChannel("main", null, "System"));
++  // 自分の情報が更新されたとき
++  main.on("meUpdated", (i) => {
++    updateAccount(i);
++  });
+ 
+-    // 自分の情報が更新されたとき
+-    main.on("meUpdated", (i) => {
+-      updateAccount(i);
+-    });
++  main.on("readAllNotifications", () => {
++    updateAccount({ hasUnreadNotification: false });
++  });
+ 
+-    main.on("readAllNotifications", () => {
+-      updateAccount({ hasUnreadNotification: false });
+-    });
++  main.on("unreadNotification", () => {
++    updateAccount({ hasUnreadNotification: true });
++  });
+ 
+-    main.on("unreadNotification", () => {
+-      updateAccount({ hasUnreadNotification: true });
+-    });
++  main.on("unreadMention", () => {
++    updateAccount({ hasUnreadMentions: true });
++  });
+ 
+-    main.on("unreadMention", () => {
+-      updateAccount({ hasUnreadMentions: true });
+-    });
++  main.on("readAllUnreadMentions", () => {
++    updateAccount({ hasUnreadMentions: false });
++  });
+ 
+-    main.on("readAllUnreadMentions", () => {
+-      updateAccount({ hasUnreadMentions: false });
+-    });
++  main.on("unreadSpecifiedNote", () => {
++    updateAccount({ hasUnreadSpecifiedNotes: true });
++  });
+ 
+-    main.on("unreadSpecifiedNote", () => {
+-      updateAccount({ hasUnreadSpecifiedNotes: true });
+-    });
++  main.on("readAllUnreadSpecifiedNotes", () => {
++    updateAccount({ hasUnreadSpecifiedNotes: false });
++  });
+ 
+-    main.on("readAllUnreadSpecifiedNotes", () => {
+-      updateAccount({ hasUnreadSpecifiedNotes: false });
+-    });
++  main.on("readAllMessagingMessages", () => {
++    updateAccount({ hasUnreadMessagingMessage: false });
++  });
+ 
+-    main.on("readAllMessagingMessages", () => {
+-      updateAccount({ hasUnreadMessagingMessage: false });
+-    });
++  main.on("unreadMessagingMessage", () => {
++    updateAccount({ hasUnreadMessagingMessage: true });
++    sound.play("chatBg");
++  });
+ 
+-    main.on("unreadMessagingMessage", () => {
+-      updateAccount({ hasUnreadMessagingMessage: true });
+-      sound.play("chatBg");
+-    });
++  main.on("readAllAntennas", () => {
++    updateAccount({ hasUnreadAntenna: false });
++  });
+ 
+-    main.on("readAllAntennas", () => {
+-      updateAccount({ hasUnreadAntenna: false });
+-    });
++  main.on("unreadAntenna", () => {
++    updateAccount({ hasUnreadAntenna: true });
++    sound.play("antenna");
++  });
+ 
+-    main.on("unreadAntenna", () => {
+-      updateAccount({ hasUnreadAntenna: true });
+-      sound.play("antenna");
+-    });
++  main.on("readAllAnnouncements", () => {
++    updateAccount({ hasUnreadAnnouncement: false });
++  });
+ 
+-    main.on("readAllAnnouncements", () => {
+-      updateAccount({ hasUnreadAnnouncement: false });
+-    });
++  main.on("readAllChannels", () => {
++    updateAccount({ hasUnreadChannel: false });
++  });
+ 
+-    main.on("readAllChannels", () => {
+-      updateAccount({ hasUnreadChannel: false });
+-    });
++  main.on("unreadChannel", () => {
++    updateAccount({ hasUnreadChannel: true });
++    sound.play("channel");
++  });
+ 
+-    main.on("unreadChannel", () => {
+-      updateAccount({ hasUnreadChannel: true });
+-      sound.play("channel");
+-    });
++  // トークンが再生成されたとき
++  // このままではMisskeyが利用できないので強制的にサインアウトさせる
++  main.on("myTokenRegenerated", () => {
++    signout();
++  });
+ 
+-    // トークンが再生成されたとき
+-    // このままではMisskeyが利用できないので強制的にサインアウトさせる
+-    main.on("myTokenRegenerated", () => {
+-      signout();
+-    });
+-  }
+-
+-  // shortcut
+-  document.addEventListener("keydown", makeHotkey(hotkeys));
+-})();
++  if (storedDeviceInfo.platform == "web") return;
++  OneSignal.setAppId(import.meta.env.VITE_ONE_SIGNAL_APP_ID);
++  const deviceId = await Device.getId();
++  OneSignal.setExternalUserId(deviceId.uuid);
++  const res = await fetch(import.meta.env.VITE_NOTIFICATION_TOKEN_ENDPOINT, {
++    method: "POST", // *GET, POST, PUT, DELETE, etc.
++    mode: "cors", // no-cors, *cors, same-origin
++    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
++    credentials: "same-origin", // include, *same-origin, omit
++    headers: {
++      "Content-Type": "application/json",
++    },
++    redirect: "follow", // manual, *follow, error
++    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
++    body: JSON.stringify({
++      misskey_token: $i.token,
++      device_id: deviceId.uuid,
++      instance_url: $i.instanceUrl,
++    }), // 本体のデータ型は "Content-Type" ヘッダーと一致させる必要があります
++  }).catch((err) => {
++    console.error(err);
++    // throw err
++  });
++  console.info(res);
++  OneSignal.setNotificationOpenedHandler(function (jsonData) {
++    console.log("notificationOpenedCallback: " + JSON.stringify(jsonData));
++  });
++  // Prompts the user for notification permissions.
++  //    * Since this shows a generic native prompt, we recommend instead using an In-App Message to prompt for notification permission (See step 7) to better communicate to your users what notifications they will get.
++  OneSignal.promptForPushNotificationsWithUserResponse(function (accepted) {
++    console.log("User accepted notifications: " + accepted);
++  });
++}
+diff --color=auto -ru Ririca13/src/instance.ts src/instance.ts
+--- Ririca13/src/instance.ts	2023-02-13 09:01:22
++++ src/instance.ts	2023-02-13 09:01:14
+@@ -28,3 +28,46 @@
+ 
+   miLocalStorage.setItem("instance", JSON.stringify(instance));
+ }
++
++/**
++export const instance: Misskey.entities.InstanceMetadata = reactive(
++	instanceData
++		? JSON.parse(instanceData)
++		: {
++			// TODO: set default values
++		}
++);
++
++export async function fetchInstance() {
++	const meta = await noCredentialApi.request("meta", {
++		detail: false,
++	});
++
++	for (const [k, v] of Object.entries(meta)) {
++		instance[k] = v;
++	}
++
++	localStorage.setItem("instance", JSON.stringify(instance));
++}
++
++export const emojiCategories = computed(() => {
++	if (instance.emojis == null) return [];
++	const categories = new Set();
++	for (const emoji of instance.emojis) {
++		categories.add(emoji.category);
++	}
++	return Array.from(categories);
++});
++
++export const emojiTags = computed(() => {
++	if (instance.emojis == null) return [];
++	const tags = new Set();
++	for (const emoji of instance.emojis) {
++		for (const tag of emoji.aliases) {
++			tags.add(tag);
++		}
++	}
++	return Array.from(tags);
++});
++
++ */
+Only in src: locales
+diff --color=auto -ru Ririca13/src/navbar.ts src/navbar.ts
+--- Ririca13/src/navbar.ts	2023-02-13 09:01:22
++++ src/navbar.ts	2023-02-13 09:01:16
+@@ -105,7 +105,7 @@
+   },
+   achievements: {
+     title: i18n.ts.achievements,
+-    icon: "ti ti-medal",
++    icon: "ti ti-military-award",
+     show: computed(() => $i != null),
+     to: "/my/achievements",
+   },
+diff --color=auto -ru Ririca13/src/os.ts src/os.ts
+--- Ririca13/src/os.ts	2023-02-13 09:01:22
++++ src/os.ts	2023-02-13 09:01:16
+@@ -1,7 +1,5 @@
+ // TODO: なんでもかんでもos.tsに突っ込むのやめたいのでよしなに分割する
+ 
+-import { pendingApiRequestsCount, api, apiGet } from "@/scripts/api";
+-export { pendingApiRequestsCount, api, apiGet };
+ import { Component, markRaw, Ref, ref, defineAsyncComponent } from "vue";
+ import { EventEmitter } from "eventemitter3";
+ import insertTextAtCursor from "insert-text-at-cursor";
+@@ -18,10 +16,46 @@
+ import MkContextMenu from "@/components/MkContextMenu.vue";
+ import { MenuItem } from "@/types/menu";
+ 
++import { $i } from "@/account";
+ export const openingWindowsCount = ref(0);
+ 
++const apiClient = new Misskey.api.APIClient({
++  origin: $i?.instanceUrl,
++  credential: $i?.token,
++});
++
++export const noCredentialApi = new Misskey.api.APIClient({
++  origin: $i?.instanceUrl || window.location.origin,
++});
++
++export const api = ((
++  endpoint: keyof Misskey.Endpoints,
++  data: Record<string, any> = {}
++) => {
++  return apiClient.request(endpoint, data);
++}) as typeof apiClient.request;
++
++export const apiGet = ((
++  endpoint: keyof Misskey.Endpoints,
++  data: Record<string, any> = {}
++) => {
++  const query = new URLSearchParams(data);
++
++  const promise = new Promise((resolve, reject) => {
++    // Send request
++    apiClient
++      .request(endpoint, { ...data })
++      .then(async (res) => {
++        resolve(res);
++      })
++      .catch(reject);
++  });
++
++  return promise;
++}) as typeof apiClient.request;
++
+ export const apiWithDialog = ((
+-  endpoint: string,
++  endpoint: keyof Misskey.Endpoints,
+   data: Record<string, any> = {},
+   token?: string | null | undefined
+ ) => {
+diff --color=auto -ru Ririca13/src/pages/about-misskey.vue src/pages/about-misskey.vue
+--- Ririca13/src/pages/about-misskey.vue	2023-02-13 09:01:22
++++ src/pages/about-misskey.vue	2023-02-13 09:01:16
+@@ -42,7 +42,10 @@
+               class="_button treasure"
+               @click="getTreasure"
+             >
+-              <img src="/fluent-emoji/1f3c6.png" class="treasureImg" />
++              <img
++                src="https://misskey.io/fluent-emoji/1f3c6.png"
++                class="treasureImg"
++              />
+             </button>
+           </div>
+           <div style="text-align: center">
+@@ -81,73 +84,19 @@
+           </FormSection>
+           <FormSection>
+             <template #label>{{ i18n.ts._aboutMisskey.contributors }}</template>
+-            <div :class="$style.contributors">
+-              <a
+-                href="https://github.com/syuilo"
+-                target="_blank"
+-                :class="$style.contributor"
++            <div class="_formLinksGrid">
++              <FormLink to="https://github.com/syuilo" external
++                >@syuilo</FormLink
+               >
+-                <img
+-                  src="https://avatars.githubusercontent.com/u/4439005?v=4"
+-                  :class="$style.contributorAvatar"
+-                />
+-                <span :class="$style.contributorUsername">@syuilo</span>
+-              </a>
+-              <a
+-                href="https://github.com/tamaina"
+-                target="_blank"
+-                :class="$style.contributor"
++              <FormLink to="https://github.com/tamaina" external
++                >@tamaina</FormLink
+               >
+-                <img
+-                  src="https://avatars.githubusercontent.com/u/7973572?v=4"
+-                  :class="$style.contributorAvatar"
+-                />
+-                <span :class="$style.contributorUsername">@tamaina</span>
+-              </a>
+-              <a
+-                href="https://github.com/acid-chicken"
+-                target="_blank"
+-                :class="$style.contributor"
++              <FormLink to="https://github.com/acid-chicken" external
++                >@acid-chicken</FormLink
+               >
+-                <img
+-                  src="https://avatars.githubusercontent.com/u/20679825?v=4"
+-                  :class="$style.contributorAvatar"
+-                />
+-                <span :class="$style.contributorUsername">@acid-chicken</span>
+-              </a>
+-              <a
+-                href="https://github.com/rinsuki"
+-                target="_blank"
+-                :class="$style.contributor"
++              <FormLink to="https://github.com/rinsuki" external
++                >@rinsuki</FormLink
+               >
+-                <img
+-                  src="https://avatars.githubusercontent.com/u/6533808?v=4"
+-                  :class="$style.contributorAvatar"
+-                />
+-                <span :class="$style.contributorUsername">@rinsuki</span>
+-              </a>
+-              <a
+-                href="https://github.com/mei23"
+-                target="_blank"
+-                :class="$style.contributor"
+-              >
+-                <img
+-                  src="https://avatars.githubusercontent.com/u/30769358?v=4"
+-                  :class="$style.contributorAvatar"
+-                />
+-                <span :class="$style.contributorUsername">@mei23</span>
+-              </a>
+-              <a
+-                href="https://github.com/robflop"
+-                target="_blank"
+-                :class="$style.contributor"
+-              >
+-                <img
+-                  src="https://avatars.githubusercontent.com/u/8159402?v=4"
+-                  :class="$style.contributorAvatar"
+-                />
+-                <span :class="$style.contributorUsername">@robflop</span>
+-              </a>
+             </div>
+             <template #caption
+               ><MkLink
+@@ -413,40 +362,5 @@
+       }
+     }
+   }
+-}
+-</style>
+-
+-<style lang="scss" module>
+-.contributors {
+-  display: grid;
+-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+-  grid-gap: 12px;
+-}
+-
+-.contributor {
+-  display: flex;
+-  align-items: center;
+-  padding: 12px;
+-  background: var(--buttonBg);
+-  border-radius: 6px;
+-
+-  &:hover {
+-    text-decoration: none;
+-    background: var(--buttonHoverBg);
+-  }
+-
+-  &.active {
+-    color: var(--accent);
+-    background: var(--buttonHoverBg);
+-  }
+-}
+-
+-.contributorAvatar {
+-  width: 30px;
+-  border-radius: 100%;
+-}
+-
+-.contributorUsername {
+-  margin-left: 12px;
+ }
+ </style>
+diff --color=auto -ru Ririca13/src/pages/about.emojis.vue src/pages/about.emojis.vue
+--- Ririca13/src/pages/about.emojis.vue	2023-02-13 09:01:22
++++ src/pages/about.emojis.vue	2023-02-13 09:01:16
+@@ -1,7 +1,7 @@
+ <template>
+   <div class="driuhtrh _gaps">
+     <MkButton
+-      v-if="$i && ($i.isModerator || $i.policies.canManageCustomEmojis)"
++      v-if="$i && ($i.isModerator || $i?.policies?.canManageCustomEmojis)"
+       primary
+       link
+       to="/custom-emojis-manager"
+diff --color=auto -ru Ririca13/src/pages/about.vue src/pages/about.vue
+--- Ririca13/src/pages/about.vue	2023-02-13 09:01:22
++++ src/pages/about.vue	2023-02-13 09:01:16
+@@ -120,7 +120,7 @@
+ import { ref, computed, watch } from "vue";
+ import XEmojis from "./about.emojis.vue";
+ import XFederation from "./about.federation.vue";
+-import { version, instanceName, host } from "@/config";
++import { instanceName, host } from "@/config";
+ import FormLink from "@/components/form/link.vue";
+ import FormSection from "@/components/form/section.vue";
+ import FormSuspense from "@/components/form/suspense.vue";
+@@ -132,6 +132,10 @@
+ import { i18n } from "@/i18n";
+ import { definePageMetadata } from "@/scripts/page-metadata";
+ import { claimAchievement } from "@/scripts/achievements";
++import { miLocalStorage } from "@/local-storage";
++import { instance } from "@/instance";
++
++const version = miLocalStorage.getItem("v");
+ 
+ const props = withDefaults(
+   defineProps<{
+diff --color=auto -ru Ririca13/src/pages/achievements.vue src/pages/achievements.vue
+--- Ririca13/src/pages/achievements.vue	2023-02-13 09:01:22
++++ src/pages/achievements.vue	2023-02-13 09:01:16
+@@ -47,7 +47,7 @@
+ 
+ definePageMetadata({
+   title: i18n.ts.achievements,
+-  icon: "ti ti-medal",
++  icon: "ti ti-military-award",
+ });
+ </script>
+ 
+diff --color=auto -ru Ririca13/src/pages/admin/files.vue src/pages/admin/files.vue
+--- Ririca13/src/pages/admin/files.vue	2023-02-13 09:01:22
++++ src/pages/admin/files.vue	2023-02-13 09:01:16
+@@ -64,7 +64,7 @@
+ 
+ <script lang="ts" setup>
+ import { computed, defineAsyncComponent } from "vue";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import XHeader from "./_header_.vue";
+ import MkButton from "@/components/MkButton.vue";
+ import MkInput from "@/components/MkInput.vue";
+diff --color=auto -ru Ririca13/src/pages/admin/object-storage.vue src/pages/admin/object-storage.vue
+--- Ririca13/src/pages/admin/object-storage.vue	2023-02-13 09:01:22
++++ src/pages/admin/object-storage.vue	2023-02-13 09:01:16
+@@ -52,7 +52,7 @@
+                 <template #label>Access key</template>
+               </MkInput>
+ 
+-              <MkInput v-model="objectStorageSecretKey" type="password">
++              <MkInput v-model="objectStorageSecretKey">
+                 <template #prefix><i class="ti ti-key"></i></template>
+                 <template #label>Secret key</template>
+               </MkInput>
+diff --color=auto -ru Ririca13/src/pages/emojis.emoji.vue src/pages/emojis.emoji.vue
+--- Ririca13/src/pages/emojis.emoji.vue	2023-02-13 09:01:23
++++ src/pages/emojis.emoji.vue	2023-02-13 09:01:17
+@@ -1,6 +1,6 @@
+ <template>
+   <button class="zuvgdzyu _button" @click="menu">
+-    <img :src="emoji.url" class="img" loading="lazy" />
++    <img :src="`/emoji/${emoji.name}.webp`" class="img" loading="lazy" />
+     <div class="body">
+       <div class="name _monospace">{{ emoji.name }}</div>
+       <div class="info">{{ emoji.aliases.join(" ") }}</div>
+@@ -15,12 +15,7 @@
+ import { i18n } from "@/i18n";
+ 
+ const props = defineProps<{
+-  emoji: {
+-    name: string;
+-    aliases: string[];
+-    category: string;
+-    url: string;
+-  };
++  emoji: Record<string, unknown>; // TODO
+ }>();
+ 
+ function menu(ev) {
+diff --color=auto -ru Ririca13/src/pages/follow.vue src/pages/follow.vue
+--- Ririca13/src/pages/follow.vue	2023-02-13 09:01:23
++++ src/pages/follow.vue	2023-02-13 09:01:17
+@@ -4,7 +4,7 @@
+ 
+ <script lang="ts" setup>
+ import {} from "vue";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import * as os from "@/os";
+ import { mainRouter } from "@/router";
+ import { i18n } from "@/i18n";
+@@ -24,7 +24,6 @@
+     userId: user.id,
+   });
+ }
+-
+ const acct = new URL(location.href).searchParams.get("acct");
+ if (acct == null) {
+   throw new Error("acct required");
+diff --color=auto -ru Ririca13/src/pages/messaging/index.vue src/pages/messaging/index.vue
+--- Ririca13/src/pages/messaging/index.vue	2023-02-13 09:01:23
++++ src/pages/messaging/index.vue	2023-02-13 09:01:17
+@@ -88,7 +88,7 @@
+   onMounted,
+   onUnmounted,
+ } from "vue";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import MkButton from "@/components/MkButton.vue";
+ import { acct } from "@/filters/user";
+ import * as os from "@/os";
+diff --color=auto -ru Ririca13/src/pages/messaging/messaging-room.form.vue src/pages/messaging/messaging-room.form.vue
+--- Ririca13/src/pages/messaging/messaging-room.form.vue	2023-02-13 09:01:23
++++ src/pages/messaging/messaging-room.form.vue	2023-02-13 09:01:17
+@@ -1,10 +1,10 @@
+ <template>
+   <div :class="$style['root']" @dragover.stop="onDragover" @drop.stop="onDrop">
+     <textarea
+-      :class="$style['textarea']"
+-      class="_acrylic"
+       ref="textEl"
+       v-model="text"
++      :class="$style['textarea']"
++      class="_acrylic"
+       :placeholder="i18n.ts.inputMessageHere"
+       @keydown="onKeydown"
+       @compositionupdate="onCompositionUpdate"
+@@ -34,8 +34,8 @@
+       </div>
+     </footer>
+     <input
+-      :class="$style['file-input']"
+       ref="fileEl"
++      :class="$style['file-input']"
+       type="file"
+       @change="onChangeFile"
+     />
+diff --color=auto -ru Ririca13/src/pages/messaging/messaging-room.vue src/pages/messaging/messaging-room.vue
+--- Ririca13/src/pages/messaging/messaging-room.vue	2023-02-13 09:01:23
++++ src/pages/messaging/messaging-room.vue	2023-02-13 09:01:17
+@@ -61,8 +61,8 @@
+           <div v-show="showIndicator" :class="$style['new-message']">
+             <button
+               class="_buttonPrimary"
+-              @click="onIndicatorClick"
+               :class="$style['new-message-button']"
++              @click="onIndicatorClick"
+             >
+               <i
+                 class="fas ti-fw fa-arrow-circle-down"
+@@ -87,7 +87,7 @@
+ <script lang="ts" setup>
+ import { computed, watch, onMounted, nextTick, onBeforeUnmount } from "vue";
+ import * as Misskey from "misskey-js";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import XMessage from "./messaging-room.message.vue";
+ import XForm from "./messaging-room.form.vue";
+ import MkDateSeparatedList from "@/components/MkDateSeparatedList.vue";
+diff --color=auto -ru Ririca13/src/pages/my-antennas/editor.vue src/pages/my-antennas/editor.vue
+--- Ririca13/src/pages/my-antennas/editor.vue	2023-02-13 09:01:23
++++ src/pages/my-antennas/editor.vue	2023-02-13 09:01:17
+@@ -65,7 +65,7 @@
+ 
+ <script lang="ts" setup>
+ import { watch } from "vue";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import MkButton from "@/components/MkButton.vue";
+ import MkInput from "@/components/MkInput.vue";
+ import MkTextarea from "@/components/MkTextarea.vue";
+diff --color=auto -ru Ririca13/src/pages/settings/accounts.vue src/pages/settings/accounts.vue
+--- Ririca13/src/pages/settings/accounts.vue	2023-02-13 09:01:23
++++ src/pages/settings/accounts.vue	2023-02-13 09:01:17
+@@ -20,7 +20,7 @@
+               <MkUserName :user="account" />
+             </div>
+             <div class="acct">
+-              <MkAcct :user="account" />
++              <MkAcct :user="account" :detail="true" />
+             </div>
+           </div>
+         </div>
+@@ -43,25 +43,28 @@
+ } from "@/account";
+ import { i18n } from "@/i18n";
+ import { definePageMetadata } from "@/scripts/page-metadata";
++import { api } from "yamisskey-js";
+ 
+ const storedAccounts = ref<any>(null);
+-const accounts = ref<any>(null);
++const accounts = ref<any>([]);
+ 
+ const init = async () => {
+-  getAccounts()
+-    .then((accounts) => {
+-      storedAccounts.value = accounts.filter((x) => x.id !== $i!.id);
+-
+-      console.log(storedAccounts.value);
+-
+-      return os.api("users/show", {
+-        userIds: storedAccounts.value.map((x) => x.id),
++  await getAccounts().then(async (ac) => {
++    return ac
++      .filter((x) => x.id !== $i!.id)
++      .forEach(async (a) => {
++        accounts.value.push({
++          ...(await new api.APIClient({
++            origin: a.instanceUrl,
++            credential: a.token,
++          }).request("users/show", {
++            userId: a.id,
++          })),
++          host: a.instanceUrl,
++        });
+       });
+-    })
+-    .then((response) => {
+-      accounts.value = response;
+-      console.log(accounts.value);
+-    });
++  });
++  return Promise.resolve();
+ };
+ 
+ function menu(account, ev) {
+diff --color=auto -ru Ririca13/src/pages/settings/index.vue src/pages/settings/index.vue
+--- Ririca13/src/pages/settings/index.vue	2023-02-13 09:01:23
++++ src/pages/settings/index.vue	2023-02-13 09:01:17
+@@ -8,12 +8,6 @@
+         <div class="body">
+           <div v-if="!narrow || currentPage?.route.name == null" class="nav">
+             <div class="baaadecd">
+-              <MkInfo v-if="emailNotConfigured" warn class="info"
+-                >{{ i18n.ts.emailNotConfiguredWarning }}
+-                <MkA to="/settings/email" class="_link">{{
+-                  i18n.ts.configure
+-                }}</MkA></MkInfo
+-              >
+               <MkSuperMenu
+                 :def="menuDef"
+                 :grid="currentPage?.route.name == null"
+diff --color=auto -ru Ririca13/src/pages/share.vue src/pages/share.vue
+--- Ririca13/src/pages/share.vue	2023-02-13 09:01:24
++++ src/pages/share.vue	2023-02-13 09:01:18
+@@ -34,7 +34,7 @@
+ 
+ import {} from "vue";
+ import { noteVisibilities } from "misskey-js";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import * as Misskey from "misskey-js";
+ import MkButton from "@/components/MkButton.vue";
+ import XPostForm from "@/components/MkPostForm.vue";
+diff --color=auto -ru Ririca13/src/pages/timeline.vue src/pages/timeline.vue
+--- Ririca13/src/pages/timeline.vue	2023-02-13 09:01:24
++++ src/pages/timeline.vue	2023-02-13 09:01:18
+@@ -9,11 +9,6 @@
+     /></template>
+     <MkSpacer :content-max="800">
+       <div ref="rootEl" v-hotkey.global="keymap">
+-        <XTutorial
+-          v-if="$store.reactiveState.tutorial.value != -1"
+-          class="_panel"
+-          style="margin-bottom: var(--margin)"
+-        />
+         <XPostForm
+           v-if="$store.reactiveState.showFixedPostForm.value"
+           :class="$style.postForm"
+@@ -52,15 +47,14 @@
+ import { instance } from "@/instance";
+ import { $i } from "@/account";
+ import { definePageMetadata } from "@/scripts/page-metadata";
++import { Camera } from "@capacitor/camera";
+ 
+ const XTutorial = defineAsyncComponent(() => import("./timeline.tutorial.vue"));
+ 
+ const isLocalTimelineAvailable =
+-  ($i == null && instance.policies.ltlAvailable) ||
+-  ($i != null && $i.policies.ltlAvailable);
++  ($i == null && instance.policies.ltlAvailable) || $i != null;
+ const isGlobalTimelineAvailable =
+-  ($i == null && instance.policies.gtlAvailable) ||
+-  ($i != null && $i.policies.gtlAvailable);
++  ($i == null && instance.policies.gtlAvailable) || $i != null;
+ const keymap = {
+   t: focus,
+ };
+@@ -204,6 +198,11 @@
+         : "ti ti-home",
+   }))
+ );
++
++const permissionState = await Camera.checkPermissions();
++if (!permissionState.camera) {
++  Camera.requestPermissions({ permissions: ["photos", "camera"] });
++}
+ </script>
+ 
+ <style lang="scss" module>
+diff --color=auto -ru Ririca13/src/pages/user/achievements.vue src/pages/user/achievements.vue
+--- Ririca13/src/pages/user/achievements.vue	2023-02-13 09:01:24
++++ src/pages/user/achievements.vue	2023-02-13 09:01:18
+@@ -1,10 +1,6 @@
+ <template>
+   <MkSpacer :content-max="1200">
+-    <MkAchievements
+-      :user="user"
+-      :with-locked="false"
+-      :with-description="$i != null && props.user.id === $i.id"
+-    />
++    <MkAchievements :user="user" :with-locked="false" />
+   </MkSpacer>
+ </template>
+ 
+diff --color=auto -ru Ririca13/src/pages/user/followers.vue src/pages/user/followers.vue
+--- Ririca13/src/pages/user/followers.vue	2023-02-13 09:01:24
++++ src/pages/user/followers.vue	2023-02-13 09:01:18
+@@ -24,7 +24,7 @@
+   onUnmounted,
+   watch,
+ } from "vue";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import * as misskey from "misskey-js";
+ import XFollowList from "./follow-list.vue";
+ import * as os from "@/os";
+diff --color=auto -ru Ririca13/src/pages/user/following.vue src/pages/user/following.vue
+--- Ririca13/src/pages/user/following.vue	2023-02-13 09:01:24
++++ src/pages/user/following.vue	2023-02-13 09:01:18
+@@ -24,7 +24,7 @@
+   onUnmounted,
+   watch,
+ } from "vue";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import * as misskey from "misskey-js";
+ import XFollowList from "./follow-list.vue";
+ import * as os from "@/os";
+diff --color=auto -ru Ririca13/src/pages/user/index.vue src/pages/user/index.vue
+--- Ririca13/src/pages/user/index.vue	2023-02-13 09:01:24
++++ src/pages/user/index.vue	2023-02-13 09:01:18
+@@ -34,7 +34,7 @@
+   watch,
+ } from "vue";
+ import calcAge from "s-age";
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import * as misskey from "misskey-js";
+ import { getScrollPosition } from "@/scripts/scroll";
+ import number from "@/filters/number";
+@@ -105,7 +105,7 @@
+               {
+                 key: "achievements",
+                 title: i18n.ts.achievements,
+-                icon: "ti ti-medal",
++                icon: "ti ti-military-award",
+               },
+             ]
+           : []),
+diff --color=auto -ru Ririca13/src/pages/welcome.entrance.a.vue src/pages/welcome.entrance.a.vue
+--- Ririca13/src/pages/welcome.entrance.a.vue	2023-02-13 09:01:24
++++ src/pages/welcome.entrance.a.vue	2023-02-13 09:01:18
+@@ -1,8 +1,6 @@
+ <template>
+-  <div v-if="meta" class="rsqzvsbo">
++  <div class="rsqzvsbo">
+     <div class="top">
+-      <MkFeaturedPhotos class="bg" />
+-      <XTimeline class="tl" />
+       <div class="shape1"></div>
+       <div class="shape2"></div>
+       <img src="/client-assets/misskey.svg" class="misskey" />
+@@ -14,114 +12,87 @@
+         <MkEmoji :normal="true" :no-style="true" emoji="🍮" />
+       </div>
+       <div class="main">
+-        <img
+-          :src="$instance.iconUrl || $instance.faviconUrl || '/favicon.ico'"
+-          alt=""
+-          class="icon"
+-        />
+         <button class="_button _acrylic menu" @click="showMenu">
+           <i class="ti ti-dots"></i>
+         </button>
++
+         <div class="fg">
+-          <h1>
++          <h1 style="pointer-events: none">
+             <!-- 背景色によってはロゴが見えなくなるのでとりあえず無効に -->
+             <!-- <img class="logo" v-if="meta.logoImageUrl" :src="meta.logoImageUrl"><span v-else class="text">{{ instanceName }}</span> -->
+-            <span class="text">{{ instanceName }}</span>
++            <span class="text">{{ $ts.ririca.name }}</span>
+           </h1>
+           <div class="about">
+             <!-- eslint-disable-next-line vue/no-v-html -->
+-            <div
+-              class="desc"
+-              v-html="meta.description || i18n.ts.headlineMisskey"
+-            ></div>
++            <div class="desc" v-html="$ts.ririca.description"></div>
+           </div>
+           <div class="action">
++            <div>
++              <input id="term" v-model="isTerm" type="checkbox" /><label
++                for="term"
++              >
++                {{ $ts.ririca.term }}</label
++              ><br />
++              <a href="https://riinswork.space/missRirica/privacy/">{{
++                $ts.ririca.termLink
++              }}</a>
++            </div>
++
++            <!--					<MkButton inline rounded gradate data-cy-signup style="margin-right: 12px;" @click="signup()">{{ i18n.ts.signup }}</MkButton>-->
+             <MkButton
+               inline
+               rounded
+-              gradate
+-              data-cy-signup
+-              style="margin-right: 12px"
+-              @click="signup()"
+-              >{{ i18n.ts.signup }}</MkButton
++              data-cy-signin
++              :disabled="!isTerm"
++              @click="signin()"
+             >
+-            <MkButton inline rounded data-cy-signin @click="signin()">{{
+-              i18n.ts.login
+-            }}</MkButton>
++              {{ i18n.ts.login }}
++            </MkButton>
++
++            <MkSelect v-model="lang">
++              <template #label>{{ i18n.ts.uiLanguage }}</template>
++              <option v-for="x in langs" :key="x[0]" :value="x[0]">
++                {{ x[1] }}
++              </option>
++              <template #caption>
++                <I18n :src="i18n.ts.i18nInfo" tag="span">
++                  <template #link>
++                    <MkLink url="https://crowdin.com/project/misskey"
++                      >Crowdin</MkLink
++                    >
++                  </template>
++                </I18n>
++              </template>
++            </MkSelect>
+           </div>
+         </div>
+       </div>
+-      <div v-if="instances" class="federation">
+-        <MarqueeText :duration="40">
+-          <MkA
+-            v-for="instance in instances"
+-            :key="instance.id"
+-            :class="$style.federationInstance"
+-            :to="`/instance-info/${instance.host}`"
+-            behavior="window"
+-          >
+-            <!--<MkInstanceCardMini :instance="instance"/>-->
+-            <img
+-              v-if="instance.iconUrl"
+-              class="icon"
+-              :src="instance.iconUrl"
+-              alt=""
+-            />
+-            <span class="name _monospace">{{ instance.host }}</span>
+-          </MkA>
+-        </MarqueeText>
+-      </div>
+     </div>
+   </div>
+ </template>
+ 
+ <script lang="ts" setup>
+-import {} from "vue";
+-import { toUnicode } from "punycode/";
+-import XTimeline from "./welcome.timeline.vue";
+-import MarqueeText from "@/components/MkMarquee.vue";
+ import XSigninDialog from "@/components/MkSigninDialog.vue";
+-import XSignupDialog from "@/components/MkSignupDialog.vue";
+ import MkButton from "@/components/MkButton.vue";
+-import XNote from "@/components/MkNote.vue";
+-import MkFeaturedPhotos from "@/components/MkFeaturedPhotos.vue";
+-import { host, instanceName } from "@/config";
++import MkSelect from "@/components/MkSelect.vue";
++import MkLink from "@/components/MkLink.vue";
+ import * as os from "@/os";
+-import number from "@/filters/number";
+ import { i18n } from "@/i18n";
++import { ref, watch } from "vue";
++import { miLocalStorage } from "@/local-storage";
++import { langs as _langs } from "@/config";
++import { unisonReload } from "@/scripts/unison-reload";
+ 
++const langs = ref(_langs);
++const lang = ref(miLocalStorage.getItem("lang"));
++
+ let meta = $ref();
+ let stats = $ref();
+ let tags = $ref();
+ let onlineUsersCount = $ref();
+ let instances = $ref();
++let isTerm = $ref();
+ 
+-os.api("meta", { detail: true }).then((_meta) => {
+-  meta = _meta;
+-});
+-
+-os.api("stats").then((_stats) => {
+-  stats = _stats;
+-});
+-
+-os.api("get-online-users-count").then((res) => {
+-  onlineUsersCount = res.count;
+-});
+-
+-os.api("hashtags/list", {
+-  sort: "+mentionedLocalUsers",
+-  limit: 8,
+-}).then((_tags) => {
+-  tags = _tags;
+-});
+-
+-os.api("federation/instances", {
+-  sort: "+pubSub",
+-  limit: 20,
+-}).then((_instances) => {
+-  instances = _instances;
+-});
+-
+ function signin() {
+   os.popup(
+     XSigninDialog,
+@@ -133,17 +104,6 @@
+   );
+ }
+ 
+-function signup() {
+-  os.popup(
+-    XSignupDialog,
+-    {
+-      autoSet: true,
+-    },
+-    {},
+-    "closed"
+-  );
+-}
+-
+ function showMenu(ev) {
+   os.popupMenu(
+     [
+@@ -173,6 +133,25 @@
+     ev.currentTarget ?? ev.target
+   );
+ }
++
++watch(lang, () => {
++  miLocalStorage.setItem("lang", lang.value as string);
++  miLocalStorage.removeItem("locale");
++});
++
++watch([lang], async () => {
++  await reloadAsk();
++});
++
++async function reloadAsk() {
++  const { canceled } = await os.confirm({
++    type: "info",
++    text: i18n.ts.reloadToApplySetting,
++  });
++  if (canceled) return;
++
++  unisonReload();
++}
+ </script>
+ 
+ <style lang="scss" scoped>
+@@ -296,9 +275,6 @@
+       }
+ 
+       > .fg {
+-        position: relative;
+-        z-index: 1;
+-
+         > h1 {
+           display: block;
+           margin: 0;
+diff --color=auto -ru Ririca13/src/pages/welcome.entrance.c.vue src/pages/welcome.entrance.c.vue
+--- Ririca13/src/pages/welcome.entrance.c.vue	2023-02-13 09:01:24
++++ src/pages/welcome.entrance.c.vue	2023-02-13 09:01:18
+@@ -80,7 +80,6 @@
+ import MkButton from "@/components/MkButton.vue";
+ import XNote from "@/components/MkNote.vue";
+ import MkFeaturedPhotos from "@/components/MkFeaturedPhotos.vue";
+-import XTimeline from "./welcome.timeline.vue";
+ import { host, instanceName } from "@/config";
+ import * as os from "@/os";
+ import number from "@/filters/number";
+@@ -90,7 +89,6 @@
+     MkButton,
+     XNote,
+     MkFeaturedPhotos,
+-    XTimeline,
+   },
+ 
+   data() {
+diff --color=auto -ru Ririca13/src/pages/welcome.vue src/pages/welcome.vue
+--- Ririca13/src/pages/welcome.vue	2023-02-13 09:01:24
++++ src/pages/welcome.vue	2023-02-13 09:01:18
+@@ -1,32 +1,7 @@
+ <template>
+-  <div v-if="meta">
+-    <XSetup v-if="meta.requireSetup" />
+-    <XEntrance v-else />
+-  </div>
++  <XEntrance />
+ </template>
+ 
+ <script lang="ts" setup>
+-import { computed } from "vue";
+-import XSetup from "./welcome.setup.vue";
+ import XEntrance from "./welcome.entrance.a.vue";
+-import { instanceName } from "@/config";
+-import * as os from "@/os";
+-import { definePageMetadata } from "@/scripts/page-metadata";
+-
+-let meta = $ref(null);
+-
+-os.api("meta", { detail: true }).then((res) => {
+-  meta = res;
+-});
+-
+-const headerActions = $computed(() => []);
+-
+-const headerTabs = $computed(() => []);
+-
+-definePageMetadata(
+-  computed(() => ({
+-    title: instanceName,
+-    icon: null,
+-  }))
+-);
+ </script>
+diff --color=auto -ru Ririca13/src/pizzax.ts src/pizzax.ts
+--- Ririca13/src/pizzax.ts	2023-02-13 09:01:24
++++ src/pizzax.ts	2023-02-13 09:01:18
+@@ -3,7 +3,6 @@
+ import { onUnmounted, Ref, ref, watch } from "vue";
+ import { $i } from "./account";
+ import { api } from "./os";
+-import { stream } from "./stream";
+ 
+ type StateDef = Record<
+   string,
+@@ -15,8 +14,6 @@
+ 
+ type ArrayElement<A> = A extends readonly (infer T)[] ? T : never;
+ 
+-const connection = $i && stream.useChannel("main");
+-
+ export class Storage<T extends StateDef> {
+   public readonly key: string;
+   public readonly keyForLocalStorage: string;
+@@ -82,73 +79,6 @@
+     }
+     this.state = state as any;
+     this.reactiveState = reactiveState as any;
+-
+-    if ($i) {
+-      // なぜかsetTimeoutしないとapi関数内でエラーになる(おそらく循環参照してることに原因がありそう)
+-      window.setTimeout(() => {
+-        api("i/registry/get-all", { scope: ["client", this.key] }).then(
+-          (kvs) => {
+-            const cache = {};
+-            for (const [k, v] of Object.entries(def)) {
+-              if (v.where === "account") {
+-                if (Object.prototype.hasOwnProperty.call(kvs, k)) {
+-                  state[k] = kvs[k];
+-                  reactiveState[k].value = kvs[k];
+-                  cache[k] = kvs[k];
+-                } else {
+-                  state[k] = v.default;
+-                  reactiveState[k].value = v.default;
+-                }
+-              }
+-            }
+-            localStorage.setItem(
+-              this.keyForLocalStorage + "::cache::" + $i.id,
+-              JSON.stringify(cache)
+-            );
+-            this.markAsReady();
+-          }
+-        );
+-      }, 1);
+-      // streamingのuser storage updateイベントを監視して更新
+-      connection?.on(
+-        "registryUpdated",
+-        ({
+-          scope,
+-          key,
+-          value,
+-        }: {
+-          scope: string[];
+-          key: keyof T;
+-          value: T[typeof key]["default"];
+-        }) => {
+-          if (
+-            scope.length !== 2 ||
+-            scope[0] !== "client" ||
+-            scope[1] !== this.key ||
+-            this.state[key] === value
+-          )
+-            return;
+-
+-          this.state[key] = value;
+-          this.reactiveState[key].value = value;
+-
+-          const cache = JSON.parse(
+-            localStorage.getItem(
+-              this.keyForLocalStorage + "::cache::" + $i.id
+-            ) || "{}"
+-          );
+-          if (cache[key] !== value) {
+-            cache[key] = value;
+-            localStorage.setItem(
+-              this.keyForLocalStorage + "::cache::" + $i.id,
+-              JSON.stringify(cache)
+-            );
+-          }
+-        }
+-      );
+-    } else {
+-      this.markAsReady();
+-    }
+   }
+ 
+   public set<K extends keyof T>(key: K, value: T[K]["default"]): void {
+diff --color=auto -ru Ririca13/src/scripts/aiscript/ui.ts src/scripts/aiscript/ui.ts
+--- Ririca13/src/scripts/aiscript/ui.ts	2023-02-13 09:01:24
++++ src/scripts/aiscript/ui.ts	2023-02-13 09:01:18
+@@ -342,7 +342,7 @@
+   if (primary) utils.assertBoolean(primary);
+   const rounded = def.value.get("rounded");
+   if (rounded) utils.assertBoolean(rounded);
+-  const disabled = def.value.get("disabled");
++  const disabled = button.value.get("disabled");
+   if (disabled) utils.assertBoolean(disabled);
+ 
+   return {
+Only in Ririca13/src/scripts: api.ts
+diff --color=auto -ru Ririca13/src/scripts/emoji-base.ts src/scripts/emoji-base.ts
+--- Ririca13/src/scripts/emoji-base.ts	2023-02-13 09:01:24
++++ src/scripts/emoji-base.ts	2023-02-13 09:01:18
+@@ -6,7 +6,7 @@
+   if (!codes.includes("200d")) codes = codes.filter((x) => x !== "fe0f");
+   codes = codes.filter((x) => x && x.length);
+   const fileName = codes.join("-");
+-  return `${twemojiSvgBase}/${fileName}.svg`;
++  return `https://misskey.io/${twemojiSvgBase}/${fileName}.svg`;
+ }
+ 
+ export function char2fluentEmojiFilePath(char: string): string {
+@@ -16,5 +16,5 @@
+   if (!codes.includes("200d")) codes = codes.filter((x) => x !== "fe0f");
+   codes = codes.filter((x) => x && x.length);
+   const fileName = codes.map((x) => x!.padStart(4, "0")).join("-");
+-  return `${fluentEmojiPngBase}/${fileName}.png`;
++  return `https://misskey.io/${fluentEmojiPngBase}/${fileName}.png`;
+ }
+diff --color=auto -ru Ririca13/src/scripts/gen-search-query.ts src/scripts/gen-search-query.ts
+--- Ririca13/src/scripts/gen-search-query.ts	2023-02-13 09:01:24
++++ src/scripts/gen-search-query.ts	2023-02-13 09:01:18
+@@ -1,4 +1,4 @@
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import { host as localHost } from "@/config";
+ 
+ export async function genSearchQuery(v: any, q: string) {
+diff --color=auto -ru Ririca13/src/scripts/get-user-menu.ts src/scripts/get-user-menu.ts
+--- Ririca13/src/scripts/get-user-menu.ts	2023-02-13 09:01:24
++++ src/scripts/get-user-menu.ts	2023-02-13 09:01:18
+@@ -1,4 +1,4 @@
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import { defineAsyncComponent } from "vue";
+ import { i18n } from "@/i18n";
+ import copyToClipboard from "@/scripts/copy-to-clipboard";
+diff --color=auto -ru Ririca13/src/scripts/lookup-user.ts src/scripts/lookup-user.ts
+--- Ririca13/src/scripts/lookup-user.ts	2023-02-13 09:01:24
++++ src/scripts/lookup-user.ts	2023-02-13 09:01:18
+@@ -1,4 +1,4 @@
+-import * as Acct from "misskey-js/built/acct";
++import * as Acct from "yamisskey-js/built/acct";
+ import { i18n } from "@/i18n";
+ import * as os from "@/os";
+ 
+diff --color=auto -ru Ririca13/src/scripts/select-file.ts src/scripts/select-file.ts
+--- Ririca13/src/scripts/select-file.ts	2023-02-13 09:01:24
++++ src/scripts/select-file.ts	2023-02-13 09:01:18
+@@ -1,5 +1,5 @@
+ import { ref } from "vue";
+-import { DriveFile } from "misskey-js/built/entities";
++import { DriveFile } from "yamisskey-js/built/entities";
+ import * as os from "@/os";
+ import { stream } from "@/stream";
+ import { i18n } from "@/i18n";
+diff --color=auto -ru Ririca13/src/scripts/sound.ts src/scripts/sound.ts
+--- Ririca13/src/scripts/sound.ts	2023-02-13 09:01:24
++++ src/scripts/sound.ts	2023-02-13 09:01:18
+@@ -1,7 +1,5 @@
+ import { ColdDeviceStorage } from "@/store";
+ 
+-const cache = new Map<string, HTMLAudioElement>();
+-
+ export const soundsTypes = [
+   null,
+   "syuilo/up",
+@@ -34,15 +32,19 @@
+   "noizenecio/kick_gaba7",
+ ] as const;
+ 
+-export function getAudio(file: string, useCache = true): HTMLAudioElement {
+-  let audio: HTMLAudioElement;
++const cache = new Map<string, AudioBuffer>();
++const ctx = new AudioContext();
++
++export async function getAudio(file: string, useCache = true) {
+   if (useCache && cache.has(file)) {
+-    audio = cache.get(file);
+-  } else {
+-    audio = new Audio(`/client-assets/sounds/${file}.mp3`);
+-    if (useCache) cache.set(file, audio);
++    return cache.get(file);
+   }
+-  return audio;
++
++  const response = await fetch(`/client-assets/sounds/${file}.mp3`);
++  const arrayBuffer = await response.arrayBuffer();
++  const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
++  if (useCache) cache.set(file, audioBuffer);
++  return audioBuffer;
+ }
+ 
+ export function setVolume(
+@@ -50,6 +52,7 @@
+   volume: number
+ ): HTMLAudioElement {
+   const masterVolume = ColdDeviceStorage.get("sound_masterVolume");
++
+   audio.volume = masterVolume - (1 - volume) * masterVolume;
+   return audio;
+ }
+@@ -60,10 +63,14 @@
+   playFile(sound.type, sound.volume);
+ }
+ 
+-export function playFile(file: string, volume: number) {
++export async function playFile(file: string, volume: number) {
+   const masterVolume = ColdDeviceStorage.get("sound_masterVolume");
+-  if (masterVolume === 0) return;
++  if (masterVolume === 0 || volume === 0) return;
+ 
+-  const audio = setVolume(getAudio(file), volume);
+-  audio.play();
++  const soundSource = ctx.createBufferSource();
++  const gainNode = ctx.createGain();
++  soundSource.buffer = await getAudio(file);
++  gainNode.gain.value = masterVolume * volume;
++  soundSource.connect(gainNode).connect(ctx.destination);
++  soundSource.start();
+ }
+diff --color=auto -ru Ririca13/src/scripts/theme.ts src/scripts/theme.ts
+--- Ririca13/src/scripts/theme.ts	2023-02-13 09:01:24
++++ src/scripts/theme.ts	2023-02-13 09:01:18
+@@ -15,6 +15,8 @@
+ import darkTheme from "@/themes/_dark.json5";
+ import { deepClone } from "./clone";
+ import { miLocalStorage } from "@/local-storage";
++import { StatusBar, Style } from "@capacitor/status-bar";
++import { storedDeviceInfo } from "@/main";
+ 
+ export const themeProps = Object.keys(lightTheme.props).filter(
+   (key) => !key.startsWith("X")
+@@ -68,6 +70,11 @@
+   }, 1000);
+ 
+   const colorSchema = theme.base === "dark" ? "dark" : "light";
++  if (storedDeviceInfo.platform == "ios") {
++    StatusBar.setStyle({
++      style: theme.base === "dark" ? Style.Dark : Style.Light,
++    });
++  }
+ 
+   // Deep copy
+   const _theme = deepClone(theme);
+diff --color=auto -ru Ririca13/src/scripts/upload.ts src/scripts/upload.ts
+--- Ririca13/src/scripts/upload.ts	2023-02-13 09:01:24
++++ src/scripts/upload.ts	2023-02-13 09:01:18
+@@ -1,6 +1,6 @@
+ import { reactive, ref } from "vue";
+ import * as Misskey from "misskey-js";
+-import { readAndCompressImage } from "browser-image-resizer";
++import * as loadImage from "blueimp-load-image";
+ import { getCompressionConfig } from "./upload/compress-config";
+ import { defaultStore } from "@/store";
+ import { apiUrl } from "@/config";
+@@ -54,7 +54,7 @@
+       let resizedImage: Blob | undefined;
+       if (config) {
+         try {
+-          const resized = await readAndCompressImage(file, config);
++          const resized = await loadImage.scale(file, config);
+           if (resized.size < file.size || file.type === "image/webp") {
+             // The compression may not always reduce the file size
+             // (and WebP is not browser safe yet)
+diff --color=auto -ru Ririca13/src/store.ts src/store.ts
+--- Ririca13/src/store.ts	2023-02-13 09:01:24
++++ src/store.ts	2023-02-13 09:01:18
+@@ -302,7 +302,7 @@
+ import { miLocalStorage } from "./local-storage";
+ import lightTheme from "@/themes/l-light.json5";
+ import darkTheme from "@/themes/d-green-lime.json5";
+-import { Note, UserDetailed } from "misskey-js/built/entities";
++import { Note, UserDetailed } from "yamisskey-js/built/entities";
+ 
+ export class ColdDeviceStorage {
+   public static default = {
+diff --color=auto -ru Ririca13/src/stream.ts src/stream.ts
+--- Ririca13/src/stream.ts	2023-02-13 09:01:24
++++ src/stream.ts	2023-02-13 09:01:19
+@@ -1,15 +1,11 @@
+ import * as Misskey from "misskey-js";
+ import { markRaw } from "vue";
+ import { $i } from "@/account";
+-import { url } from "@/config";
+ 
+-export const stream = markRaw(
+-  new Misskey.Stream(
+-    url,
+-    $i
+-      ? {
+-          token: $i.token,
+-        }
+-      : null
+-  )
+-);
++export const stream = $i
++  ? markRaw(
++      new Misskey.Stream($i.instanceUrl, {
++        token: $i?.token,
++      })
++    )
++  : null;
+diff --color=auto -ru Ririca13/src/style.scss src/style.scss
+--- Ririca13/src/style.scss	2023-02-13 09:01:24
++++ src/style.scss	2023-02-13 09:01:19
+@@ -135,13 +135,11 @@
+ }
+ 
+ .ti {
+-  vertical-align: -40%;
+-  line-height: 1em;
++  vertical-align: -10%;
++  line-height: 0.9em;
+ 
+   &:before {
+-    display: inline-block;
+-    font-size: 165%;
+-    width: 0.74em;
++    font-size: 130%;
+   }
+ }
+ 
+diff --color=auto -ru Ririca13/src/theme-store.ts src/theme-store.ts
+--- Ririca13/src/theme-store.ts	2023-02-13 09:01:24
++++ src/theme-store.ts	2023-02-13 09:01:19
+@@ -14,10 +14,7 @@
+   if ($i == null) return;
+ 
+   try {
+-    const themes = await api("i/registry/get", {
+-      scope: ["client"],
+-      key: "themes",
+-    });
++    // const themes = await api('i/registry/get', { scope: ['client'], key: 'themes' });
+     miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
+   } catch (err) {
+     if (err.code === "NO_SUCH_KEY") return;
+@@ -29,21 +26,13 @@
+   if ($i == null) return;
+   await fetchThemes();
+   const themes = getThemes().concat(theme);
+-  await api("i/registry/set", {
+-    scope: ["client"],
+-    key: "themes",
+-    value: themes,
+-  });
++  // await api('i/registry/set', { scope: ['client'], key: 'themes', value: themes });
+   miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
+ }
+ 
+ export async function removeTheme(theme: Theme): Promise<void> {
+   if ($i == null) return;
+   const themes = getThemes().filter((t) => t.id !== theme.id);
+-  await api("i/registry/set", {
+-    scope: ["client"],
+-    key: "themes",
+-    value: themes,
+-  });
++  // await api('i/registry/set', { scope: ['client'], key: 'themes', value: themes });
+   miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
+ }
+diff --color=auto -ru Ririca13/src/ui/_common_/common.ts src/ui/_common_/common.ts
+--- Ririca13/src/ui/_common_/common.ts	2023-02-13 09:01:24
++++ src/ui/_common_/common.ts	2023-02-13 09:01:19
+@@ -60,7 +60,7 @@
+             icon: "ti ti-cookie",
+           },
+           $i &&
+-          ($i.isAdmin || $i.policies.canInvite) &&
++          ($i.isAdmin || $i?.policies?.canInvite) &&
+           instance.disableRegistration
+             ? {
+                 text: i18n.ts.invite,
+@@ -82,7 +82,7 @@
+                 },
+               }
+             : undefined,
+-          $i && ($i.isAdmin || $i.policies.canManageCustomEmojis)
++          $i && ($i.isAdmin || $i?.policies?.canManageCustomEmojis)
+             ? {
+                 type: "link",
+                 to: "/custom-emojis-manager",
+@@ -104,6 +104,12 @@
+         type: "link",
+         text: i18n.ts.aboutMisskey,
+         to: "/about-misskey",
++      },
++      {
++        type: "a",
++        target: "_blank",
++        href: "https://github.com/fruitriin/missRirica-client",
++        text: i18n.ts.ririca.name,
+       },
+     ],
+     ev.currentTarget ?? ev.target,
+diff --color=auto -ru Ririca13/src/ui/_common_/common.vue src/ui/_common_/common.vue
+--- Ririca13/src/ui/_common_/common.vue	2023-02-13 09:01:24
++++ src/ui/_common_/common.vue	2023-02-13 09:01:19
+@@ -38,8 +38,6 @@
+ 
+   <XStreamIndicator />
+ 
+-  <div v-if="pendingApiRequestsCount > 0" id="wait"></div>
+-
+   <div v-if="dev" id="devTicker"><span>DEV BUILD</span></div>
+ 
+   <div v-if="$i && $i.isBot" id="botWarn">
+@@ -52,16 +50,13 @@
+ import * as misskey from "misskey-js";
+ import { swInject } from "./sw-inject";
+ import XNotification from "./notification.vue";
+-import { popup, popups, pendingApiRequestsCount } from "@/os";
++import { popup, popups } from "@/os";
+ import { uploads } from "@/scripts/upload";
+ import * as sound from "@/scripts/sound";
+ import { $i } from "@/account";
+ import { stream } from "@/stream";
+ import { i18n } from "@/i18n";
+ 
+-const XStreamIndicator = defineAsyncComponent(
+-  () => import("./stream-indicator.vue")
+-);
+ const XUpload = defineAsyncComponent(() => import("./upload.vue"));
+ 
+ const dev = _DEV_;
+diff --color=auto -ru Ririca13/src/ui/visitor/b.vue src/ui/visitor/b.vue
+--- Ririca13/src/ui/visitor/b.vue	2023-02-13 09:01:25
++++ src/ui/visitor/b.vue	2023-02-13 09:01:19
+@@ -2,10 +2,10 @@
+   <div class="mk-app">
+     <a
+       v-if="root"
+-      href="https://github.com/misskey-dev/misskey"
+       target="_blank"
+       class="github-corner"
+       aria-label="View source on GitHub"
++      @click="linkToGithub"
+       ><svg
+         width="80"
+         height="80"
+@@ -113,6 +113,8 @@
+   provideMetadataReceiver,
+   setPageMetadata,
+ } from "@/scripts/page-metadata";
++import { i18n } from "@/i18n";
++import { MenuA } from "@/types/menu";
+ 
+ const DESKTOP_THRESHOLD = 1100;
+ 
+@@ -126,6 +128,22 @@
+   }
+ });
+ 
++function linkToGithub() {
++  const misskeyLink: MenuA = {
++    type: "a",
++    target: "_blank",
++    href: "https://github.com/misskey-dev/misskey",
++    text: i18n.ts.aboutMisskey,
++  };
++  const missRirica: MenuA = {
++    type: "a",
++    target: "_blank",
++    href: "https://github.com/fruitriin/missRirica-client",
++    text: i18n.ts.ririca.name,
++  };
++  os.popupMenu([misskeyLink, missRirica]);
++}
++
+ const announcements = {
+   endpoint: "announcements",
+   limit: 10,
+@@ -133,7 +151,6 @@
+ let showMenu = $ref(false);
+ let isDesktop = $ref(window.innerWidth >= DESKTOP_THRESHOLD);
+ let narrow = $ref(window.innerWidth < 1280);
+-let meta = $ref();
+ 
+ const keymap = $computed(() => {
+   return {
+@@ -146,10 +163,6 @@
+ });
+ 
+ const root = $computed(() => mainRouter.currentRoute.value.name === "index");
+-
+-os.api("meta", { detail: true }).then((res) => {
+-  meta = res;
+-});
+ 
+ function signin() {
+   os.popup(

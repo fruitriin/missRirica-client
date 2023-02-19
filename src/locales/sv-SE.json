@@ -373,12 +373,6 @@
       "title": "följde dig"
     }
   },
-  "_mfm": {
-    "mention": "Nämn",
-    "quote": "Citat",
-    "emoji": "Anpassa emoji",
-    "search": "Sök"
-  },
   "_channel": {
     "setBanner": "Välj banner",
     "removeBanner": "Ta bort banner"
@@ -469,16 +463,16 @@
       "mentions": "Omnämningar"
     }
   },
-  "ririca" : {
+  "ririca": {
     "name": "MissRirica",
     "description": "MissRirica is Misskey Client for iOS/Android.  Please prepare access token for login",
     "term": "Agree Privacy Policy and Term of Uses ",
     "termLink": "Link: Privacy Policy and Term of Uses",
     "login": "login",
     "instance": "Instance",
-    "makeToken" : "How to make access token (JP)",
+    "makeToken": "How to make access token (JP)",
     "selectInstanceYourself": "Input instance url instead select one",
     "accessToken": "AccessToken",
-    "howToCreateToken" : "How to make access token (JP)"
+    "howToCreateToken": "How to make access token (JP)"
   }
 }

@@ -377,12 +377,6 @@
       "title": "t'ha seguit"
     }
   },
-  "_mfm": {
-    "mention": "Menció",
-    "quote": "Citar",
-    "emoji": "Emojis personalitzats",
-    "search": "Cercar"
-  },
   "_instanceMute": {
     "instanceMuteDescription": "Silencia tots els impulsos dels servidors seleccionats, també els usuaris que responen a altres d'un servidor silenciat."
   },
@@ -495,16 +489,16 @@
       "direct": "Publicacions directes"
     }
   },
-  "ririca" : {
+  "ririca": {
     "name": "MissRirica",
     "description": "MissRirica is Misskey Client for iOS/Android.  Please prepare access token for login",
     "term": "Agree Privacy Policy and Term of Uses ",
     "termLink": "Link: Privacy Policy and Term of Uses",
     "login": "login",
     "instance": "Instance",
-    "makeToken" : "How to make access token (JP)",
+    "makeToken": "How to make access token (JP)",
     "selectInstanceYourself": "Input instance url instead select one",
     "accessToken": "AccessToken",
-    "howToCreateToken" : "How to make access token (JP)"
+    "howToCreateToken": "How to make access token (JP)"
   }
 }

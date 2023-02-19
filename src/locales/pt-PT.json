@@ -477,12 +477,6 @@
       "title": "Você tem um novo seguidor"
     }
   },
-  "_mfm": {
-    "mention": "Menção",
-    "quote": "Citar",
-    "emoji": "Emoji personalizado",
-    "search": "Buscar"
-  },
   "_theme": {
     "keys": {
       "mention": "Menção",
@@ -593,16 +587,16 @@
       "direct": "Notas diretas"
     }
   },
-  "ririca" : {
+  "ririca": {
     "name": "MissRirica",
     "description": "MissRirica is Misskey Client for iOS/Android.  Please prepare access token for login",
     "term": "Agree Privacy Policy and Term of Uses ",
     "termLink": "Link: Privacy Policy and Term of Uses",
     "login": "login",
     "instance": "Instance",
-    "makeToken" : "How to make access token (JP)",
+    "makeToken": "How to make access token (JP)",
     "selectInstanceYourself": "Input instance url instead select one",
     "accessToken": "AccessToken",
-    "howToCreateToken" : "How to make access token (JP)"
+    "howToCreateToken": "How to make access token (JP)"
   }
 }

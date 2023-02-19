@@ -1,102 +1,112 @@
 <template>
-<div class="mk-media-banner">
-	<div v-if="media.isSensitive && hide" class="sensitive" @click="hide = false">
-		<span class="icon"><i class="ti ti-alert-triangle"></i></span>
-		<b>{{ $ts.sensitive }}</b>
-		<span>{{ $ts.clickToShow }}</span>
-	</div>
-	<div v-else-if="media.type.startsWith('audio') && media.type !== 'audio/midi'" class="audio">
-		<audio
-			ref="audioEl"
-			class="audio"
-			:src="media.url"
-			:title="media.name"
-			controls
-			preload="metadata"
-			@volumechange="volumechange"
-		/>
-	</div>
-	<a
-		v-else class="download"
-		:href="media.url"
-		:title="media.name"
-		:download="media.name"
-	>
-		<span class="icon"><i class="ti ti-download"></i></span>
-		<b>{{ media.name }}</b>
-	</a>
-</div>
+  <div class="mk-media-banner">
+    <div
+      v-if="media.isSensitive && hide"
+      class="sensitive"
+      @click="hide = false"
+    >
+      <span class="icon"><i class="ti ti-alert-triangle"></i></span>
+      <b>{{ $ts.sensitive }}</b>
+      <span>{{ $ts.clickToShow }}</span>
+    </div>
+    <div
+      v-else-if="media.type.startsWith('audio') && media.type !== 'audio/midi'"
+      class="audio"
+    >
+      <VuePlyr :options="{ volume: 0.5 }">
+        <audio controls preload="metadata">
+          <source :src="media.url" :type="media.type" />
+        </audio>
+      </VuePlyr>
+    </div>
+    <a
+      v-else
+      class="download"
+      :href="media.url"
+      :title="media.name"
+      :download="media.name"
+    >
+      <span class="icon"><i class="ti ti-download"></i></span>
+      <b>{{ media.name }}</b>
+    </a>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from 'vue';
-import * as misskey from 'yamisskey-js';
-import { ColdDeviceStorage } from '@/store';
+import { onMounted } from "vue";
+import * as misskey from "misskey-js";
+import VuePlyr from "vue-plyr";
+import { ColdDeviceStorage } from "@/store";
+import "vue-plyr/dist/vue-plyr.css";
 
-const props = withDefaults(defineProps<{
-	media: misskey.entities.DriveFile;
-}>(), {
-});
+const props = withDefaults(
+  defineProps<{
+    media: misskey.entities.DriveFile;
+  }>(),
+  {}
+);
 
 const audioEl = $shallowRef<HTMLAudioElement | null>();
 let hide = $ref(true);
 
 function volumechange() {
-	if (audioEl) ColdDeviceStorage.set('mediaVolume', audioEl.volume);
+  if (audioEl) ColdDeviceStorage.set("mediaVolume", audioEl.volume);
 }
 
 onMounted(() => {
-	if (audioEl) audioEl.volume = ColdDeviceStorage.get('mediaVolume');
+  if (audioEl) audioEl.volume = ColdDeviceStorage.get("mediaVolume");
 });
 </script>
 
 <style lang="scss" scoped>
 .mk-media-banner {
-	width: 100%;
-	border-radius: 4px;
-	margin-top: 4px;
-	overflow: hidden;
+  width: 100%;
+  border-radius: 4px;
+  margin-top: 4px;
+  // overflow: clip;
 
-	> .download,
-	> .sensitive {
-		display: flex;
-		align-items: center;
-		font-size: 12px;
-		padding: 8px 12px;
-		white-space: nowrap;
+  --plyr-color-main: var(--accent);
+  --plyr-audio-controls-background: var(--bg);
+  --plyr-audio-controls-color: var(--accentLighten);
 
-		> * {
-			display: block;
-		}
+  > .download,
+  > .sensitive {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    padding: 8px 12px;
+    white-space: nowrap;
 
-		> b {
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
+    > * {
+      display: block;
+    }
 
-		> *:not(:last-child) {
-			margin-right: .2em;
-		}
+    > b {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-		> .icon {
-			font-size: 1.6em;
-		}
-	}
+    > *:not(:last-child) {
+      margin-right: 0.2em;
+    }
 
-	> .download {
-		background: var(--noteAttachedFile);
-	}
+    > .icon {
+      font-size: 1.6em;
+    }
+  }
 
-	> .sensitive {
-		background: #111;
-		color: #fff;
-	}
+  > .download {
+    background: var(--noteAttachedFile);
+  }
 
-	> .audio {
-		.audio {
-			display: block;
-			width: 100%;
-		}
-	}
+  > .sensitive {
+    background: #111;
+    color: #fff;
+  }
+
+  > .audio {
+    border-radius: 8px;
+    // overflow: clip;
+  }
 }
 </style>
