@@ -191,7 +191,7 @@ export let storedDeviceInfo: Object;
 
       try {
         document.body.innerHTML = "<div>Please wait...</div>";
-        await login(i);
+        await login(i, $);
       } catch (err) {
         // Render the error screen
         // TODO: ちゃんとしたコンポーネントをレンダリングする(v10とかのトラブルシューティングゲーム付きのやつみたいな)

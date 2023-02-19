@@ -1,57 +1,47 @@
 <template>
-  <form class="eppvobhk" :class="{ signing }" @submit.prevent="onSubmit">
-    <div class="normal-signin">
-      {{ i18n.ts.ririca.instance }}
-      <MkSelect v-model="instanceUrl" large :model-value="instances[0]?.url">
-        <option value="other">
-          {{ i18n.ts.ririca.selectInstanceYourself }}
-        </option>
-        <option
-          v-for="(instance, i) in instances"
-          :key="instance.url"
-          :value="instance.url"
-          :selected="i === 0"
-        >
-          {{ instance.name }}
-        </option>
-      </MkSelect>
-      <template v-if="instanceUrl === 'other'">
-        URL
-        <MkInput
-          v-model="instanceUrlOther"
-          :spellcheck="false"
-          autofocus
-          required
-        />
-      </template>
-      {{ i18n.ts.ririca.accessToken }}
-      <MkInput
-        v-model="token"
-        :spellcheck="false"
-        autofocus
-        required
-        data-cy-signin-username
-      ></MkInput>
-      <MkButton
-        class="_formBlock"
-        type="submit"
-        primary
-        :disabled="signing"
-        style="margin: 0 auto"
-      >
-        {{ signing ? i18n.ts.loggingIn : i18n.ts.login }}
-      </MkButton>
-    </div>
-
-    <div style="display: flex; justify-content: center">
-      <a
-        href="https://misskey.io/notes/99l9jqqun2"
-        target="_blank"
-        style="color: var(--link); text-align: center"
-        >{{ i18n.ts.ririca.howToCreateToken }}</a
-      >
-    </div>
-  </form>
+<form class="eppvobhk" :class="{ signing }" @submit.prevent="onSubmit">
+	<div class="normal-signin">
+		{{ i18n.ts.ririca.instance }}
+		<MkSelect v-model="instanceUrl" large :model-value="instances[0]?.url">
+			<option
+				key="misskey.io"
+				value="misskey.io"
+				:selected="true"
+			>
+				Misskey.io
+			</option>
+			<option value="other">
+				{{ i18n.ts.ririca.selectInstanceYourself }}
+			</option>
+		</MkSelect>
+		<template v-if="instanceUrl === 'other'">
+			URL
+			<MkInput
+				v-model="instanceUrlOther"
+				:spellcheck="false"
+				autofocus
+				required
+			/>
+		</template>
+		{{ i18n.ts.ririca.accessToken }}
+		<MkInput
+			v-model="token"
+			:spellcheck="false"
+			autofocus
+			required
+			data-cy-signin-username
+		></MkInput>
+		<MkButton
+			class="_formBlock"
+			type="submit"
+			primary
+			:disabled="signing"
+			style="margin: 0 auto"
+		>
+			{{ signing ? i18n.ts.loggingIn : i18n.ts.login }}
+		</MkButton>
+	</div>
+</form>
 </template>
 
 <script lang="ts" setup>
