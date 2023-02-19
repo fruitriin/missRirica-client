@@ -33,8 +33,12 @@ rm src/locales/*.tmp.json
 
 # en.jsonをsrc/locals以下のすべてのjsonにマージする
 for file in src/locales/*.json; do
-    if [ "$file" != "src/locals/ja-JP.json" ] && [ "$file" != "src/locals/ja-KS.json" ] && [ "$file" != "src/locals/ko-KR.json" ]; then
-        jq -s '.[0] * .[1]' "$file" RiricaSrc/locales/en.json > "$file.tmp"
-        mv "$file.tmp" "$file"
+    if [ "$file" = "src/locales/ja-JP.json" ] || [ "$file" = "src/locales/ja-KS.json" ] || [ "$file" = "src/locales/ko-KR.json" ]; then
+      echo "skiped"
+        continue # 条件に一致したらループをスキップする
     fi
+
+    echo $file
+    jq -s '.[0] * .[1]' "$file" RiricaSrc/locales/en.json > "$file.tmp"
+    mv "$file.tmp" "$file"
 done

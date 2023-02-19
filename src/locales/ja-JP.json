@@ -1,15 +1,14 @@
 {
   "ririca": {
     "name": "MissRirica",
-    "description": "MissRirica is Misskey Client for iOS/Android.  Please prepare access token for login",
-    "term": "Agree Privacy Policy and Term of Uses ",
-    "termLink": "Link: Privacy Policy and Term of Uses",
-    "instance": "Instance",
-    "makeToken": "How to make access token (JP)",
-    "selectInstanceYourself": "Input instance url instead select one",
-    "accessToken": "AccessToken",
-    "howToCreateToken": "How to make access token (JP)",
-    "login": "login"
+    "description": "MissRiricaはMisskeyクライアントです。アクセストークンを用意してログインしてください。",
+    "term": "プライバシーポリシー及び利用規約に同意する",
+    "termLink": "プライバシーポリシー及び利用規約を読む",
+    "instance": "インスタンス",
+    "makeToken": "アクセストークンの作り方",
+    "selectInstanceYourself": "インスタンスのURLを入力する",
+    "accessToken": "アクセストークン",
+    "howToCreateToken": "アクセストークンの作り方"
   },
   "_lang_": "日本語",
   "headlineMisskey": "ノートでつながるネットワーク",
