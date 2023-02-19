@@ -27,12 +27,12 @@
         </MkSelect>
         <MkTextarea v-else-if="src === 'users'" v-model="users">
           <template #label>{{ i18n.ts.users }}</template>
-          <template #caption
-            >{{ i18n.ts.antennaUsersDescription }}
+          <template #caption>
+            {{ i18n.ts.antennaUsersDescription }}
             <button class="_textButton" @click="addUser">
               {{ i18n.ts.addUser }}
-            </button></template
-          >
+            </button>
+          </template>
         </MkTextarea>
         <MkSwitch v-model="withReplies">{{ i18n.ts.withReplies }}</MkSwitch>
         <MkTextarea v-model="keywords">
@@ -48,16 +48,17 @@
         <MkSwitch v-model="notify">{{ i18n.ts.notifyAntenna }}</MkSwitch>
       </div>
       <div class="actions">
-        <MkButton inline primary @click="saveAntenna()"
-          ><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton
-        >
+        <MkButton inline primary @click="saveAntenna()">
+          <i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}
+        </MkButton>
         <MkButton
           v-if="antenna.id != null"
           inline
           danger
           @click="deleteAntenna()"
-          ><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton
         >
+          <i class="ti ti-trash"></i> {{ i18n.ts.delete }}
+        </MkButton>
       </div>
     </div>
   </MkSpacer>
@@ -65,7 +66,7 @@
 
 <script lang="ts" setup>
 import { watch } from "vue";
-import * as Acct from "yamisskey-js/built/acct";
+import * as Acct from "misskey-js/built/acct";
 import MkButton from "@/components/MkButton.vue";
 import MkInput from "@/components/MkInput.vue";
 import MkTextarea from "@/components/MkTextarea.vue";

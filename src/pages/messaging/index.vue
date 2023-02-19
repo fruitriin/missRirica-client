@@ -1,13 +1,13 @@
 <template>
   <MkStickyContainer>
-    <template #header
-      ><MkPageHeader :actions="headerActions" :tabs="headerTabs"
-    /></template>
+    <template #header>
+      <MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+    </template>
     <MkSpacer :content-max="800">
       <div class="yweeujhr">
-        <MkButton primary class="start" @click="start"
-          ><i class="ti ti-plus"></i> {{ $ts.startMessaging }}</MkButton
-        >
+        <MkButton primary class="start" @click="start">
+          <i class="ti ti-plus"></i> {{ $ts.startMessaging }}
+        </MkButton>
 
         <div v-if="messages.length > 0" class="history">
           <MkA
@@ -88,7 +88,7 @@ import {
   onMounted,
   onUnmounted,
 } from "vue";
-import * as Acct from "yamisskey-js/built/acct";
+import * as Acct from "misskey-js/built/acct";
 import MkButton from "@/components/MkButton.vue";
 import { acct } from "@/filters/user";
 import * as os from "@/os";

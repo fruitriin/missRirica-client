@@ -130,11 +130,12 @@
         v-if="hasNotSpecifiedMentions"
         warn
         :class="$style.hasNotSpecifiedMentions"
-        >{{ i18n.ts.notSpecifiedMentionWarning }} -
+      >
+        {{ i18n.ts.notSpecifiedMentionWarning }} -
         <button class="_textButton" @click="addMissingMention()">
           {{ i18n.ts.add }}
-        </button></MkInfo
-      >
+        </button>
+      </MkInfo>
       <input
         v-show="useCw"
         ref="cwInputEl"
@@ -252,7 +253,7 @@ import * as misskey from "misskey-js";
 import insertTextAtCursor from "insert-text-at-cursor";
 import { length } from "stringz";
 import { toASCII } from "punycode/";
-import * as Acct from "yamisskey-js/built/acct";
+import * as Acct from "misskey-js/built/acct";
 import { throttle } from "throttle-debounce";
 import MkNoteSimple from "@/components/MkNoteSimple.vue";
 import XNotePreview from "@/components/MkNotePreview.vue";

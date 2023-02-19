@@ -34,9 +34,9 @@
         </div>
         <MkAvatar class="avatar" :user="user" indicator />
         <div class="title">
-          <MkA class="name" :to="userPage(user)"
-            ><MkUserName :user="user" :nowrap="false"
-          /></MkA>
+          <MkA class="name" :to="userPage(user)">
+            <MkUserName :user="user" :nowrap="false" />
+          </MkA>
           <p class="username"><MkAcct :user="user" /></p>
         </div>
         <div class="description">
@@ -80,7 +80,7 @@
 
 <script lang="ts" setup>
 import { onMounted } from "vue";
-import * as Acct from "yamisskey-js/built/acct";
+import * as Acct from "misskey-js/built/acct";
 import * as misskey from "misskey-js";
 import MkFollowButton from "@/components/MkFollowButton.vue";
 import { userPage } from "@/filters/user";

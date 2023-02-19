@@ -2,12 +2,8 @@
 <form class="eppvobhk" :class="{ signing }" @submit.prevent="onSubmit">
 	<div class="normal-signin">
 		{{ i18n.ts.ririca.instance }}
-		<MkSelect v-model="instanceUrl" large :model-value="instances[0]?.url">
-			<option
-				key="misskey.io"
-				value="misskey.io"
-				:selected="true"
-			>
+		<MkSelect v-model="instanceUrl" large model-value="misskey.io">
+			<option key="misskey.io" value="misskey.io" :selected="true">
 				Misskey.io
 			</option>
 			<option value="other">
@@ -234,12 +230,6 @@ function resetPassword() {
   );
 }
 
-let instances = $ref([]);
-fetch("https://instanceapp.misskey.page/instances.json").then((res) => {
-  res.json().then((data) => {
-    instances = data.instancesInfos;
-  });
-});
 </script>
 
 <style lang="scss" scoped>

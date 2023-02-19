@@ -1,5 +1,5 @@
 function join(...paths: string[]) {
-  return paths.join('/');
+  return paths.join("/");
 }
 async function ky(url: string, options: any) {
   const response = await fetch(url, options);
@@ -74,10 +74,12 @@ export class MiAuth {
   public async getToken(): Promise<string> {
     const url = new URL(
       join("api", "miauth", this.session, "check"),
-      this.origin,
+      this.origin
     );
 
-    const data: Record<string, unknown> = await fetch(url).then(res => res.json())
+    const data: Record<string, unknown> = await fetch(url).then((res) =>
+      res.json()
+    );
     const token = String(data.token);
 
     if (typeof data.token === "undefined") {
@@ -125,34 +127,33 @@ export function quickAuth(origin: string, param: UrlParam): MiAuth {
   return new MiAuth(origin, param, session);
 }
 
-
 export const Permissions = [
   "read:account",
-"write:account",
-"write:notes",
-"read:blocks",
-"write:blocks",
-"read:drive",
-"write:drive",
-"read:favorites",
-"write:favorites",
-"read:following",
-"write:following",
-"read:messaging",
-"write:messaging",
-"read:mutes",
-"write:mutes",
-"read:notifications",
-"write:notifications",
-"read:reactions",
-"write:reactions",
-"write:votes",
-"read:pages",
-"write:pages",
-"read:page-likes",
-"write:page-likes",
-"read:user-groups",
-"write:user-groups",
-"read:channels",
-"write:channels",
-]
+  "write:account",
+  "write:notes",
+  "read:blocks",
+  "write:blocks",
+  "read:drive",
+  "write:drive",
+  "read:favorites",
+  "write:favorites",
+  "read:following",
+  "write:following",
+  "read:messaging",
+  "write:messaging",
+  "read:mutes",
+  "write:mutes",
+  "read:notifications",
+  "write:notifications",
+  "read:reactions",
+  "write:reactions",
+  "write:votes",
+  "read:pages",
+  "write:pages",
+  "read:page-likes",
+  "write:page-likes",
+  "read:user-groups",
+  "write:user-groups",
+  "read:channels",
+  "write:channels",
+];

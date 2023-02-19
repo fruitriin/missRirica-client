@@ -1,8 +1,8 @@
 <template>
   <MkStickyContainer>
-    <template #header
-      ><MkPageHeader :actions="headerActions" :tabs="headerTabs"
-    /></template>
+    <template #header>
+      <MkPageHeader :actions="headerActions" :tabs="headerTabs" />
+    </template>
     <MkSpacer :content-max="800">
       <MkPostForm
         v-if="state === 'writing'"
@@ -23,8 +23,9 @@
         primary
         class="close"
         @click="close()"
-        >{{ i18n.ts.close }}</MkButton
       >
+        {{ i18n.ts.close }}
+      </MkButton>
     </MkSpacer>
   </MkStickyContainer>
 </template>
@@ -34,7 +35,7 @@
 
 import {} from "vue";
 import { noteVisibilities } from "misskey-js";
-import * as Acct from "yamisskey-js/built/acct";
+import * as Acct from "misskey-js/built/acct";
 import * as Misskey from "misskey-js";
 import MkButton from "@/components/MkButton.vue";
 import MkPostForm from "@/components/MkPostForm.vue";
