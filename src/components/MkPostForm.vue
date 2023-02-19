@@ -1,240 +1,249 @@
 <template>
-<div
-	:class="[$style.root, { [$style.modal]: modal, _popup: modal }]"
-	@dragover.stop="onDragover"
-	@dragenter="onDragenter"
-	@dragleave="onDragleave"
-	@drop.stop="onDrop"
->
-	<header :class="$style.header">
-		<button
-			v-if="!fixed"
-			:class="$style.cancel"
-			class="_button"
-			@click="cancel"
-		>
-			<i class="ti ti-x"></i>
-		</button>
-		<button
-			v-click-anime
-			v-tooltip="i18n.ts.switchAccount"
-			:class="$style.account"
-			class="_button"
-			@click="openAccountMenu"
-		>
-			<MkAvatar :user="postAccount ?? $i" :class="$style.avatar"/>
-		</button>
-		<div :class="$style.headerRight">
-			<span
-				:class="[
-					$style.textCount,
-					{ [$style.textOver]: textLength > maxTextLength },
-				]"
-			>{{ maxTextLength - textLength }}</span>
-			<span v-if="localOnly" :class="$style.localOnly"><i class="ti ti-world-off"></i></span>
-			<button
-				ref="visibilityButton"
-				v-tooltip="i18n.ts.visibility"
-				class="_button"
-				:class="$style.visibility"
-				:disabled="channel != null"
-				@click="setVisibility"
-			>
-				<span v-if="visibility === 'public'"><i class="ti ti-world"></i></span>
-				<span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
-				<span v-if="visibility === 'followers'"><i class="ti ti-lock"></i></span>
-				<span v-if="visibility === 'specified'"><i class="ti ti-mail"></i></span>
-			</button>
-			<button
-				v-tooltip="i18n.ts.previewNoteText"
-				class="_button"
-				:class="[
-					$style.previewButton,
-					{ [$style.previewButtonActive]: showPreview },
-				]"
-				@click="showPreview = !showPreview"
-			>
-				<i class="ti ti-eye"></i>
-			</button>
-			<button
-				v-click-anime
-				class="_button"
-				:class="[$style.submit, { [$style.submitPosting]: posting }]"
-				:disabled="!canPost"
-				data-cy-open-post-form-submit
-				@click="post"
-			>
-				<div :class="$style.submitInner">
-					<template v-if="posted"></template>
-					<template v-else-if="posting"><MkEllipsis/></template>
-					<template v-else>{{ submitText }}</template>
-					<i
-						style="margin-left: 6px"
-						:class="
-							posted
-								? 'ti ti-check'
-								: reply
-									? 'ti ti-arrow-back-up'
-									: renote
-										? 'ti ti-quote'
-										: 'ti ti-send'
-						"
-					></i>
-				</div>
-			</button>
-		</div>
-	</header>
-	<div :class="[$style.form]">
-		<MkNoteSimple v-if="reply" :class="$style.targetNote" :note="reply"/>
-		<MkNoteSimple v-if="renote" :class="$style.targetNote" :note="renote"/>
-		<div v-if="quoteId" :class="$style.withQuote">
-			<i class="ti ti-quote"></i> {{ i18n.ts.quoteAttached
-			}}<button @click="quoteId = null"><i class="ti ti-x"></i></button>
-		</div>
-		<div v-if="visibility === 'specified'" :class="$style.toSpecified">
-			<span style="margin-right: 8px">{{ i18n.ts.recipient }}</span>
-			<div :class="$style.visibleUsers">
-				<span
-					v-for="u in visibleUsers"
-					:key="u.id"
-					:class="$style.visibleUser"
-				>
-					<MkAcct :user="u"/>
-					<button
-						class="_button"
-						style="padding: 4px 8px"
-						@click="removeVisibleUser(u)"
-					>
-						<i class="ti ti-x"></i>
-					</button>
-				</span>
-				<button
-					class="_buttonPrimary"
-					style="padding: 4px; border-radius: 8px"
-					@click="addVisibleUser"
-				>
-					<i class="ti ti-plus ti-fw"></i>
-				</button>
-			</div>
-		</div>
-		<MkInfo
-			v-if="hasNotSpecifiedMentions"
-			warn
-			:class="$style.hasNotSpecifiedMentions"
-		>
-			{{ i18n.ts.notSpecifiedMentionWarning }} -
-			<button class="_textButton" @click="addMissingMention()">
-				{{ i18n.ts.add }}
-			</button>
-		</MkInfo>
-		<input
-			v-show="useCw"
-			ref="cwInputEl"
-			v-model="cw"
-			:class="$style.cw"
-			:placeholder="i18n.ts.annotation"
-			@keydown="onKeydown"
-		/>
-		<textarea
-			ref="textareaEl"
-			v-model="text"
-			:class="[$style.text, { [$style.withCw]: useCw }]"
-			:disabled="posting || posted"
-			:placeholder="placeholder"
-			data-cy-post-form-text
-			@keydown="onKeydown"
-			@paste="onPaste"
-			@compositionupdate="onCompositionUpdate"
-			@compositionend="onCompositionEnd"
-		/>
-		<input
-			v-show="withHashtags"
-			ref="hashtagsInputEl"
-			v-model="hashtags"
-			:class="$style.hashtags"
-			:placeholder="i18n.ts.hashtags"
-			list="hashtags"
-		/>
-		<XPostFormAttaches
-			v-model="files"
-			:class="$style.attaches"
-			@detach="detachFile"
-			@change-sensitive="updateFileSensitive"
-			@change-name="updateFileName"
-		/>
-		<MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null"/>
-		<XNotePreview v-if="showPreview" :class="$style.preview" :text="text"/>
-		<footer :class="$style.footer">
-			<button
-				v-tooltip="i18n.ts.attachFile"
-				class="_button"
-				:class="$style.footerButton"
-				@click="chooseFileFrom"
-			>
-				<i class="ti ti-photo-plus"></i>
-			</button>
-			<button
-				v-tooltip="i18n.ts.poll"
-				class="_button"
-				:class="[$style.footerButton, { [$style.footerButtonActive]: poll }]"
-				@click="togglePoll"
-			>
-				<i class="ti ti-chart-arrows"></i>
-			</button>
-			<button
-				v-tooltip="i18n.ts.useCw"
-				class="_button"
-				:class="[$style.footerButton, { [$style.footerButtonActive]: useCw }]"
-				@click="useCw = !useCw"
-			>
-				<i class="ti ti-eye-off"></i>
-			</button>
-			<button
-				v-tooltip="i18n.ts.mention"
-				class="_button"
-				:class="$style.footerButton"
-				@click="insertMention"
-			>
-				<i class="ti ti-at"></i>
-			</button>
-			<button
-				v-tooltip="i18n.ts.hashtags"
-				class="_button"
-				:class="[
-					$style.footerButton,
-					{ [$style.footerButtonActive]: withHashtags },
-				]"
-				@click="withHashtags = !withHashtags"
-			>
-				<i class="ti ti-hash"></i>
-			</button>
-			<button
-				v-tooltip="i18n.ts.emoji"
-				class="_button"
-				:class="$style.footerButton"
-				@click="insertEmoji"
-			>
-				<i class="ti ti-mood-happy"></i>
-			</button>
-			<button
-				v-if="postFormActions.length > 0"
-				v-tooltip="i18n.ts.plugin"
-				class="_button"
-				:class="$style.footerButton"
-				@click="showActions"
-			>
-				<i class="ti ti-plug"></i>
-			</button>
-		</footer>
-		<datalist id="hashtags">
-			<option
-				v-for="hashtag in recentHashtags"
-				:key="hashtag"
-				:value="hashtag"
-			/>
-		</datalist>
-	</div>
-</div>
+  <div
+    :class="[$style.root, { [$style.modal]: modal, _popup: modal }]"
+    @dragover.stop="onDragover"
+    @dragenter="onDragenter"
+    @dragleave="onDragleave"
+    @drop.stop="onDrop"
+  >
+    <header :class="$style.header">
+      <button
+        v-if="!fixed"
+        :class="$style.cancel"
+        class="_button"
+        @click="cancel"
+      >
+        <i class="ti ti-x"></i>
+      </button>
+      <button
+        v-click-anime
+        v-tooltip="i18n.ts.switchAccount"
+        :class="$style.account"
+        class="_button"
+        @click="openAccountMenu"
+      >
+        <MkAvatar :user="postAccount ?? $i" :class="$style.avatar" />
+      </button>
+      <div :class="$style.headerRight">
+        <span
+          :class="[
+            $style.textCount,
+            { [$style.textOver]: textLength > maxTextLength },
+          ]"
+          >{{ maxTextLength - textLength }}</span
+        >
+        <span v-if="localOnly" :class="$style.localOnly"
+          ><i class="ti ti-world-off"></i
+        ></span>
+        <button
+          ref="visibilityButton"
+          v-tooltip="i18n.ts.visibility"
+          class="_button"
+          :class="$style.visibility"
+          :disabled="channel != null"
+          @click="setVisibility"
+        >
+          <span v-if="visibility === 'public'"
+            ><i class="ti ti-world"></i
+          ></span>
+          <span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
+          <span v-if="visibility === 'followers'"
+            ><i class="ti ti-lock"></i
+          ></span>
+          <span v-if="visibility === 'specified'"
+            ><i class="ti ti-mail"></i
+          ></span>
+        </button>
+        <button
+          v-tooltip="i18n.ts.previewNoteText"
+          class="_button"
+          :class="[
+            $style.previewButton,
+            { [$style.previewButtonActive]: showPreview },
+          ]"
+          @click="showPreview = !showPreview"
+        >
+          <i class="ti ti-eye"></i>
+        </button>
+        <button
+          v-click-anime
+          class="_button"
+          :class="[$style.submit, { [$style.submitPosting]: posting }]"
+          :disabled="!canPost"
+          data-cy-open-post-form-submit
+          @click="post"
+        >
+          <div :class="$style.submitInner">
+            <template v-if="posted"></template>
+            <template v-else-if="posting"><MkEllipsis /></template>
+            <template v-else>{{ submitText }}</template>
+            <i
+              style="margin-left: 6px"
+              :class="
+                posted
+                  ? 'ti ti-check'
+                  : reply
+                  ? 'ti ti-arrow-back-up'
+                  : renote
+                  ? 'ti ti-quote'
+                  : 'ti ti-send'
+              "
+            ></i>
+          </div>
+        </button>
+      </div>
+    </header>
+    <div :class="[$style.form]">
+      <MkNoteSimple v-if="reply" :class="$style.targetNote" :note="reply" />
+      <MkNoteSimple v-if="renote" :class="$style.targetNote" :note="renote" />
+      <div v-if="quoteId" :class="$style.withQuote">
+        <i class="ti ti-quote"></i> {{ i18n.ts.quoteAttached
+        }}<button @click="quoteId = null"><i class="ti ti-x"></i></button>
+      </div>
+      <div v-if="visibility === 'specified'" :class="$style.toSpecified">
+        <span style="margin-right: 8px">{{ i18n.ts.recipient }}</span>
+        <div :class="$style.visibleUsers">
+          <span
+            v-for="u in visibleUsers"
+            :key="u.id"
+            :class="$style.visibleUser"
+          >
+            <MkAcct :user="u" />
+            <button
+              class="_button"
+              style="padding: 4px 8px"
+              @click="removeVisibleUser(u)"
+            >
+              <i class="ti ti-x"></i>
+            </button>
+          </span>
+          <button
+            class="_buttonPrimary"
+            style="padding: 4px; border-radius: 8px"
+            @click="addVisibleUser"
+          >
+            <i class="ti ti-plus ti-fw"></i>
+          </button>
+        </div>
+      </div>
+      <MkInfo
+        v-if="hasNotSpecifiedMentions"
+        warn
+        :class="$style.hasNotSpecifiedMentions"
+      >
+        {{ i18n.ts.notSpecifiedMentionWarning }} -
+        <button class="_textButton" @click="addMissingMention()">
+          {{ i18n.ts.add }}
+        </button>
+      </MkInfo>
+      <input
+        v-show="useCw"
+        ref="cwInputEl"
+        v-model="cw"
+        :class="$style.cw"
+        :placeholder="i18n.ts.annotation"
+        @keydown="onKeydown"
+      />
+      <textarea
+        ref="textareaEl"
+        v-model="text"
+        :class="[$style.text, { [$style.withCw]: useCw }]"
+        :disabled="posting || posted"
+        :placeholder="placeholder"
+        data-cy-post-form-text
+        @keydown="onKeydown"
+        @paste="onPaste"
+        @compositionupdate="onCompositionUpdate"
+        @compositionend="onCompositionEnd"
+      />
+      <input
+        v-show="withHashtags"
+        ref="hashtagsInputEl"
+        v-model="hashtags"
+        :class="$style.hashtags"
+        :placeholder="i18n.ts.hashtags"
+        list="hashtags"
+      />
+      <XPostFormAttaches
+        v-model="files"
+        :class="$style.attaches"
+        @detach="detachFile"
+        @change-sensitive="updateFileSensitive"
+        @change-name="updateFileName"
+      />
+      <MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null" />
+      <XNotePreview v-if="showPreview" :class="$style.preview" :text="text" />
+      <footer :class="$style.footer">
+        <button
+          v-tooltip="i18n.ts.attachFile"
+          class="_button"
+          :class="$style.footerButton"
+          @click="chooseFileFrom"
+        >
+          <i class="ti ti-photo-plus"></i>
+        </button>
+        <button
+          v-tooltip="i18n.ts.poll"
+          class="_button"
+          :class="[$style.footerButton, { [$style.footerButtonActive]: poll }]"
+          @click="togglePoll"
+        >
+          <i class="ti ti-chart-arrows"></i>
+        </button>
+        <button
+          v-tooltip="i18n.ts.useCw"
+          class="_button"
+          :class="[$style.footerButton, { [$style.footerButtonActive]: useCw }]"
+          @click="useCw = !useCw"
+        >
+          <i class="ti ti-eye-off"></i>
+        </button>
+        <button
+          v-tooltip="i18n.ts.mention"
+          class="_button"
+          :class="$style.footerButton"
+          @click="insertMention"
+        >
+          <i class="ti ti-at"></i>
+        </button>
+        <button
+          v-tooltip="i18n.ts.hashtags"
+          class="_button"
+          :class="[
+            $style.footerButton,
+            { [$style.footerButtonActive]: withHashtags },
+          ]"
+          @click="withHashtags = !withHashtags"
+        >
+          <i class="ti ti-hash"></i>
+        </button>
+        <button
+          v-tooltip="i18n.ts.emoji"
+          class="_button"
+          :class="$style.footerButton"
+          @click="insertEmoji"
+        >
+          <i class="ti ti-mood-happy"></i>
+        </button>
+        <button
+          v-if="postFormActions.length > 0"
+          v-tooltip="i18n.ts.plugin"
+          class="_button"
+          :class="$style.footerButton"
+          @click="showActions"
+        >
+          <i class="ti ti-plug"></i>
+        </button>
+      </footer>
+      <datalist id="hashtags">
+        <option
+          v-for="hashtag in recentHashtags"
+          :key="hashtag"
+          :value="hashtag"
+        />
+      </datalist>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -332,10 +341,10 @@ let localOnly = $ref<boolean>(
 );
 let visibility = $ref(
   props.initialVisibility ??
-  ((defaultStore.state.rememberNoteVisibility
-    ? defaultStore.state.visibility
-    : defaultStore.state
-      .defaultNoteVisibility) as (typeof misskey.noteVisibilities)[number])
+    ((defaultStore.state.rememberNoteVisibility
+      ? defaultStore.state.visibility
+      : defaultStore.state
+          .defaultNoteVisibility) as (typeof misskey.noteVisibilities)[number])
 );
 let visibleUsers = $ref([]);
 if (props.initialVisibleUsers) {
@@ -394,8 +403,8 @@ const submitText = $computed((): string => {
   return props.renote
     ? i18n.ts.quote
     : props.reply
-      ? i18n.ts.reply
-      : i18n.ts.note;
+    ? i18n.ts.reply
+    : i18n.ts.note;
 });
 
 const textLength = $computed((): number => {
@@ -460,8 +469,8 @@ if (props.reply && props.reply.text != null) {
     const mention = x.host
       ? `@${x.username}@${toASCII(x.host)}`
       : otherHost == null || otherHost === host
-        ? `@${x.username}`
-        : `@${x.username}@${toASCII(otherHost)}`;
+      ? `@${x.username}`
+      : `@${x.username}@${toASCII(otherHost)}`;
 
     // 自分は除外
     if ($i.username === x.username && (x.host == null || x.host === host))
@@ -1043,7 +1052,7 @@ onMounted(() => {
     if (!props.instant && !props.mention && !props.specified) {
       const draft = JSON.parse(miLocalStorage.getItem("drafts") || "{}")[
         draftKey
-        ];
+      ];
       if (draft) {
         text = draft.data.text;
         useCw = draft.data.useCw;
@@ -1200,9 +1209,9 @@ defineExpose({
   box-sizing: border-box;
   color: var(--fgOnAccent);
   background: linear-gradient(
-      90deg,
-      var(--buttonGradateA),
-      var(--buttonGradateB)
+    90deg,
+    var(--buttonGradateA),
+    var(--buttonGradateB)
   );
 }
 

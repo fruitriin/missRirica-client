@@ -1,5 +1,5 @@
 diff -ru migrateWork/account.ts src/account.ts
---- migrateWork/account.ts	2023-02-19 20:30:38
+--- migrateWork/account.ts	2023-02-19 20:32:34
 +++ src/account.ts	2023-02-19 19:02:03
 @@ -4,7 +4,6 @@
  import { i18n } from "./i18n";
@@ -283,7 +283,7 @@ diff -ru migrateWork/account.ts src/account.ts
              ],
 Only in src: assets
 diff -ru migrateWork/components/MkAchievements.vue src/components/MkAchievements.vue
---- migrateWork/components/MkAchievements.vue	2023-02-19 20:30:38
+--- migrateWork/components/MkAchievements.vue	2023-02-19 20:32:36
 +++ src/components/MkAchievements.vue	2023-02-18 21:58:45
 @@ -41,17 +41,11 @@
            </div>
@@ -318,7 +318,7 @@ diff -ru migrateWork/components/MkAchievements.vue src/components/MkAchievements
  );
  
 diff -ru migrateWork/components/MkClickerGame.vue src/components/MkClickerGame.vue
---- migrateWork/components/MkClickerGame.vue	2023-02-19 20:30:38
+--- migrateWork/components/MkClickerGame.vue	2023-02-19 20:32:36
 +++ src/components/MkClickerGame.vue	2023-02-18 21:58:45
 @@ -12,7 +12,7 @@
          :class="$style.button"
@@ -330,7 +330,7 @@ diff -ru migrateWork/components/MkClickerGame.vue src/components/MkClickerGame.v
      </div>
      <div v-else>
 diff -ru migrateWork/components/MkDonation.vue src/components/MkDonation.vue
---- migrateWork/components/MkDonation.vue	2023-02-19 20:30:39
+--- migrateWork/components/MkDonation.vue	2023-02-19 20:32:37
 +++ src/components/MkDonation.vue	2023-02-19 18:32:25
 @@ -23,7 +23,7 @@
        </svg>
@@ -357,7 +357,7 @@ diff -ru migrateWork/components/MkDonation.vue src/components/MkDonation.vue
        </div>
        <div class="_buttons">
 diff -ru migrateWork/components/MkMention.vue src/components/MkMention.vue
---- migrateWork/components/MkMention.vue	2023-02-19 20:30:39
+--- migrateWork/components/MkMention.vue	2023-02-19 20:32:38
 +++ src/components/MkMention.vue	2023-02-18 21:58:45
 @@ -5,7 +5,11 @@
      :to="url"
@@ -373,7 +373,7 @@ diff -ru migrateWork/components/MkMention.vue src/components/MkMention.vue
        <span :class="$style.username">@{{ username }}</span>
        <span
 diff -ru migrateWork/components/MkMenu.vue src/components/MkMenu.vue
---- migrateWork/components/MkMenu.vue	2023-02-19 20:30:39
+--- migrateWork/components/MkMenu.vue	2023-02-19 20:32:38
 +++ src/components/MkMenu.vue	2023-02-18 21:58:45
 @@ -89,6 +89,7 @@
            <MkAvatar :user="item.user" :class="$style.avatar" /><MkUserName
@@ -384,7 +384,7 @@ diff -ru migrateWork/components/MkMenu.vue src/components/MkMenu.vue
              ><i class="_indicatorCircle"></i
            ></span>
 diff -ru migrateWork/components/MkNotification.vue src/components/MkNotification.vue
---- migrateWork/components/MkNotification.vue	2023-02-19 20:30:40
+--- migrateWork/components/MkNotification.vue	2023-02-19 20:32:38
 +++ src/components/MkNotification.vue	2023-02-18 21:58:45
 @@ -55,7 +55,7 @@
          ></i>
@@ -405,1540 +405,26 @@ diff -ru migrateWork/components/MkNotification.vue src/components/MkNotification
  }
  
 diff -ru migrateWork/components/MkPostForm.vue src/components/MkPostForm.vue
---- migrateWork/components/MkPostForm.vue	2023-02-19 20:30:40
-+++ src/components/MkPostForm.vue	2023-02-19 19:23:14
-@@ -1,1372 +1,199 @@
- <template>
--  <div
--    :class="[$style.root, { [$style.modal]: modal, _popup: modal }]"
--    @dragover.stop="onDragover"
--    @dragenter="onDragenter"
--    @dragleave="onDragleave"
--    @drop.stop="onDrop"
--  >
--    <header :class="$style.header">
--      <button
--        v-if="!fixed"
--        :class="$style.cancel"
--        class="_button"
--        @click="cancel"
--      >
--        <i class="ti ti-x"></i>
--      </button>
--      <button
--        v-click-anime
--        v-tooltip="i18n.ts.switchAccount"
--        :class="$style.account"
--        class="_button"
--        @click="openAccountMenu"
--      >
--        <MkAvatar :user="postAccount ?? $i" :class="$style.avatar" />
--      </button>
--      <div :class="$style.headerRight">
--        <span
--          :class="[
--            $style.textCount,
--            { [$style.textOver]: textLength > maxTextLength },
--          ]"
--          >{{ maxTextLength - textLength }}</span
--        >
--        <span v-if="localOnly" :class="$style.localOnly"
--          ><i class="ti ti-world-off"></i
--        ></span>
--        <button
--          ref="visibilityButton"
--          v-tooltip="i18n.ts.visibility"
--          class="_button"
--          :class="$style.visibility"
--          :disabled="channel != null"
--          @click="setVisibility"
--        >
--          <span v-if="visibility === 'public'"
--            ><i class="ti ti-world"></i
--          ></span>
--          <span v-if="visibility === 'home'"><i class="ti ti-home"></i></span>
--          <span v-if="visibility === 'followers'"
--            ><i class="ti ti-lock"></i
--          ></span>
--          <span v-if="visibility === 'specified'"
--            ><i class="ti ti-mail"></i
--          ></span>
--        </button>
--        <button
--          v-tooltip="i18n.ts.previewNoteText"
--          class="_button"
--          :class="[
--            $style.previewButton,
--            { [$style.previewButtonActive]: showPreview },
--          ]"
--          @click="showPreview = !showPreview"
--        >
--          <i class="ti ti-eye"></i>
--        </button>
--        <button
--          v-click-anime
--          class="_button"
--          :class="[$style.submit, { [$style.submitPosting]: posting }]"
--          :disabled="!canPost"
--          data-cy-open-post-form-submit
--          @click="post"
--        >
--          <div :class="$style.submitInner">
--            <template v-if="posted"></template>
--            <template v-else-if="posting"><MkEllipsis /></template>
--            <template v-else>{{ submitText }}</template>
--            <i
--              style="margin-left: 6px"
--              :class="
--                posted
--                  ? 'ti ti-check'
--                  : reply
--                  ? 'ti ti-arrow-back-up'
--                  : renote
--                  ? 'ti ti-quote'
--                  : 'ti ti-send'
--              "
--            ></i>
--          </div>
--        </button>
--      </div>
--    </header>
--    <div :class="[$style.form]">
--      <MkNoteSimple v-if="reply" :class="$style.targetNote" :note="reply" />
--      <MkNoteSimple v-if="renote" :class="$style.targetNote" :note="renote" />
--      <div v-if="quoteId" :class="$style.withQuote">
--        <i class="ti ti-quote"></i> {{ i18n.ts.quoteAttached
--        }}<button @click="quoteId = null"><i class="ti ti-x"></i></button>
--      </div>
--      <div v-if="visibility === 'specified'" :class="$style.toSpecified">
--        <span style="margin-right: 8px">{{ i18n.ts.recipient }}</span>
--        <div :class="$style.visibleUsers">
--          <span
--            v-for="u in visibleUsers"
--            :key="u.id"
--            :class="$style.visibleUser"
--          >
--            <MkAcct :user="u" />
--            <button
--              class="_button"
--              style="padding: 4px 8px"
--              @click="removeVisibleUser(u)"
--            >
--              <i class="ti ti-x"></i>
--            </button>
--          </span>
--          <button
--            class="_buttonPrimary"
--            style="padding: 4px; border-radius: 8px"
--            @click="addVisibleUser"
--          >
--            <i class="ti ti-plus ti-fw"></i>
--          </button>
--        </div>
--      </div>
--      <MkInfo
--        v-if="hasNotSpecifiedMentions"
--        warn
--        :class="$style.hasNotSpecifiedMentions"
+--- migrateWork/components/MkPostForm.vue	2023-02-19 20:32:38
++++ src/components/MkPostForm.vue	2023-02-19 20:32:46
+@@ -130,11 +130,12 @@
+         v-if="hasNotSpecifiedMentions"
+         warn
+         :class="$style.hasNotSpecifiedMentions"
 -        >{{ i18n.ts.notSpecifiedMentionWarning }} -
--        <button class="_textButton" @click="addMissingMention()">
--          {{ i18n.ts.add }}
++      >
++        {{ i18n.ts.notSpecifiedMentionWarning }} -
+         <button class="_textButton" @click="addMissingMention()">
+           {{ i18n.ts.add }}
 -        </button></MkInfo
 -      >
--      <input
--        v-show="useCw"
--        ref="cwInputEl"
--        v-model="cw"
--        :class="$style.cw"
--        :placeholder="i18n.ts.annotation"
--        @keydown="onKeydown"
-+  <MkStickyContainer>
-+    <template #header>
-+      <MkPageHeader :actions="headerActions" :tabs="headerTabs" />
-+    </template>
-+    <MkSpacer :content-max="800">
-+      <MkPostForm
-+        v-if="state === 'writing'"
-+        fixed
-+        :instant="true"
-+        :initial-text="initialText"
-+        :initial-visibility="visibility"
-+        :initial-files="files"
-+        :initial-local-only="localOnly"
-+        :reply="reply"
-+        :renote="renote"
-+        :initial-visible-users="visibleUsers"
-+        class="_panel"
-+        @posted="state = 'posted'"
-       />
--      <textarea
--        ref="textareaEl"
--        v-model="text"
--        :class="[$style.text, { [$style.withCw]: useCw }]"
--        :disabled="posting || posted"
--        :placeholder="placeholder"
--        data-cy-post-form-text
--        @keydown="onKeydown"
--        @paste="onPaste"
--        @compositionupdate="onCompositionUpdate"
--        @compositionend="onCompositionEnd"
--      />
--      <input
--        v-show="withHashtags"
--        ref="hashtagsInputEl"
--        v-model="hashtags"
--        :class="$style.hashtags"
--        :placeholder="i18n.ts.hashtags"
--        list="hashtags"
--      />
--      <XPostFormAttaches
--        v-model="files"
--        :class="$style.attaches"
--        @detach="detachFile"
--        @change-sensitive="updateFileSensitive"
--        @change-name="updateFileName"
--      />
--      <MkPollEditor v-if="poll" v-model="poll" @destroyed="poll = null" />
--      <XNotePreview v-if="showPreview" :class="$style.preview" :text="text" />
--      <footer :class="$style.footer">
--        <button
--          v-tooltip="i18n.ts.attachFile"
--          class="_button"
--          :class="$style.footerButton"
--          @click="chooseFileFrom"
--        >
--          <i class="ti ti-photo-plus"></i>
--        </button>
--        <button
--          v-tooltip="i18n.ts.poll"
--          class="_button"
--          :class="[$style.footerButton, { [$style.footerButtonActive]: poll }]"
--          @click="togglePoll"
--        >
--          <i class="ti ti-chart-arrows"></i>
--        </button>
--        <button
--          v-tooltip="i18n.ts.useCw"
--          class="_button"
--          :class="[$style.footerButton, { [$style.footerButtonActive]: useCw }]"
--          @click="useCw = !useCw"
--        >
--          <i class="ti ti-eye-off"></i>
--        </button>
--        <button
--          v-tooltip="i18n.ts.mention"
--          class="_button"
--          :class="$style.footerButton"
--          @click="insertMention"
--        >
--          <i class="ti ti-at"></i>
--        </button>
--        <button
--          v-tooltip="i18n.ts.hashtags"
--          class="_button"
--          :class="[
--            $style.footerButton,
--            { [$style.footerButtonActive]: withHashtags },
--          ]"
--          @click="withHashtags = !withHashtags"
--        >
--          <i class="ti ti-hash"></i>
--        </button>
--        <button
--          v-tooltip="i18n.ts.emoji"
--          class="_button"
--          :class="$style.footerButton"
--          @click="insertEmoji"
--        >
--          <i class="ti ti-mood-happy"></i>
--        </button>
--        <button
--          v-if="postFormActions.length > 0"
--          v-tooltip="i18n.ts.plugin"
--          class="_button"
--          :class="$style.footerButton"
--          @click="showActions"
--        >
--          <i class="ti ti-plug"></i>
--        </button>
--      </footer>
--      <datalist id="hashtags">
--        <option
--          v-for="hashtag in recentHashtags"
--          :key="hashtag"
--          :value="hashtag"
--        />
--      </datalist>
--    </div>
--  </div>
-+      <MkButton
-+        v-else-if="state === 'posted'"
-+        primary
-+        class="close"
-+        @click="close()"
-+      >
-+        {{ i18n.ts.close }}
-+      </MkButton>
-+    </MkSpacer>
-+  </MkStickyContainer>
- </template>
- 
- <script lang="ts" setup>
--import { inject, watch, nextTick, onMounted, defineAsyncComponent } from "vue";
--import * as mfm from "mfm-js";
--import * as misskey from "misskey-js";
--import insertTextAtCursor from "insert-text-at-cursor";
--import { length } from "stringz";
--import { toASCII } from "punycode/";
-+// SPECIFICATION: https://misskey-hub.net/docs/features/share-form.html
-+
-+import {} from "vue";
-+import { noteVisibilities } from "misskey-js";
- import * as Acct from "misskey-js/built/acct";
--import { throttle } from "throttle-debounce";
--import MkNoteSimple from "@/components/MkNoteSimple.vue";
--import XNotePreview from "@/components/MkNotePreview.vue";
--import XPostFormAttaches from "@/components/MkPostFormAttaches.vue";
--import MkPollEditor from "@/components/MkPollEditor.vue";
--import { host, url } from "@/config";
--import { erase, unique } from "@/scripts/array";
--import { extractMentions } from "@/scripts/extract-mentions";
--import { formatTimeString } from "@/scripts/format-time-string";
--import { Autocomplete } from "@/scripts/autocomplete";
-+import * as Misskey from "misskey-js";
-+import MkButton from "@/components/MkButton.vue";
-+import MkPostForm from "@/components/MkPostForm.vue";
- import * as os from "@/os";
--import { stream } from "@/stream";
--import { selectFiles } from "@/scripts/select-file";
--import { defaultStore, notePostInterruptors, postFormActions } from "@/store";
--import MkInfo from "@/components/MkInfo.vue";
-+import { mainRouter } from "@/router";
-+import { definePageMetadata } from "@/scripts/page-metadata";
- import { i18n } from "@/i18n";
--import { instance } from "@/instance";
--import {
--  $i,
--  notesCount,
--  incNotesCount,
--  getAccounts,
--  openAccountMenu as openAccountMenu_,
--} from "@/account";
--import { uploadFile } from "@/scripts/upload";
--import { deepClone } from "@/scripts/clone";
--import MkRippleEffect from "@/components/MkRippleEffect.vue";
--import { miLocalStorage } from "@/local-storage";
--import { claimAchievement } from "@/scripts/achievements";
- 
--const modal = inject("modal");
-+const urlParams = new URLSearchParams(window.location.search);
-+const localOnlyQuery = urlParams.get("localOnly");
-+const visibilityQuery = urlParams.get(
-+  "visibility"
-+) as (typeof noteVisibilities)[number];
- 
--const props = withDefaults(
--  defineProps<{
--    reply?: misskey.entities.Note;
--    renote?: misskey.entities.Note;
--    channel?: any; // TODO
--    mention?: misskey.entities.User;
--    specified?: misskey.entities.User;
--    initialText?: string;
--    initialVisibility?: (typeof misskey.noteVisibilities)[number];
--    initialFiles?: misskey.entities.DriveFile[];
--    initialLocalOnly?: boolean;
--    initialVisibleUsers?: misskey.entities.User[];
--    initialNote?: misskey.entities.Note;
--    instant?: boolean;
--    fixed?: boolean;
--    autofocus?: boolean;
--    freezeAfterPosted?: boolean;
--  }>(),
--  {
--    initialVisibleUsers: () => [],
--    autofocus: true,
--  }
--);
--
--const emit = defineEmits<{
--  (ev: "posted"): void;
--  (ev: "cancel"): void;
--  (ev: "esc"): void;
--}>();
--
--const textareaEl = $shallowRef<HTMLTextAreaElement | null>(null);
--const cwInputEl = $shallowRef<HTMLInputElement | null>(null);
--const hashtagsInputEl = $shallowRef<HTMLInputElement | null>(null);
--const visibilityButton = $shallowRef<HTMLElement | null>(null);
--
--let posting = $ref(false);
--let posted = $ref(false);
--let text = $ref(props.initialText ?? "");
--let files = $ref(props.initialFiles ?? []);
--let poll = $ref<{
--  choices: string[];
--  multiple: boolean;
--  expiresAt: string | null;
--  expiredAfter: string | null;
--} | null>(null);
--let useCw = $ref(false);
--let showPreview = $ref(false);
--let cw = $ref<string | null>(null);
--let localOnly = $ref<boolean>(
--  props.initialLocalOnly ?? defaultStore.state.rememberNoteVisibility
--    ? defaultStore.state.localOnly
--    : defaultStore.state.defaultNoteLocalOnly
--);
-+let state = $ref("fetching" as "fetching" | "writing" | "posted");
-+let title = $ref(urlParams.get("title"));
-+const text = urlParams.get("text");
-+const url = urlParams.get("url");
-+let initialText = $ref<string | undefined>();
-+let reply = $ref<Misskey.entities.Note | undefined>();
-+let renote = $ref<Misskey.entities.Note | undefined>();
- let visibility = $ref(
--  props.initialVisibility ??
--    ((defaultStore.state.rememberNoteVisibility
--      ? defaultStore.state.visibility
--      : defaultStore.state
--          .defaultNoteVisibility) as (typeof misskey.noteVisibilities)[number])
-+  noteVisibilities.includes(visibilityQuery) ? visibilityQuery : undefined
- );
--let visibleUsers = $ref([]);
--if (props.initialVisibleUsers) {
--  props.initialVisibleUsers.forEach(pushVisibleUser);
--}
--let autocomplete = $ref(null);
--let draghover = $ref(false);
--let quoteId = $ref(null);
--let hasNotSpecifiedMentions = $ref(false);
--let recentHashtags = $ref(
--  JSON.parse(miLocalStorage.getItem("hashtags") || "[]")
-+let localOnly = $ref(
-+  localOnlyQuery === "0" ? false : localOnlyQuery === "1" ? true : undefined
- );
--let imeText = $ref("");
-+let files = $ref([] as Misskey.entities.DriveFile[]);
-+let visibleUsers = $ref([] as Misskey.entities.User[]);
- 
--const typing = throttle(3000, () => {
--  if (props.channel) {
--    stream.send("typingOnChannel", { channel: props.channel.id });
--  }
--});
-+async function init() {
-+  let noteText = "";
-+  if (title) noteText += `[ ${title} ]\n`;
-+  // Googleニュース対策
-+  if (text?.startsWith(`${title}.\n`))
-+    noteText += text.replace(`${title}.\n`, "");
-+  else if (text && title !== text) noteText += `${text}\n`;
-+  if (url) noteText += `${url}`;
-+  initialText = noteText.trim();
- 
--const draftKey = $computed((): string => {
--  let key = props.channel ? `channel:${props.channel.id}` : "";
--
--  if (props.renote) {
--    key += `renote:${props.renote.id}`;
--  } else if (props.reply) {
--    key += `reply:${props.reply.id}`;
--  } else {
--    key += "note";
-+  if (visibility === "specified") {
-+    const visibleUserIds = urlParams.get("visibleUserIds");
-+    const visibleAccts = urlParams.get("visibleAccts");
-+    await Promise.all(
-+      [
-+        ...(visibleUserIds
-+          ? visibleUserIds.split(",").map((userId) => ({ userId }))
-+          : []),
-+        ...(visibleAccts ? visibleAccts.split(",").map(Acct.parse) : []),
-+      ]
-+        // TypeScriptの指示通りに変換する
-+        .map((q) =>
-+          "username" in q
-+            ? {
-+                username: q.username,
-+                host: q.host === null ? undefined : q.host,
-+              }
-+            : q
-+        )
-+        .map((q) =>
-+          os.api("users/show", q).then(
-+            (user) => {
-+              visibleUsers.push(user);
-+            },
-+            () => {
-+              console.error(`Invalid user query: ${JSON.stringify(q)}`);
-+            }
-+          )
-+        )
-+    );
-   }
- 
--  return key;
--});
--
--const placeholder = $computed((): string => {
--  if (props.renote) {
--    return i18n.ts._postForm.quotePlaceholder;
--  } else if (props.reply) {
--    return i18n.ts._postForm.replyPlaceholder;
--  } else if (props.channel) {
--    return i18n.ts._postForm.channelPlaceholder;
--  } else {
--    const xs = [
--      i18n.ts._postForm._placeholders.a,
--      i18n.ts._postForm._placeholders.b,
--      i18n.ts._postForm._placeholders.c,
--      i18n.ts._postForm._placeholders.d,
--      i18n.ts._postForm._placeholders.e,
--      i18n.ts._postForm._placeholders.f,
--    ];
--    return xs[Math.floor(Math.random() * xs.length)];
--  }
--});
--
--const submitText = $computed((): string => {
--  return props.renote
--    ? i18n.ts.quote
--    : props.reply
--    ? i18n.ts.reply
--    : i18n.ts.note;
--});
--
--const textLength = $computed((): number => {
--  return length((text + imeText).trim());
--});
--
--const maxTextLength = $computed((): number => {
--  return instance ? instance.maxNoteTextLength : 1000;
--});
--
--const canPost = $computed((): boolean => {
--  return (
--    !posting &&
--    !posted &&
--    (1 <= textLength || 1 <= files.length || !!poll || !!props.renote) &&
--    textLength <= maxTextLength &&
--    (!poll || poll.choices.length >= 2)
--  );
--});
--
--const withHashtags = $computed(
--  defaultStore.makeGetterSetter("postFormWithHashtags")
--);
--const hashtags = $computed(defaultStore.makeGetterSetter("postFormHashtags"));
--
--watch($$(text), () => {
--  checkMissingMention();
--});
--
--watch(
--  $$(visibleUsers),
--  () => {
--    checkMissingMention();
--  },
--  {
--    deep: true,
--  }
--);
--
--if (props.mention) {
--  text = props.mention.host
--    ? `@${props.mention.username}@${toASCII(props.mention.host)}`
--    : `@${props.mention.username}`;
--  text += " ";
--}
--
--if (
--  props.reply &&
--  (props.reply.user.username !== $i.username ||
--    (props.reply.user.host != null && props.reply.user.host !== host))
--) {
--  text = `@${props.reply.user.username}${
--    props.reply.user.host != null ? "@" + toASCII(props.reply.user.host) : ""
--  } `;
--}
--
--if (props.reply && props.reply.text != null) {
--  const ast = mfm.parse(props.reply.text);
--  const otherHost = props.reply.user.host;
--
--  for (const x of extractMentions(ast)) {
--    const mention = x.host
--      ? `@${x.username}@${toASCII(x.host)}`
--      : otherHost == null || otherHost === host
--      ? `@${x.username}`
--      : `@${x.username}@${toASCII(otherHost)}`;
--
--    // 自分は除外
--    if ($i.username === x.username && (x.host == null || x.host === host))
--      continue;
--
--    // 重複は除外
--    if (text.includes(`${mention} `)) continue;
--
--    text += `${mention} `;
--  }
--}
--
--if (props.channel) {
--  visibility = "public";
--  localOnly = true; // TODO: チャンネルが連合するようになった折には消す
--}
--
--// 公開以外へのリプライ時は元の公開範囲を引き継ぐ
--if (
--  props.reply &&
--  ["home", "followers", "specified"].includes(props.reply.visibility)
--) {
--  if (props.reply.visibility === "home" && visibility === "followers") {
--    visibility = "followers";
--  } else if (
--    ["home", "followers"].includes(props.reply.visibility) &&
--    visibility === "specified"
--  ) {
--    visibility = "specified";
--  } else {
--    visibility = props.reply.visibility;
--  }
--
--  if (visibility === "specified") {
--    if (props.reply.visibleUserIds) {
--      os.api("users/show", {
--        userIds: props.reply.visibleUserIds.filter(
--          (uid) => uid !== $i.id && uid !== props.reply.userId
--        ),
--      }).then((users) => {
--        users.forEach(pushVisibleUser);
-+  try {
-+    //#region Reply
-+    const replyId = urlParams.get("replyId");
-+    const replyUri = urlParams.get("replyUri");
-+    if (replyId) {
-+      reply = await os.api("notes/show", {
-+        noteId: replyId,
-       });
--    }
--
--    if (props.reply.userId !== $i.id) {
--      os.api("users/show", { userId: props.reply.userId }).then((user) => {
--        pushVisibleUser(user);
-+    } else if (replyUri) {
-+      const obj = await os.api("ap/show", {
-+        uri: replyUri,
-       });
-+      if (obj.type === "Note") {
-+        reply = obj.object;
-+      }
-     }
--  }
--}
-+    //#endregion
- 
--if (props.specified) {
--  visibility = "specified";
--  pushVisibleUser(props.specified);
--}
--
--// keep cw when reply
--if (defaultStore.state.keepCw && props.reply && props.reply.cw) {
--  useCw = true;
--  cw = props.reply.cw;
--}
--
--function watchForDraft() {
--  watch($$(text), () => saveDraft());
--  watch($$(useCw), () => saveDraft());
--  watch($$(cw), () => saveDraft());
--  watch($$(poll), () => saveDraft());
--  watch($$(files), () => saveDraft(), { deep: true });
--  watch($$(visibility), () => saveDraft());
--  watch($$(localOnly), () => saveDraft());
--}
--
--function checkMissingMention() {
--  if (visibility === "specified") {
--    const ast = mfm.parse(text);
--
--    for (const x of extractMentions(ast)) {
--      if (
--        !visibleUsers.some(
--          (u) => u.username === x.username && u.host === x.host
--        )
--      ) {
--        hasNotSpecifiedMentions = true;
--        return;
-+    //#region Renote
-+    const renoteId = urlParams.get("renoteId");
-+    const renoteUri = urlParams.get("renoteUri");
-+    if (renoteId) {
-+      renote = await os.api("notes/show", {
-+        noteId: renoteId,
-+      });
-+    } else if (renoteUri) {
-+      const obj = await os.api("ap/show", {
-+        uri: renoteUri,
-+      });
-+      if (obj.type === "Note") {
-+        renote = obj.object;
-       }
-     }
--    hasNotSpecifiedMentions = false;
--  }
--}
-+    //#endregion
- 
--function addMissingMention() {
--  const ast = mfm.parse(text);
--
--  for (const x of extractMentions(ast)) {
--    if (
--      !visibleUsers.some((u) => u.username === x.username && u.host === x.host)
--    ) {
--      os.api("users/show", { username: x.username, host: x.host }).then(
--        (user) => {
--          visibleUsers.push(user);
--        }
-+    //#region Drive files
-+    const fileIds = urlParams.get("fileIds");
-+    if (fileIds) {
-+      await Promise.all(
-+        fileIds.split(",").map((fileId) =>
-+          os.api("drive/files/show", { fileId }).then(
-+            (file) => {
-+              files.push(file);
-+            },
-+            () => {
-+              console.error(`Failed to fetch a file ${fileId}`);
-+            }
-+          )
-+        )
-       );
-     }
--  }
--}
--
--function togglePoll() {
--  if (poll) {
--    poll = null;
--  } else {
--    poll = {
--      choices: ["", ""],
--      multiple: false,
--      expiresAt: null,
--      expiredAfter: null,
--    };
--  }
--}
--
--function addTag(tag: string) {
--  insertTextAtCursor(textareaEl, ` #${tag} `);
--}
--
--function focus() {
--  if (textareaEl) {
--    textareaEl.focus();
--    textareaEl.setSelectionRange(
--      textareaEl.value.length,
--      textareaEl.value.length
--    );
--  }
--}
--
--function chooseFileFrom(ev) {
--  selectFiles(ev.currentTarget ?? ev.target, i18n.ts.attachFile).then(
--    (files_) => {
--      for (const file of files_) {
--        files.push(file);
--      }
--    }
--  );
--}
--
--function detachFile(id) {
--  files = files.filter((x) => x.id !== id);
--}
--
--function updateFileSensitive(file, sensitive) {
--  files[files.findIndex((x) => x.id === file.id)].isSensitive = sensitive;
--}
--
--function updateFileName(file, name) {
--  files[files.findIndex((x) => x.id === file.id)].name = name;
--}
--
--function upload(file: File, name?: string) {
--  uploadFile(file, defaultStore.state.uploadFolder, name).then((res) => {
--    files.push(res);
--  });
--}
--
--function setVisibility() {
--  if (props.channel) {
--    // TODO: information dialog
--    return;
--  }
--
--  os.popup(
--    defineAsyncComponent(() => import("@/components/MkVisibilityPicker.vue")),
--    {
--      currentVisibility: visibility,
--      currentLocalOnly: localOnly,
--      src: visibilityButton,
--    },
--    {
--      changeVisibility: (v) => {
--        visibility = v;
--        if (defaultStore.state.rememberNoteVisibility) {
--          defaultStore.set("visibility", visibility);
--        }
--      },
--      changeLocalOnly: (v) => {
--        localOnly = v;
--        if (defaultStore.state.rememberNoteVisibility) {
--          defaultStore.set("localOnly", localOnly);
--        }
--      },
--    },
--    "closed"
--  );
--}
--
--function pushVisibleUser(user) {
--  if (
--    !visibleUsers.some(
--      (u) => u.username === user.username && u.host === user.host
--    )
--  ) {
--    visibleUsers.push(user);
--  }
--}
--
--function addVisibleUser() {
--  os.selectUser().then((user) => {
--    pushVisibleUser(user);
--  });
--}
--
--function removeVisibleUser(user) {
--  visibleUsers = erase(user, visibleUsers);
--}
--
--function clear() {
--  text = "";
--  files = [];
--  poll = null;
--  quoteId = null;
--}
--
--function onKeydown(ev: KeyboardEvent) {
--  if (
--    (ev.which === 10 || ev.which === 13) &&
--    (ev.ctrlKey || ev.metaKey) &&
--    canPost
--  )
--    post();
--  if (ev.which === 27) emit("esc");
--  typing();
--}
--
--function onCompositionUpdate(ev: CompositionEvent) {
--  imeText = ev.data;
--  typing();
--}
--
--function onCompositionEnd(ev: CompositionEvent) {
--  imeText = "";
--}
--
--async function onPaste(ev: ClipboardEvent) {
--  for (const { item, i } of Array.from(ev.clipboardData.items).map(
--    (item, i) => ({ item, i })
--  )) {
--    if (item.kind === "file") {
--      const file = item.getAsFile();
--      const lio = file.name.lastIndexOf(".");
--      const ext = lio >= 0 ? file.name.slice(lio) : "";
--      const formatted = `${formatTimeString(
--        new Date(file.lastModified),
--        defaultStore.state.pastedFileName
--      ).replace(/{{number}}/g, `${i + 1}`)}${ext}`;
--      upload(file, formatted);
--    }
--  }
--
--  const paste = ev.clipboardData.getData("text");
--
--  if (!props.renote && !quoteId && paste.startsWith(url + "/notes/")) {
--    ev.preventDefault();
--
--    os.confirm({
--      type: "info",
--      text: i18n.ts.quoteQuestion,
--    }).then(({ canceled }) => {
--      if (canceled) {
--        insertTextAtCursor(textareaEl, paste);
--        return;
--      }
--
--      quoteId = paste.substr(url.length).match(/^\/notes\/(.+?)\/?$/)[1];
-+    //#endregion
-+  } catch (err: any) {
-+    os.alert({
-+      type: "error",
-+      title: err.message,
-+      text: err.name,
-     });
-   }
--}
- 
--function onDragover(ev) {
--  if (!ev.dataTransfer.items[0]) return;
--  const isFile = ev.dataTransfer.items[0].kind === "file";
--  const isDriveFile = ev.dataTransfer.types[0] === _DATA_TRANSFER_DRIVE_FILE_;
--  if (isFile || isDriveFile) {
--    ev.preventDefault();
--    draghover = true;
--    switch (ev.dataTransfer.effectAllowed) {
--      case "all":
--      case "uninitialized":
--      case "copy":
--      case "copyLink":
--      case "copyMove":
--        ev.dataTransfer.dropEffect = "copy";
--        break;
--      case "linkMove":
--      case "move":
--        ev.dataTransfer.dropEffect = "move";
--        break;
--      default:
--        ev.dataTransfer.dropEffect = "none";
--        break;
--    }
--  }
-+  state = "writing";
- }
- 
--function onDragenter(ev) {
--  draghover = true;
--}
-+init();
- 
--function onDragleave(ev) {
--  draghover = false;
--}
-+function close(): void {
-+  window.close();
- 
--function onDrop(ev): void {
--  draghover = false;
--
--  // ファイルだったら
--  if (ev.dataTransfer.files.length > 0) {
--    ev.preventDefault();
--    for (const x of Array.from(ev.dataTransfer.files)) upload(x);
--    return;
--  }
--
--  //#region ドライブのファイル
--  const driveFile = ev.dataTransfer.getData(_DATA_TRANSFER_DRIVE_FILE_);
--  if (driveFile != null && driveFile !== "") {
--    const file = JSON.parse(driveFile);
--    files.push(file);
--    ev.preventDefault();
--  }
--  //#endregion
-+  // 閉じなければ100ms後タイムラインに
-+  window.setTimeout(() => {
-+    mainRouter.push("/");
-+  }, 100);
- }
- 
--function saveDraft() {
--  const draftData = JSON.parse(miLocalStorage.getItem("drafts") || "{}");
-+const headerActions = $computed(() => []);
- 
--  draftData[draftKey] = {
--    updatedAt: new Date(),
--    data: {
--      text: text,
--      useCw: useCw,
--      cw: cw,
--      visibility: visibility,
--      localOnly: localOnly,
--      files: files,
--      poll: poll,
--    },
--  };
-+const headerTabs = $computed(() => []);
- 
--  miLocalStorage.setItem("drafts", JSON.stringify(draftData));
--}
--
--function deleteDraft() {
--  const draftData = JSON.parse(miLocalStorage.getItem("drafts") ?? "{}");
--
--  delete draftData[draftKey];
--
--  miLocalStorage.setItem("drafts", JSON.stringify(draftData));
--}
--
--async function post(ev?: MouseEvent) {
--  if (ev) {
--    const el = ev.currentTarget ?? ev.target;
--    const rect = el.getBoundingClientRect();
--    const x = rect.left + el.offsetWidth / 2;
--    const y = rect.top + el.offsetHeight / 2;
--    os.popup(MkRippleEffect, { x, y }, {}, "end");
--  }
--
--  const annoying =
--    text.includes("$[x2") ||
--    text.includes("$[x3") ||
--    text.includes("$[x4") ||
--    text.includes("$[scale") ||
--    text.includes("$[position");
--  if (annoying) {
--    const { canceled, result } = await os.actions({
--      type: "warning",
--      text: i18n.ts.thisPostMayBeAnnoying,
--      actions: [
--        {
--          value: "home",
--          text: i18n.ts.thisPostMayBeAnnoyingHome,
--          primary: true,
--        },
--        {
--          value: "cancel",
--          text: i18n.ts.thisPostMayBeAnnoyingCancel,
--        },
--        {
--          value: "ignore",
--          text: i18n.ts.thisPostMayBeAnnoyingIgnore,
--        },
--      ],
--    });
--
--    if (canceled) return;
--    if (result === "cancel") return;
--    if (result === "home") {
--      visibility = "home";
--    }
--  }
--
--  let postData = {
--    text: text === "" ? undefined : text,
--    fileIds: files.length > 0 ? files.map((f) => f.id) : undefined,
--    replyId: props.reply ? props.reply.id : undefined,
--    renoteId: props.renote ? props.renote.id : quoteId ? quoteId : undefined,
--    channelId: props.channel ? props.channel.id : undefined,
--    poll: poll,
--    cw: useCw ? cw ?? "" : undefined,
--    localOnly: localOnly,
--    visibility: visibility,
--    visibleUserIds:
--      visibility === "specified" ? visibleUsers.map((u) => u.id) : undefined,
--  };
--
--  if (withHashtags && hashtags && hashtags.trim() !== "") {
--    const hashtags_ = hashtags
--      .trim()
--      .split(" ")
--      .map((x) => (x.startsWith("#") ? x : "#" + x))
--      .join(" ");
--    postData.text = postData.text ? `${postData.text} ${hashtags_}` : hashtags_;
--  }
--
--  // plugin
--  if (notePostInterruptors.length > 0) {
--    for (const interruptor of notePostInterruptors) {
--      postData = await interruptor.handler(deepClone(postData));
--    }
--  }
--
--  let token = undefined;
--
--  if (postAccount) {
--    const storedAccounts = await getAccounts();
--    token = storedAccounts.find((x) => x.id === postAccount.id)?.token;
--  }
--
--  posting = true;
--  os.api("notes/create", postData, token)
--    .then(() => {
--      if (props.freezeAfterPosted) {
--        posted = true;
--      } else {
--        clear();
--      }
--      nextTick(() => {
--        deleteDraft();
--        emit("posted");
--        if (postData.text && postData.text !== "") {
--          const hashtags_ = mfm
--            .parse(postData.text)
--            .filter((x) => x.type === "hashtag")
--            .map((x) => x.props.hashtag);
--          const history = JSON.parse(
--            miLocalStorage.getItem("hashtags") || "[]"
--          ) as string[];
--          miLocalStorage.setItem(
--            "hashtags",
--            JSON.stringify(unique(hashtags_.concat(history)))
--          );
--        }
--        posting = false;
--        postAccount = null;
--
--        incNotesCount();
--        if (notesCount === 1) {
--          claimAchievement("notes1");
--        }
--
--        const text = postData.text?.toLowerCase() ?? "";
--        if (
--          (text.includes("love") || text.includes("❤")) &&
--          text.includes("misskey")
--        ) {
--          claimAchievement("iLoveMisskey");
--        }
--        if (
--          text.includes("Efrlqw8ytg4".toLowerCase()) ||
--          text.includes("XVCwzwxdHuA".toLowerCase())
--        ) {
--          claimAchievement("brainDiver");
--        }
--
--        if (props.renote && props.renote.userId === $i.id && text.length > 0) {
--          claimAchievement("selfQuote");
--        }
--
--        const date = new Date();
--        const h = date.getHours();
--        const m = date.getMinutes();
--        const s = date.getSeconds();
--        if (h >= 0 && h <= 3) {
--          claimAchievement("postedAtLateNight");
--        }
--        if (m === 0 && s === 0) {
--          claimAchievement("postedAt0min0sec");
--        }
--      });
--    })
--    .catch((err) => {
--      posting = false;
--      os.alert({
--        type: "error",
--        text: err.message + "\n" + (err as any).id,
--      });
--    });
--}
--
--function cancel() {
--  emit("cancel");
--}
--
--function insertMention() {
--  os.selectUser().then((user) => {
--    insertTextAtCursor(textareaEl, "@" + Acct.toString(user) + " ");
--  });
--}
--
--async function insertEmoji(ev: MouseEvent) {
--  os.openEmojiPicker(ev.currentTarget ?? ev.target, {}, textareaEl);
--}
--
--function showActions(ev) {
--  os.popupMenu(
--    postFormActions.map((action) => ({
--      text: action.title,
--      action: () => {
--        action.handler(
--          {
--            text: text,
--          },
--          (key, value) => {
--            if (key === "text") {
--              text = value;
--            }
--          }
--        );
--      },
--    })),
--    ev.currentTarget ?? ev.target
--  );
--}
--
--let postAccount = $ref<misskey.entities.UserDetailed | null>(null);
--
--function openAccountMenu(ev: MouseEvent) {
--  openAccountMenu_(
--    {
--      withExtraOperation: false,
--      includeCurrentAccount: true,
--      active: postAccount != null ? postAccount.id : $i.id,
--      onChoose: (account) => {
--        if (account.id === $i.id) {
--          postAccount = null;
--        } else {
--          postAccount = account;
--        }
--      },
--    },
--    ev
--  );
--}
--
--onMounted(() => {
--  if (props.autofocus) {
--    focus();
--
--    nextTick(() => {
--      focus();
--    });
--  }
--
--  // TODO: detach when unmount
--  new Autocomplete(textareaEl, $$(text));
--  new Autocomplete(cwInputEl, $$(cw));
--  new Autocomplete(hashtagsInputEl, $$(hashtags));
--
--  nextTick(() => {
--    // 書きかけの投稿を復元
--    if (!props.instant && !props.mention && !props.specified) {
--      const draft = JSON.parse(miLocalStorage.getItem("drafts") || "{}")[
--        draftKey
--      ];
--      if (draft) {
--        text = draft.data.text;
--        useCw = draft.data.useCw;
--        cw = draft.data.cw;
--        visibility = draft.data.visibility;
--        localOnly = draft.data.localOnly;
--        files = (draft.data.files || []).filter((draftFile) => draftFile);
--        if (draft.data.poll) {
--          poll = draft.data.poll;
--        }
--      }
--    }
--
--    // 削除して編集
--    if (props.initialNote) {
--      const init = props.initialNote;
--      text = init.text ? init.text : "";
--      files = init.files;
--      cw = init.cw;
--      useCw = init.cw != null;
--      if (init.poll) {
--        poll = {
--          choices: init.poll.choices.map((x) => x.text),
--          multiple: init.poll.multiple,
--          expiresAt: init.poll.expiresAt,
--          expiredAfter: init.poll.expiredAfter,
--        };
--      }
--      visibility = init.visibility;
--      localOnly = init.localOnly;
--      quoteId = init.renote ? init.renote.id : null;
--    }
--
--    nextTick(() => watchForDraft());
--  });
-+definePageMetadata({
-+  title: i18n.ts.share,
-+  icon: "ti ti-share",
- });
--
--defineExpose({
--  clear,
--});
- </script>
- 
--<style lang="scss" module>
--.root {
--  position: relative;
--
--  &.modal {
--    width: 100%;
--    max-width: 520px;
--  }
--}
--
--.header {
--  z-index: 1000;
--  height: 66px;
--}
--
--.cancel {
--  padding: 0;
--  font-size: 1em;
--  width: 64px;
--  line-height: 66px;
--}
--
--.account {
--  height: 100%;
--  aspect-ratio: 1/1;
--  display: inline-flex;
--  vertical-align: bottom;
--}
--
--.avatar {
--  width: 28px;
--  height: 28px;
--  margin: auto;
--}
--
--.headerRight {
--  position: absolute;
--  top: 0;
--  right: 0;
--}
--
--.textCount {
--  opacity: 0.7;
--  line-height: 66px;
--}
--
--.visibility {
--  height: 34px;
--  width: 34px;
--  margin: 0 0 0 8px;
--
--  & + .localOnly {
--    margin-left: 0 !important;
--  }
--}
--
--.localOnly {
--  margin: 0 0 0 12px;
--  opacity: 0.7;
--}
--
--.previewButton {
--  display: inline-block;
--  padding: 0;
--  margin: 0 8px 0 0;
--  font-size: 16px;
--  width: 34px;
--  height: 34px;
--  border-radius: 6px;
--
--  &:hover {
--    background: var(--X5);
--  }
--
--  &.previewButtonActive {
--    color: var(--accent);
--  }
--}
--
--.submit {
--  margin: 16px 16px 16px 0;
--  vertical-align: bottom;
--
--  &:disabled {
--    opacity: 0.7;
--  }
--
--  &.posting {
--    cursor: wait;
--  }
--
--  &:not(:disabled):hover {
--    > .inner {
--      background: linear-gradient(90deg, var(--X8), var(--X8));
--    }
--  }
--
--  &:not(:disabled):active {
--    > .inner {
--      background: linear-gradient(90deg, var(--X8), var(--X8));
--    }
--  }
--}
--
--.submitInner {
--  padding: 0 12px;
--  line-height: 34px;
--  font-weight: bold;
--  border-radius: 4px;
--  font-size: 0.9em;
--  min-width: 90px;
--  box-sizing: border-box;
--  color: var(--fgOnAccent);
--  background: linear-gradient(
--    90deg,
--    var(--buttonGradateA),
--    var(--buttonGradateB)
--  );
--}
--
--.form {
--}
--
--.preview {
--  padding: 16px 20px 0 20px;
--}
--
--.targetNote {
--  padding: 0 20px 16px 20px;
--}
--
--.withQuote {
--  margin: 0 0 8px 0;
--  color: var(--accent);
--}
--
--.toSpecified {
--  padding: 6px 24px;
--  margin-bottom: 8px;
--  overflow: auto;
--  white-space: nowrap;
--}
--
--.visibleUsers {
--  display: inline;
--  top: -1px;
--  font-size: 14px;
--}
--
--.visibleUser {
--  margin-right: 14px;
--  padding: 8px 0 8px 8px;
--  border-radius: 8px;
--  background: var(--X4);
--}
--
--.hasNotSpecifiedMentions {
--  margin: 0 20px 16px 20px;
--}
--
--.cw,
--.hashtags,
--.text {
--  display: block;
--  box-sizing: border-box;
--  padding: 0 24px;
--  margin: 0;
--  width: 100%;
--  font-size: 16px;
--  border: none;
--  border-radius: 0;
--  background: transparent;
--  color: var(--fg);
--  font-family: inherit;
--
--  &:focus {
--    outline: none;
--  }
--
--  &:disabled {
--    opacity: 0.5;
--  }
--}
--
--.cw {
--  z-index: 1;
--  padding-bottom: 8px;
--  border-bottom: solid 0.5px var(--divider);
--}
--
--.hashtags {
--  z-index: 1;
--  padding-top: 8px;
--  padding-bottom: 8px;
--  border-top: solid 0.5px var(--divider);
--}
--
--.text {
--  max-width: 100%;
--  min-width: 100%;
--  min-height: 90px;
--
--  &.withCw {
--    padding-top: 8px;
--  }
--}
--
--.footer {
--  padding: 0 16px 16px 16px;
--}
--
--.footerButton {
--  display: inline-block;
--  padding: 0;
--  margin: 0;
--  font-size: 1em;
--  width: 46px;
--  height: 46px;
--  border-radius: 6px;
--
--  &:hover {
--    background: var(--X5);
--  }
--
--  &.footerButtonActive {
--    color: var(--accent);
--  }
--}
--
--@container (max-width: 500px) {
--  .header {
--    height: 50px;
--
--    > .cancel {
--      width: 50px;
--      line-height: 50px;
--    }
--
--    > .headerRight {
--      > .textCount {
--        line-height: 50px;
--      }
--
--      > .submit {
--        margin: 8px;
--      }
--    }
--  }
--
--  .toSpecified {
--    padding: 6px 16px;
--  }
--
--  .cw,
--  .hashtags,
--  .text {
--    padding: 0 16px;
--  }
--
--  .text {
--    min-height: 80px;
--  }
--
--  .footer {
--    padding: 0 8px 8px 8px;
--  }
--}
--
--@container (max-width: 310px) {
--  .footerButton {
--    font-size: 14px;
--    width: 44px;
--    height: 44px;
--  }
-+<style lang="scss" scoped>
-+.close {
-+  margin: 16px auto;
- }
- </style>
++        </button>
++      </MkInfo>
+       <input
+         v-show="useCw"
+         ref="cwInputEl"
 diff -ru migrateWork/components/MkRange.vue src/components/MkRange.vue
---- migrateWork/components/MkRange.vue	2023-02-19 20:30:40
+--- migrateWork/components/MkRange.vue	2023-02-19 20:32:38
 +++ src/components/MkRange.vue	2023-02-18 22:55:31
 @@ -266,7 +266,7 @@
            bottom: 0;
@@ -1950,7 +436,7 @@ diff -ru migrateWork/components/MkRange.vue src/components/MkRange.vue
            border-radius: 999px;
          }
 diff -ru migrateWork/components/MkReactionsViewer.reaction.vue src/components/MkReactionsViewer.reaction.vue
---- migrateWork/components/MkReactionsViewer.reaction.vue	2023-02-19 20:30:40
+--- migrateWork/components/MkReactionsViewer.reaction.vue	2023-02-19 20:32:38
 +++ src/components/MkReactionsViewer.reaction.vue	2023-02-18 21:58:45
 @@ -31,7 +31,6 @@
  import { $i } from "@/account";
@@ -1969,7 +455,7 @@ diff -ru migrateWork/components/MkReactionsViewer.reaction.vue src/components/Mk
    const rect = buttonEl.value.getBoundingClientRect();
    const x = rect.left + 16;
 diff -ru migrateWork/components/MkSignin.vue src/components/MkSignin.vue
---- migrateWork/components/MkSignin.vue	2023-02-19 20:30:40
+--- migrateWork/components/MkSignin.vue	2023-02-19 20:32:39
 +++ src/components/MkSignin.vue	2023-02-19 19:03:12
 @@ -1,111 +1,41 @@
  <template>
@@ -2221,7 +707,7 @@ diff -ru migrateWork/components/MkSignin.vue src/components/MkSignin.vue
  }
  
 diff -ru migrateWork/components/MkUserPreview.vue src/components/MkUserPreview.vue
---- migrateWork/components/MkUserPreview.vue	2023-02-19 20:30:40
+--- migrateWork/components/MkUserPreview.vue	2023-02-19 20:32:39
 +++ src/components/MkUserPreview.vue	2023-02-19 18:55:14
 @@ -34,9 +34,9 @@
          </div>
@@ -2237,7 +723,7 @@ diff -ru migrateWork/components/MkUserPreview.vue src/components/MkUserPreview.v
          </div>
          <div class="description">
 diff -ru migrateWork/components/global/MkAvatar.vue src/components/global/MkAvatar.vue
---- migrateWork/components/global/MkAvatar.vue	2023-02-19 20:30:38
+--- migrateWork/components/global/MkAvatar.vue	2023-02-19 20:32:35
 +++ src/components/global/MkAvatar.vue	2023-02-18 21:58:45
 @@ -56,6 +56,7 @@
  import { acct, userPage } from "@/filters/user";
@@ -2248,7 +734,7 @@ diff -ru migrateWork/components/global/MkAvatar.vue src/components/global/MkAvat
  const props = withDefaults(
    defineProps<{
 diff -ru migrateWork/components/global/MkStickyContainer.vue src/components/global/MkStickyContainer.vue
---- migrateWork/components/global/MkStickyContainer.vue	2023-02-19 20:30:38
+--- migrateWork/components/global/MkStickyContainer.vue	2023-02-19 20:32:35
 +++ src/components/global/MkStickyContainer.vue	2023-02-18 21:58:45
 @@ -24,7 +24,10 @@
  
@@ -2263,7 +749,7 @@ diff -ru migrateWork/components/global/MkStickyContainer.vue src/components/glob
  
  const calc = () => {
 diff -ru migrateWork/config.ts src/config.ts
---- migrateWork/config.ts	2023-02-19 20:30:41
+--- migrateWork/config.ts	2023-02-19 20:32:39
 +++ src/config.ts	2023-02-18 21:58:45
 @@ -1,24 +1,19 @@
  import { miLocalStorage } from "./local-storage";
@@ -2298,7 +784,7 @@ diff -ru migrateWork/config.ts src/config.ts
 -  locale = newLocale;
 -}
 diff -ru migrateWork/custom-emojis.ts src/custom-emojis.ts
---- migrateWork/custom-emojis.ts	2023-02-19 20:30:41
+--- migrateWork/custom-emojis.ts	2023-02-19 20:32:39
 +++ src/custom-emojis.ts	2023-02-18 22:55:31
 @@ -18,24 +18,26 @@
    return markRaw([...Array.from(categories), null]);
@@ -2344,7 +830,7 @@ diff -ru migrateWork/custom-emojis.ts src/custom-emojis.ts
  export async function fetchCustomEmojis(force = false) {
    const now = Date.now();
 diff -ru migrateWork/i18n.ts src/i18n.ts
---- migrateWork/i18n.ts	2023-02-19 20:30:41
+--- migrateWork/i18n.ts	2023-02-19 20:32:39
 +++ src/i18n.ts	2023-02-18 21:58:45
 @@ -1,9 +1,75 @@
 -import { markRaw } from "vue";
@@ -2428,7 +914,7 @@ diff -ru migrateWork/i18n.ts src/i18n.ts
  }
 +export let i18n = new I18n(languages["ja-JP"]);
 diff -ru migrateWork/init.ts src/init.ts
---- migrateWork/init.ts	2023-02-19 20:30:41
+--- migrateWork/init.ts	2023-02-19 20:32:39
 +++ src/init.ts	2023-02-19 18:32:27
 @@ -1,9 +1,6 @@
  /**
@@ -3512,7 +1998,7 @@ diff -ru migrateWork/init.ts src/init.ts
 -// shortcut
 -document.addEventListener("keydown", makeHotkey(hotkeys));
 diff -ru migrateWork/instance.ts src/instance.ts
---- migrateWork/instance.ts	2023-02-19 20:30:41
+--- migrateWork/instance.ts	2023-02-19 20:32:39
 +++ src/instance.ts	2023-02-18 21:58:45
 @@ -28,3 +28,46 @@
  
@@ -3564,7 +2050,7 @@ diff -ru migrateWork/instance.ts src/instance.ts
 Only in src: locales
 Only in src: miauth.ts
 diff -ru migrateWork/navbar.ts src/navbar.ts
---- migrateWork/navbar.ts	2023-02-19 20:30:41
+--- migrateWork/navbar.ts	2023-02-19 20:32:39
 +++ src/navbar.ts	2023-02-18 21:58:45
 @@ -105,7 +105,7 @@
    },
@@ -3576,7 +2062,7 @@ diff -ru migrateWork/navbar.ts src/navbar.ts
      to: "/my/achievements",
    },
 diff -ru migrateWork/os.ts src/os.ts
---- migrateWork/os.ts	2023-02-19 20:30:41
+--- migrateWork/os.ts	2023-02-19 20:32:40
 +++ src/os.ts	2023-02-18 21:58:45
 @@ -1,7 +1,5 @@
  // TODO: なんでもかんでもos.tsに突っ込むのやめたいのでよしなに分割する
@@ -3635,7 +2121,7 @@ diff -ru migrateWork/os.ts src/os.ts
    token?: string | null | undefined
  ) => {
 diff -ru migrateWork/pages/about.emojis.vue src/pages/about.emojis.vue
---- migrateWork/pages/about.emojis.vue	2023-02-19 20:30:41
+--- migrateWork/pages/about.emojis.vue	2023-02-19 20:32:40
 +++ src/pages/about.emojis.vue	2023-02-18 21:58:45
 @@ -1,7 +1,7 @@
  <template>
@@ -3647,7 +2133,7 @@ diff -ru migrateWork/pages/about.emojis.vue src/pages/about.emojis.vue
        link
        to="/custom-emojis-manager"
 diff -ru migrateWork/pages/about.vue src/pages/about.vue
---- migrateWork/pages/about.vue	2023-02-19 20:30:41
+--- migrateWork/pages/about.vue	2023-02-19 20:32:40
 +++ src/pages/about.vue	2023-02-18 21:58:45
 @@ -120,7 +120,7 @@
  import { ref, computed, watch } from "vue";
@@ -3670,7 +2156,7 @@ diff -ru migrateWork/pages/about.vue src/pages/about.vue
  const props = withDefaults(
    defineProps<{
 diff -ru migrateWork/pages/achievements.vue src/pages/achievements.vue
---- migrateWork/pages/achievements.vue	2023-02-19 20:30:41
+--- migrateWork/pages/achievements.vue	2023-02-19 20:32:40
 +++ src/pages/achievements.vue	2023-02-18 21:58:45
 @@ -47,7 +47,7 @@
  
@@ -3686,7 +2172,7 @@ Only in src/pages/admin: integrations.github.vue
 Only in src/pages/admin: integrations.twitter.vue
 Only in src/pages/admin: integrations.vue
 diff -ru migrateWork/pages/admin/object-storage.vue src/pages/admin/object-storage.vue
---- migrateWork/pages/admin/object-storage.vue	2023-02-19 20:30:41
+--- migrateWork/pages/admin/object-storage.vue	2023-02-19 20:32:40
 +++ src/pages/admin/object-storage.vue	2023-02-18 21:58:45
 @@ -52,7 +52,7 @@
                  <template #label>Access key</template>
@@ -3698,7 +2184,7 @@ diff -ru migrateWork/pages/admin/object-storage.vue src/pages/admin/object-stora
                  <template #label>Secret key</template>
                </MkInput>
 diff -ru migrateWork/pages/messaging/index.vue src/pages/messaging/index.vue
---- migrateWork/pages/messaging/index.vue	2023-02-19 20:30:42
+--- migrateWork/pages/messaging/index.vue	2023-02-19 20:32:41
 +++ src/pages/messaging/index.vue	2023-02-19 18:55:18
 @@ -1,13 +1,13 @@
  <template>
@@ -3721,7 +2207,7 @@ diff -ru migrateWork/pages/messaging/index.vue src/pages/messaging/index.vue
          <div v-if="messages.length > 0" class="history">
            <MkA
 diff -ru migrateWork/pages/messaging/messaging-room.form.vue src/pages/messaging/messaging-room.form.vue
---- migrateWork/pages/messaging/messaging-room.form.vue	2023-02-19 20:30:42
+--- migrateWork/pages/messaging/messaging-room.form.vue	2023-02-19 20:32:41
 +++ src/pages/messaging/messaging-room.form.vue	2023-02-19 19:23:18
 @@ -1,10 +1,10 @@
  <template>
@@ -3747,7 +2233,7 @@ diff -ru migrateWork/pages/messaging/messaging-room.form.vue src/pages/messaging
        @change="onChangeFile"
      />
 diff -ru migrateWork/pages/messaging/messaging-room.vue src/pages/messaging/messaging-room.vue
---- migrateWork/pages/messaging/messaging-room.vue	2023-02-19 20:30:42
+--- migrateWork/pages/messaging/messaging-room.vue	2023-02-19 20:32:41
 +++ src/pages/messaging/messaging-room.vue	2023-02-19 18:55:18
 @@ -61,8 +61,8 @@
            <div v-show="showIndicator" :class="$style['new-message']">
@@ -3761,7 +2247,7 @@ diff -ru migrateWork/pages/messaging/messaging-room.vue src/pages/messaging/mess
                  class="fas ti-fw fa-arrow-circle-down"
 Only in src/pages: mfm-cheat-sheet.vue
 diff -ru migrateWork/pages/my-antennas/editor.vue src/pages/my-antennas/editor.vue
---- migrateWork/pages/my-antennas/editor.vue	2023-02-19 20:30:42
+--- migrateWork/pages/my-antennas/editor.vue	2023-02-19 20:32:41
 +++ src/pages/my-antennas/editor.vue	2023-02-19 19:23:18
 @@ -27,12 +27,12 @@
          </MkSelect>
@@ -3803,7 +2289,7 @@ diff -ru migrateWork/pages/my-antennas/editor.vue src/pages/my-antennas/editor.v
      </div>
    </MkSpacer>
 diff -ru migrateWork/pages/settings/accounts.vue src/pages/settings/accounts.vue
---- migrateWork/pages/settings/accounts.vue	2023-02-19 20:30:43
+--- migrateWork/pages/settings/accounts.vue	2023-02-19 20:32:41
 +++ src/pages/settings/accounts.vue	2023-02-18 22:55:31
 @@ -2,9 +2,9 @@
    <div class="">
@@ -3870,7 +2356,7 @@ diff -ru migrateWork/pages/settings/accounts.vue src/pages/settings/accounts.vue
 Only in src/pages/settings: accounts.vue.orig
 Only in src/pages/settings: accounts.vue.rej
 diff -ru migrateWork/pages/settings/index.vue src/pages/settings/index.vue
---- migrateWork/pages/settings/index.vue	2023-02-19 20:30:43
+--- migrateWork/pages/settings/index.vue	2023-02-19 20:32:41
 +++ src/pages/settings/index.vue	2023-02-18 21:58:45
 @@ -8,12 +8,6 @@
          <div class="body">
@@ -3887,7 +2373,7 @@ diff -ru migrateWork/pages/settings/index.vue src/pages/settings/index.vue
                  :grid="currentPage?.route.name == null"
 Only in src/pages/settings: integration.vue
 diff -ru migrateWork/pages/share.vue src/pages/share.vue
---- migrateWork/pages/share.vue	2023-02-19 20:30:44
+--- migrateWork/pages/share.vue	2023-02-19 20:32:42
 +++ src/pages/share.vue	2023-02-19 18:55:19
 @@ -1,8 +1,8 @@
  <template>
@@ -3913,7 +2399,7 @@ diff -ru migrateWork/pages/share.vue src/pages/share.vue
    </MkStickyContainer>
  </template>
 diff -ru migrateWork/pages/timeline.vue src/pages/timeline.vue
---- migrateWork/pages/timeline.vue	2023-02-19 20:30:44
+--- migrateWork/pages/timeline.vue	2023-02-19 20:32:42
 +++ src/pages/timeline.vue	2023-02-18 22:55:31
 @@ -1,19 +1,15 @@
  <template>
@@ -3973,7 +2459,7 @@ diff -ru migrateWork/pages/timeline.vue src/pages/timeline.vue
  
  <style lang="scss" module>
 diff -ru migrateWork/pages/user/followers.vue src/pages/user/followers.vue
---- migrateWork/pages/user/followers.vue	2023-02-19 20:30:45
+--- migrateWork/pages/user/followers.vue	2023-02-19 20:32:42
 +++ src/pages/user/followers.vue	2023-02-19 18:55:19
 @@ -1,8 +1,8 @@
  <template>
@@ -3988,7 +2474,7 @@ diff -ru migrateWork/pages/user/followers.vue src/pages/user/followers.vue
        <Transition name="fade" mode="out-in">
          <div v-if="user">
 diff -ru migrateWork/pages/user/following.vue src/pages/user/following.vue
---- migrateWork/pages/user/following.vue	2023-02-19 20:30:45
+--- migrateWork/pages/user/following.vue	2023-02-19 20:32:42
 +++ src/pages/user/following.vue	2023-02-19 18:55:19
 @@ -1,8 +1,8 @@
  <template>
@@ -4003,7 +2489,7 @@ diff -ru migrateWork/pages/user/following.vue src/pages/user/following.vue
        <Transition name="fade" mode="out-in">
          <div v-if="user">
 diff -ru migrateWork/pages/user/index.vue src/pages/user/index.vue
---- migrateWork/pages/user/index.vue	2023-02-19 20:30:45
+--- migrateWork/pages/user/index.vue	2023-02-19 20:32:42
 +++ src/pages/user/index.vue	2023-02-19 19:23:19
 @@ -1,11 +1,12 @@
  <template>
@@ -4022,7 +2508,7 @@ diff -ru migrateWork/pages/user/index.vue src/pages/user/index.vue
        <Transition name="fade" mode="out-in">
          <div v-if="user">
 diff -ru migrateWork/pages/welcome.entrance.a.vue src/pages/welcome.entrance.a.vue
---- migrateWork/pages/welcome.entrance.a.vue	2023-02-19 20:30:45
+--- migrateWork/pages/welcome.entrance.a.vue	2023-02-19 20:32:42
 +++ src/pages/welcome.entrance.a.vue	2023-02-18 22:55:31
 @@ -1,8 +1,6 @@
  <template>
@@ -4258,7 +2744,7 @@ diff -ru migrateWork/pages/welcome.entrance.a.vue src/pages/welcome.entrance.a.v
            display: block;
            margin: 0;
 diff -ru migrateWork/pages/welcome.entrance.c.vue src/pages/welcome.entrance.c.vue
---- migrateWork/pages/welcome.entrance.c.vue	2023-02-19 20:30:45
+--- migrateWork/pages/welcome.entrance.c.vue	2023-02-19 20:32:42
 +++ src/pages/welcome.entrance.c.vue	2023-02-18 21:58:45
 @@ -80,7 +80,6 @@
  import MkButton from "@/components/MkButton.vue";
@@ -4277,7 +2763,7 @@ diff -ru migrateWork/pages/welcome.entrance.c.vue src/pages/welcome.entrance.c.v
  
    data() {
 diff -ru migrateWork/pages/welcome.vue src/pages/welcome.vue
---- migrateWork/pages/welcome.vue	2023-02-19 20:30:45
+--- migrateWork/pages/welcome.vue	2023-02-19 20:32:42
 +++ src/pages/welcome.vue	2023-02-18 21:58:45
 @@ -1,32 +1,7 @@
  <template>
@@ -4314,7 +2800,7 @@ diff -ru migrateWork/pages/welcome.vue src/pages/welcome.vue
 -);
  </script>
 diff -ru migrateWork/pizzax.ts src/pizzax.ts
---- migrateWork/pizzax.ts	2023-02-19 20:30:45
+--- migrateWork/pizzax.ts	2023-02-19 20:32:42
 +++ src/pizzax.ts	2023-02-18 21:58:45
 @@ -32,7 +32,6 @@
  };
@@ -4367,7 +2853,7 @@ diff -ru migrateWork/pizzax.ts src/pizzax.ts
          }
        }
 diff -ru migrateWork/scripts/aiscript/ui.ts src/scripts/aiscript/ui.ts
---- migrateWork/scripts/aiscript/ui.ts	2023-02-19 20:30:45
+--- migrateWork/scripts/aiscript/ui.ts	2023-02-19 20:32:42
 +++ src/scripts/aiscript/ui.ts	2023-02-18 21:58:45
 @@ -342,7 +342,7 @@
    if (primary) utils.assertBoolean(primary);
@@ -4379,7 +2865,7 @@ diff -ru migrateWork/scripts/aiscript/ui.ts src/scripts/aiscript/ui.ts
  
    return {
 diff -ru migrateWork/scripts/emoji-base.ts src/scripts/emoji-base.ts
---- migrateWork/scripts/emoji-base.ts	2023-02-19 20:30:45
+--- migrateWork/scripts/emoji-base.ts	2023-02-19 20:32:42
 +++ src/scripts/emoji-base.ts	2023-02-18 21:58:45
 @@ -6,7 +6,7 @@
    if (!codes.includes("200d")) codes = codes.filter((x) => x !== "fe0f");
@@ -4398,7 +2884,7 @@ diff -ru migrateWork/scripts/emoji-base.ts src/scripts/emoji-base.ts
 +  return `https://misskey.io/${fluentEmojiPngBase}/${fileName}.png`;
  }
 diff -ru migrateWork/scripts/sound.ts src/scripts/sound.ts
---- migrateWork/scripts/sound.ts	2023-02-19 20:30:45
+--- migrateWork/scripts/sound.ts	2023-02-19 20:32:42
 +++ src/scripts/sound.ts	2023-02-18 21:58:45
 @@ -1,7 +1,5 @@
  import { ColdDeviceStorage } from "@/store";
@@ -4463,7 +2949,7 @@ diff -ru migrateWork/scripts/sound.ts src/scripts/sound.ts
 +  soundSource.start();
  }
 diff -ru migrateWork/scripts/theme.ts src/scripts/theme.ts
---- migrateWork/scripts/theme.ts	2023-02-19 20:30:45
+--- migrateWork/scripts/theme.ts	2023-02-19 20:32:42
 +++ src/scripts/theme.ts	2023-02-18 21:58:45
 @@ -15,6 +15,8 @@
  import darkTheme from "@/themes/_dark.json5";
@@ -4487,7 +2973,7 @@ diff -ru migrateWork/scripts/theme.ts src/scripts/theme.ts
    // Deep copy
    const _theme = deepClone(theme);
 diff -ru migrateWork/scripts/upload.ts src/scripts/upload.ts
---- migrateWork/scripts/upload.ts	2023-02-19 20:30:45
+--- migrateWork/scripts/upload.ts	2023-02-19 20:32:43
 +++ src/scripts/upload.ts	2023-02-18 21:58:45
 @@ -1,6 +1,6 @@
  import { reactive, ref } from "vue";
@@ -4507,7 +2993,7 @@ diff -ru migrateWork/scripts/upload.ts src/scripts/upload.ts
              // The compression may not always reduce the file size
              // (and WebP is not browser safe yet)
 diff -ru migrateWork/stream.ts src/stream.ts
---- migrateWork/stream.ts	2023-02-19 20:30:45
+--- migrateWork/stream.ts	2023-02-19 20:32:43
 +++ src/stream.ts	2023-02-18 21:58:45
 @@ -1,15 +1,11 @@
  import * as Misskey from "misskey-js";
@@ -4533,7 +3019,7 @@ diff -ru migrateWork/stream.ts src/stream.ts
 +    )
 +  : null;
 diff -ru migrateWork/theme-store.ts src/theme-store.ts
---- migrateWork/theme-store.ts	2023-02-19 20:30:45
+--- migrateWork/theme-store.ts	2023-02-19 20:32:43
 +++ src/theme-store.ts	2023-02-18 22:55:31
 @@ -13,37 +13,26 @@
  export async function fetchThemes(): Promise<void> {
@@ -4583,7 +3069,7 @@ diff -ru migrateWork/theme-store.ts src/theme-store.ts
    miLocalStorage.setItem(lsCacheKey!, JSON.stringify(themes));
  }
 diff -ru migrateWork/ui/_common_/common.ts src/ui/_common_/common.ts
---- migrateWork/ui/_common_/common.ts	2023-02-19 20:30:45
+--- migrateWork/ui/_common_/common.ts	2023-02-19 20:32:43
 +++ src/ui/_common_/common.ts	2023-02-18 21:58:45
 @@ -60,7 +60,7 @@
              icon: "ti ti-cookie",
@@ -4617,7 +3103,7 @@ diff -ru migrateWork/ui/_common_/common.ts src/ui/_common_/common.ts
      ],
      ev.currentTarget ?? ev.target,
 diff -ru migrateWork/ui/_common_/common.vue src/ui/_common_/common.vue
---- migrateWork/ui/_common_/common.vue	2023-02-19 20:30:45
+--- migrateWork/ui/_common_/common.vue	2023-02-19 20:32:43
 +++ src/ui/_common_/common.vue	2023-02-18 22:55:31
 @@ -36,10 +36,8 @@
      />
@@ -4651,7 +3137,7 @@ diff -ru migrateWork/ui/_common_/common.vue src/ui/_common_/common.vue
  
  const dev = _DEV_;
 diff -ru migrateWork/ui/visitor/b.vue src/ui/visitor/b.vue
---- migrateWork/ui/visitor/b.vue	2023-02-19 20:30:46
+--- migrateWork/ui/visitor/b.vue	2023-02-19 20:32:43
 +++ src/ui/visitor/b.vue	2023-02-18 22:55:31
 @@ -2,10 +2,10 @@
    <div class="mk-app">

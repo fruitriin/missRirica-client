@@ -1,200 +1,200 @@
 <template>
-  <MkStickyContainer>
-    <template #header
-      ><MkPageHeader :actions="headerActions" :tabs="headerTabs"
-    /></template>
-    <div style="overflow: clip">
-      <MkSpacer :content-max="600" :margin-min="20">
-        <div class="_gaps_m znqjceqz">
-          <div v-panel class="about">
-            <div
-              ref="containerEl"
-              class="container"
-              :class="{ playing: easterEggEngine != null }"
-            >
-              <img
-                src="/client-assets/about-icon.png"
-                alt=""
-                class="icon"
-                draggable="false"
-                @load="iconLoaded"
-                @click="gravity"
-              />
-              <div class="misskey">Misskey</div>
-              <div class="version">v{{ version }}</div>
-              <span
-                v-for="emoji in easterEggEmojis"
-                :key="emoji.id"
-                class="emoji"
-                :data-physics-x="emoji.left"
-                :data-physics-y="emoji.top"
-                :class="{ _physics_circle_: !emoji.emoji.startsWith(':') }"
-              >
-                <MkCustomEmoji
-                  v-if="emoji.emoji[0] === ':'"
-                  class="emoji"
-                  :name="emoji.emoji"
-                  :normal="true"
-                  :no-style="true"
-                />
-                <MkEmoji
-                  v-else
-                  class="emoji"
-                  :emoji="emoji.emoji"
-                  :normal="true"
-                  :no-style="true"
-                />
-              </span>
-            </div>
-            <button
-              v-if="thereIsTreasure"
-              class="_button treasure"
-              @click="getTreasure"
-            >
-              <img src="/fluent-emoji/1f3c6.png" class="treasureImg" />
-            </button>
-          </div>
-          <div style="text-align: center">
-            {{ i18n.ts._aboutMisskey.about }}<br /><a
-              href="https://misskey-hub.net/docs/misskey.html"
-              target="_blank"
-              class="_link"
-              >{{ i18n.ts.learnMore }}</a
-            >
-          </div>
-          <div style="text-align: center">
-            <MkButton primary rounded inline @click="iLoveMisskey"
-              >I <Mfm text="$[jelly ❤]" /> #Misskey</MkButton
-            >
-          </div>
-          <FormSection>
-            <div class="_formLinks">
-              <FormLink to="https://github.com/misskey-dev/misskey" external>
-                <template #icon><i class="ti ti-code"></i></template>
-                {{ i18n.ts._aboutMisskey.source }}
-                <template #suffix>GitHub</template>
-              </FormLink>
-              <FormLink to="https://crowdin.com/project/misskey" external>
-                <template #icon
-                  ><i class="ti ti-language-hiragana"></i
-                ></template>
-                {{ i18n.ts._aboutMisskey.translation }}
-                <template #suffix>Crowdin</template>
-              </FormLink>
-              <FormLink to="https://www.patreon.com/syuilo" external>
-                <template #icon><i class="ti ti-pig-money"></i></template>
-                {{ i18n.ts._aboutMisskey.donate }}
-                <template #suffix>Patreon</template>
-              </FormLink>
-            </div>
-          </FormSection>
-          <FormSection>
-            <template #label>{{ i18n.ts._aboutMisskey.contributors }}</template>
-            <div :class="$style.contributors">
-              <a
-                href="https://github.com/syuilo"
-                target="_blank"
-                :class="$style.contributor"
-              >
-                <img
-                  src="https://avatars.githubusercontent.com/u/4439005?v=4"
-                  :class="$style.contributorAvatar"
-                />
-                <span :class="$style.contributorUsername">@syuilo</span>
-              </a>
-              <a
-                href="https://github.com/tamaina"
-                target="_blank"
-                :class="$style.contributor"
-              >
-                <img
-                  src="https://avatars.githubusercontent.com/u/7973572?v=4"
-                  :class="$style.contributorAvatar"
-                />
-                <span :class="$style.contributorUsername">@tamaina</span>
-              </a>
-              <a
-                href="https://github.com/acid-chicken"
-                target="_blank"
-                :class="$style.contributor"
-              >
-                <img
-                  src="https://avatars.githubusercontent.com/u/20679825?v=4"
-                  :class="$style.contributorAvatar"
-                />
-                <span :class="$style.contributorUsername">@acid-chicken</span>
-              </a>
-              <a
-                href="https://github.com/rinsuki"
-                target="_blank"
-                :class="$style.contributor"
-              >
-                <img
-                  src="https://avatars.githubusercontent.com/u/6533808?v=4"
-                  :class="$style.contributorAvatar"
-                />
-                <span :class="$style.contributorUsername">@rinsuki</span>
-              </a>
-              <a
-                href="https://github.com/mei23"
-                target="_blank"
-                :class="$style.contributor"
-              >
-                <img
-                  src="https://avatars.githubusercontent.com/u/30769358?v=4"
-                  :class="$style.contributorAvatar"
-                />
-                <span :class="$style.contributorUsername">@mei23</span>
-              </a>
-              <a
-                href="https://github.com/robflop"
-                target="_blank"
-                :class="$style.contributor"
-              >
-                <img
-                  src="https://avatars.githubusercontent.com/u/8159402?v=4"
-                  :class="$style.contributorAvatar"
-                />
-                <span :class="$style.contributorUsername">@robflop</span>
-              </a>
-            </div>
-            <template #caption
-              ><MkLink
-                url="https://github.com/misskey-dev/misskey/graphs/contributors"
-                >{{ i18n.ts._aboutMisskey.allContributors }}</MkLink
-              ></template
-            >
-          </FormSection>
-          <FormSection>
-            <template #label
-              ><Mfm text="$[jelly ❤]" />
-              {{ i18n.ts._aboutMisskey.patrons }}</template
-            >
-            <div :class="$style.patronsWithIcon">
-              <div
-                v-for="patron in patronsWithIcon"
-                :class="$style.patronWithIcon"
-              >
-                <img :src="patron.icon" :class="$style.patronIcon" />
-                <span :class="$style.patronName">{{ patron.name }}</span>
-              </div>
-            </div>
-            <div
-              style="
+<MkStickyContainer>
+	<template #header>
+		<MkPageHeader :actions="headerActions" :tabs="headerTabs"/>
+	</template>
+	<div style="overflow: clip">
+		<MkSpacer :content-max="600" :margin-min="20">
+			<div class="_gaps_m znqjceqz">
+				<div v-panel class="about">
+					<div
+						ref="containerEl"
+						class="container"
+						:class="{ playing: easterEggEngine != null }"
+					>
+						<img
+							src="/client-assets/about-icon.png"
+							alt=""
+							class="icon"
+							draggable="false"
+							@load="iconLoaded"
+							@click="gravity"
+						/>
+						<div class="misskey">Misskey</div>
+						<div class="version">v{{ version }}</div>
+						<span
+							v-for="emoji in easterEggEmojis"
+							:key="emoji.id"
+							class="emoji"
+							:data-physics-x="emoji.left"
+							:data-physics-y="emoji.top"
+							:class="{ _physics_circle_: !emoji.emoji.startsWith(':') }"
+						>
+							<MkCustomEmoji
+								v-if="emoji.emoji[0] === ':'"
+								class="emoji"
+								:name="emoji.emoji"
+								:normal="true"
+								:no-style="true"
+							/>
+							<MkEmoji
+								v-else
+								class="emoji"
+								:emoji="emoji.emoji"
+								:normal="true"
+								:no-style="true"
+							/>
+						</span>
+					</div>
+					<button
+						v-if="thereIsTreasure"
+						class="_button treasure"
+						@click="getTreasure"
+					>
+						<img src="https://misskey.io/fluent-emoji/1f3c6.png" class="treasureImg"/>
+					</button>
+				</div>
+				<div style="text-align: center">
+					{{ i18n.ts._aboutMisskey.about }}<br/><a
+						href="https://misskey-hub.net/docs/misskey.html"
+						target="_blank"
+						class="_link"
+					>{{ i18n.ts.learnMore }}</a>
+				</div>
+				<div style="text-align: center">
+					<MkButton primary rounded inline @click="iLoveMisskey">
+						I <Mfm text="$[jelly ❤]"/> #Misskey
+					</MkButton>
+				</div>
+				<FormSection>
+					<div class="_formLinks">
+						<FormLink to="https://github.com/misskey-dev/misskey" external>
+							<template #icon><i class="ti ti-code"></i></template>
+							{{ i18n.ts._aboutMisskey.source }}
+							<template #suffix>GitHub</template>
+						</FormLink>
+						<FormLink to="https://crowdin.com/project/misskey" external>
+							<template #icon>
+								<i class="ti ti-language-hiragana"></i>
+							</template>
+							{{ i18n.ts._aboutMisskey.translation }}
+							<template #suffix>Crowdin</template>
+						</FormLink>
+						<FormLink to="https://www.patreon.com/syuilo" external>
+							<template #icon><i class="ti ti-pig-money"></i></template>
+							{{ i18n.ts._aboutMisskey.donate }}
+							<template #suffix>Patreon</template>
+						</FormLink>
+					</div>
+				</FormSection>
+				<FormSection>
+					<template #label>{{ i18n.ts._aboutMisskey.contributors }}</template>
+					<div :class="$style.contributors">
+						<a
+							href="https://github.com/syuilo"
+							target="_blank"
+							:class="$style.contributor"
+						>
+							<img
+								src="https://avatars.githubusercontent.com/u/4439005?v=4"
+								:class="$style.contributorAvatar"
+							/>
+							<span :class="$style.contributorUsername">@syuilo</span>
+						</a>
+						<a
+							href="https://github.com/tamaina"
+							target="_blank"
+							:class="$style.contributor"
+						>
+							<img
+								src="https://avatars.githubusercontent.com/u/7973572?v=4"
+								:class="$style.contributorAvatar"
+							/>
+							<span :class="$style.contributorUsername">@tamaina</span>
+						</a>
+						<a
+							href="https://github.com/acid-chicken"
+							target="_blank"
+							:class="$style.contributor"
+						>
+							<img
+								src="https://avatars.githubusercontent.com/u/20679825?v=4"
+								:class="$style.contributorAvatar"
+							/>
+							<span :class="$style.contributorUsername">@acid-chicken</span>
+						</a>
+						<a
+							href="https://github.com/rinsuki"
+							target="_blank"
+							:class="$style.contributor"
+						>
+							<img
+								src="https://avatars.githubusercontent.com/u/6533808?v=4"
+								:class="$style.contributorAvatar"
+							/>
+							<span :class="$style.contributorUsername">@rinsuki</span>
+						</a>
+						<a
+							href="https://github.com/mei23"
+							target="_blank"
+							:class="$style.contributor"
+						>
+							<img
+								src="https://avatars.githubusercontent.com/u/30769358?v=4"
+								:class="$style.contributorAvatar"
+							/>
+							<span :class="$style.contributorUsername">@mei23</span>
+						</a>
+						<a
+							href="https://github.com/robflop"
+							target="_blank"
+							:class="$style.contributor"
+						>
+							<img
+								src="https://avatars.githubusercontent.com/u/8159402?v=4"
+								:class="$style.contributorAvatar"
+							/>
+							<span :class="$style.contributorUsername">@robflop</span>
+						</a>
+					</div>
+					<template #caption>
+						<MkLink
+							url="https://github.com/misskey-dev/misskey/graphs/contributors"
+						>
+							{{ i18n.ts._aboutMisskey.allContributors }}
+						</MkLink>
+					</template>
+				</FormSection>
+				<FormSection>
+					<template #label>
+						<Mfm text="$[jelly ❤]"/>
+						{{ i18n.ts._aboutMisskey.patrons }}
+					</template>
+					<div :class="$style.patronsWithIcon">
+						<div
+							v-for="patron in patronsWithIcon"
+							:class="$style.patronWithIcon"
+						>
+							<img :src="patron.icon" :class="$style.patronIcon"/>
+							<span :class="$style.patronName">{{ patron.name }}</span>
+						</div>
+					</div>
+					<div
+						style="
                 margin-top: 16px;
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
                 grid-gap: 12px;
               "
-            >
-              <div v-for="patron in patrons" :key="patron">{{ patron }}</div>
-            </div>
-            <p>{{ i18n.ts._aboutMisskey.morePatrons }}</p>
-          </FormSection>
-        </div>
-      </MkSpacer>
-    </div>
-  </MkStickyContainer>
+					>
+						<div v-for="patron in patrons" :key="patron">{{ patron }}</div>
+					</div>
+					<p>{{ i18n.ts._aboutMisskey.morePatrons }}</p>
+				</FormSection>
+			</div>
+		</MkSpacer>
+	</div>
+</MkStickyContainer>
 </template>
 
 <script lang="ts" setup>
