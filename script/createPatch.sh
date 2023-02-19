@@ -12,6 +12,6 @@ eslint --fix src migrateWork
 prettier -w migrateWork
 prettier -w src
 diff -ru migrateWork src > mypatch.patch
+# rm -rf migrateWork
 
-
-# TODO 言語ファイルのパッチ操作をなんとかする
+sh script/createLocal.sh
