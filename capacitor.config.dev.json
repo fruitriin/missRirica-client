@@ -6,6 +6,9 @@
   "plugins": {
     "PushNotifications": {
       "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "CapacitorHttp": {
+      "enabled": true
     }
   },
   "server": {

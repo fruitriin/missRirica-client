@@ -19,6 +19,7 @@
 				required
 			/>
 		</template>
+		<!--
 		{{ i18n.ts.ririca.accessToken }}
 		<MkInput
 			v-model="token"
@@ -27,6 +28,7 @@
 			required
 			data-cy-signin-username
 		></MkInput>
+		-->
 		<MkButton
 			class="_formBlock"
 			type="submit"
@@ -53,6 +55,8 @@ import * as os from "@/os";
 import { login } from "@/account";
 import { instance } from "@/instance";
 import { i18n } from "@/i18n";
+import { quickAuth, Permissions } from "@/miauth"
+import { Browser } from "@capacitor/browser"
 
 let signing = $ref(false);
 let user = $ref(null);
@@ -126,7 +130,7 @@ function queryKey() {
     .get({
       publicKey: {
         challenge: byteify(challengeData.challenge, "base64"),
-        allowCredentials: challengeData.securityKeys.map((key) => ({
+        allowCredentials: challengeData.securityKeys.map((key: { id: string; }) => ({
           id: byteify(key.id, "hex"),
           type: "public-key",
           transports: ["usb", "nfc", "ble", "internal"],
@@ -167,16 +171,38 @@ function queryKey() {
     });
 }
 
-function onSubmit() {
+// TODO: Implement handling browser shutdown by user.
+// On current implementation, arbitrary closing of browser by user is
+// not detected. The button will be disabled until token fetching maxCount is reached.
+// Also, MiAuth will try to get the token forever.
+// Browser.addListener('browserFinished', ...) will work.
+// https://capacitorjs.com/docs/apis/browser#addlistenerbrowserfinished-
+async function onSubmit() {
+  const miauth = quickAuth(instanceUrlResult, {name: "missRirica", permission: Permissions})
+  var maxCount = 100
+  var miauthToken = ""
   signing = true;
-  console.log("submit");
-  if (!token.value) {
-    login(token, instanceUrlResult);
-    signing = false;
-  }
+  await Browser.open({url: miauth.authUrl(), presentationStyle: "popover"})
+
+  setTimeout(async function fetchToken() {
+    try {
+      maxCount--
+      miauthToken = await miauth.getToken()
+      await Browser.close() // No-op in Android, User need to close Webview themselves.
+      login(miauthToken, instanceUrlResult)
+      signing = false
+    } catch (er) {
+      if (maxCount > 0) {
+        setTimeout(fetchToken, 3000)
+      } else if (maxCount === 0) {
+        loginFailed(er)
+        signing = false
+      }
+    }
+  }, 3000);
 }
 
-function loginFailed(err) {
+function loginFailed(err: unknown) {
   switch (err.id) {
     case "6cc579cc-885d-43d8-95c2-b8c7fc963280": {
       os.alert({
