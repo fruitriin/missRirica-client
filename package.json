@@ -6,7 +6,7 @@
   "scripts": {
     "prebuild": "cd misskeyV13/packages/frontend  && pnpm install && pnpm build",
     "dev": "cp capacitor.config.dev.json capacitor.config.json;cap copy; vite --host;",
-    "build": " cp capacitor.config.prod.json capacitor.config.json ; vite build;cap copy;",
+    "build": "pnpm prebuild && cp capacitor.config.prod.json capacitor.config.json ; vite build;cap copy;",
     "devbuild": "cp capacitor.config.prod.json capacitor.config.json; vite build  --mode development; cap sync",
     "lint": "vue-tsc",
     "preview": "vite preview",
