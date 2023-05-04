@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MissRirica</string>
+    <string name="title_activity_main">MissRirica</string>
+    <string name="package_name">space.riinswork.missririca</string>
+    <string name="custom_url_scheme">space.riinswork.missririca</string>
+</resources>

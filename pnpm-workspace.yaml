@@ -1,0 +1,3 @@
+packages:
+ - 'misskeyV13/packages/frontend'
+ - 'misskeyV13/packages/misskey-js'

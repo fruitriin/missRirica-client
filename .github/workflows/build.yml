@@ -1,0 +1,65 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+    - "main"
+
+jobs:
+# 1. build missRirica the vite project
+# 2. build missRirica Android client
+# 3. release debug APK
+  build_missririca_client:
+  # The cache steps are heavily based on @dwy6626's article:
+  # https://dwye.dev/post/github-action-npm-cache/
+    name: Build missRirica
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [19.5.0]
+    steps:        
+      - name: Build MissRirica
+        uses: actions/checkout@v3
+      - name: Set Node.js latest
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ matrix.node-version }}-missRirica-client
+      - name: Install Packages
+        run: test -d node_modules && echo "node_modules exists" || yarn install --frozen-lockfile
+      - name: Build Node project and Echo Secret
+        env:
+          google_services: ${{ secrets.GOOGLE_SERVICE }}
+        run: |
+          yarn build
+          echo ${google_services} > android/app/google-services.json
+# Java/Gradle part
+      - name: Set up Java Env
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Build using Gradle with Cache
+        uses: burrunan/gradle-cache-action@v1
+        with:
+          arguments: build
+          remote-build-cache-proxy-enabled: false
+          build-root-directory: android
+          concurrent: true
+          gradle-build-scan-report: false
+          gradle-distribution-sha-256-sum-warning: false
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with: # See https://github.com/softprops/action-gh-release#-customizing
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          tag_name: ${{steps.next_semantic_version.outputs.version}}
+          name: "Automatic release ${{steps.next_semantic_version.outputs.version}}"
+          generate_release_notes: true
+          draft: true
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          files: android/app/build/outputs/apk/debug/app-debug.apk

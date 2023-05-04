@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>MissRirica Web</title>
+    <style>
+      .ios #header {
+        position: sticky;
+        height: 20px;
+        top: 0;
+        opacity: 1;
+        z-index: 999999;
+      }
+
+      @supports (bottom: env(safe-area-inset-bottom)) {
+        .ios #header {
+          height: 0;
+          padding-top: calc(env(safe-area-inset-top));
+        }
+      }
+
+      /* サイドバーとウィジェット */
+      .ios ._menuDrawer_bf6hp_183,
+      .ios ._widgetsDrawer_bf6hp_94 {
+        padding-top: calc(16px) !important;
+      }
+      @supports (bottom: env(safe-area-inset-bottom)) {
+        .ios ._menuDrawer_bf6hp_183,
+        .ios ._widgetsDrawer_bf6hp_94 {
+          padding-top: calc(env(safe-area-inset-top)) !important;
+          padding-bottom: calc(env(safe-area-inset-bottom) + 16px) !important;
+        }
+      }
+
+      /*  投稿ダイアログ */
+      .ios ._content_hgr5a_5 {
+        padding-top: calc(20px + 16px) !important;
+      }
+      @supports (bottom: env(safe-area-inset-bottom)) {
+        .ios ._content_hgr5a_5 {
+          padding-top: calc(env(safe-area-inset-top) + 16px) !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ririca"></div>
+    <div id="header" style="background: var(--bg)"></div>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
