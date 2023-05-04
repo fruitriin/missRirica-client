@@ -30,10 +30,6 @@ import { api as misskeyApi } from 'misskey-js';
 
 
 export default {
-  components: {
-    MkInput,
-    MkButton
-  },
   mounted(){
     if(localStorage.getItem("account")) this.activateMisskeyV13()
   },
