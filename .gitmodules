@@ -1,3 +1,4 @@
 [submodule "misskeyV13"]
 	path = misskeyV13
-	url = https://github.com/misskey-dev/misskey.git
+	url = https://github.com/fruitriin/misskey4ririca
+	branch = ririca/master
