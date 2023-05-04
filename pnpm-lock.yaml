@@ -34,7 +34,7 @@ importers:
         version: 2.0.6
       misskey-js:
         specifier: workspace:^
-        version: link:misskeyV13/packages/misskey-js
+        version: link:submodules/misskey-v13/packages/misskey-js
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
@@ -48,7 +48,7 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0(typescript@4.8.4)
 
-  misskeyV13/packages/frontend:
+  submodules/misskey-v13/packages/frontend:
     dependencies:
       '@capacitor/android':
         specifier: ^4.5.0
@@ -425,7 +425,7 @@ importers:
         version: github.com/misskey-dev/storybook-addon-misskey-theme/cf583db098365b2ccc81a82f63ca9c93bc32b640(@storybook/blocks@7.0.2)(@storybook/components@7.0.8)(@storybook/core-events@7.0.2)(@storybook/manager-api@7.0.2)(@storybook/preview-api@7.0.2)(@storybook/theming@7.0.2)(@storybook/types@7.0.2)(react-dom@18.2.0)(react@18.2.0)
       summaly:
         specifier: github:misskey-dev/summaly
-        version: github.com/misskey-dev/summaly/c7d71a9ec2467268b3911dc2ac805c2b8a898d3e
+        version: github.com/misskey-dev/summaly/2d63e2a0066f89871e777cc81d43c1ade8c97517
       vite-plugin-top-level-await:
         specifier: ^1.3.0
         version: 1.3.0(@swc/helpers@0.5.1)(rollup@3.20.2)(vite@4.2.1)
@@ -445,7 +445,7 @@ importers:
         specifier: 1.2.0
         version: 1.2.0(typescript@5.0.3)
 
-  misskeyV13/packages/misskey-js:
+  submodules/misskey-v13/packages/misskey-js:
     dependencies:
       '@swc/cli':
         specifier: 0.1.62
@@ -2609,7 +2609,7 @@ packages:
     dependencies:
       '@jest/types': 29.5.0
       '@types/node': 18.15.11
-      chalk: 4.1.1
+      chalk: 4.1.2
       jest-message-util: 29.5.0
       jest-util: 29.5.0
       slash: 3.0.0
@@ -2631,7 +2631,7 @@ packages:
       '@jest/types': 29.5.0
       '@types/node': 18.15.11
       ansi-escapes: 4.3.2
-      chalk: 4.1.1
+      chalk: 4.1.2
       ci-info: 3.8.0
       exit: 0.1.2
       graceful-fs: 4.2.11
@@ -2731,7 +2731,7 @@ packages:
       '@jest/types': 29.5.0
       '@jridgewell/trace-mapping': 0.3.18
       '@types/node': 18.15.11
-      chalk: 4.1.1
+      chalk: 4.1.2
       collect-v8-coverage: 1.0.1
       exit: 0.1.2
       glob: 7.2.3
@@ -2803,7 +2803,7 @@ packages:
       '@jest/types': 29.5.0
       '@jridgewell/trace-mapping': 0.3.18
       babel-plugin-istanbul: 6.1.1
-      chalk: 4.1.1
+      chalk: 4.1.2
       convert-source-map: 2.0.0
       fast-json-stable-stringify: 2.1.0
       graceful-fs: 4.2.11
@@ -2826,7 +2826,7 @@ packages:
       '@types/istanbul-reports': 3.0.1
       '@types/node': 18.15.11
       '@types/yargs': 16.0.5
-      chalk: 4.1.1
+      chalk: 4.1.2
     dev: true
 
   /@jest/types@29.5.0:
@@ -2838,7 +2838,7 @@ packages:
       '@types/istanbul-reports': 3.0.1
       '@types/node': 18.15.11
       '@types/yargs': 17.0.24
-      chalk: 4.1.1
+      chalk: 4.1.2
     dev: true
 
   /@joshwooding/vite-plugin-react-docgen-typescript@0.2.3(typescript@5.0.3)(vite@4.2.1):
@@ -3698,7 +3698,7 @@ packages:
       '@storybook/types': 7.0.2
       '@types/semver': 7.3.13
       boxen: 5.1.2
-      chalk: 4.1.1
+      chalk: 4.1.2
       commander: 6.2.1
       cross-spawn: 7.0.3
       detect-indent: 6.1.0
@@ -3813,7 +3813,7 @@ packages:
       '@storybook/types': 7.0.2
       '@types/node': 16.18.25
       '@types/pretty-hrtime': 1.0.1
-      chalk: 4.1.1
+      chalk: 4.1.2
       esbuild: 0.17.18
       esbuild-register: 3.4.2(esbuild@0.17.18)
       file-system-cache: 2.1.1
@@ -3864,7 +3864,7 @@ packages:
       '@types/semver': 7.3.13
       better-opn: 2.1.1
       boxen: 5.1.2
-      chalk: 4.1.1
+      chalk: 4.1.2
       cli-table3: 0.6.3
       compression: 1.7.4
       detect-port: 1.5.1
@@ -4017,7 +4017,7 @@ packages:
     resolution: {integrity: sha512-UENpXxB1yDqP7JXaODJo+pbGt5y3NFBNurBr4+pI4bMAC4ARjpgRE4wp6fxUKFPu9MAR10oCdcLEHkaVUAjYRg==}
     dependencies:
       '@types/npmlog': 4.1.4
-      chalk: 4.1.1
+      chalk: 4.1.2
       npmlog: 5.0.1
       pretty-hrtime: 1.0.3
     dev: true
@@ -4179,7 +4179,7 @@ packages:
     dependencies:
       '@storybook/client-logger': 7.0.2
       '@storybook/core-common': 7.0.2
-      chalk: 4.1.1
+      chalk: 4.1.2
       detect-package-manager: 2.0.1
       fetch-retry: 5.0.5
       fs-extra: 11.1.1
@@ -4470,7 +4470,7 @@ packages:
       '@babel/runtime': 7.21.5
       '@types/aria-query': 5.0.1
       aria-query: 5.1.3
-      chalk: 4.1.1
+      chalk: 4.1.2
       dom-accessibility-api: 0.5.16
       lz-string: 1.5.0
       pretty-format: 27.5.1
@@ -4484,7 +4484,7 @@ packages:
       '@babel/runtime': 7.21.5
       '@types/aria-query': 5.0.1
       aria-query: 5.1.3
-      chalk: 4.1.1
+      chalk: 4.1.2
       dom-accessibility-api: 0.5.16
       lz-string: 1.5.0
       pretty-format: 27.5.1
@@ -6104,7 +6104,7 @@ packages:
     dependencies:
       ansi-align: 3.0.1
       camelcase: 6.3.0
-      chalk: 4.1.1
+      chalk: 4.1.2
       cli-boxes: 2.2.1
       string-width: 4.2.3
       type-fest: 0.20.2
@@ -7526,7 +7526,7 @@ packages:
     dependencies:
       '@types/eslint': 7.29.0
       ansi-escapes: 4.3.2
-      chalk: 4.1.1
+      chalk: 4.1.2
       eslint-rule-docs: 1.1.235
       log-symbols: 4.1.0
       plur: 4.0.0
@@ -7590,7 +7590,7 @@ packages:
       '@humanwhocodes/module-importer': 1.0.1
       '@nodelib/fs.walk': 1.2.8
       ajv: 6.12.6
-      chalk: 4.1.1
+      chalk: 4.1.2
       cross-spawn: 7.0.3
       debug: 4.3.4
       doctrine: 3.0.0
@@ -8830,7 +8830,7 @@ packages:
     engines: {node: '>=12.0.0'}
     dependencies:
       ansi-escapes: 4.3.2
-      chalk: 4.1.1
+      chalk: 4.1.2
       cli-cursor: 3.1.0
       cli-width: 3.0.0
       external-editor: 3.1.0
@@ -9402,7 +9402,7 @@ packages:
       '@jest/core': 29.5.0
       '@jest/test-result': 29.5.0
       '@jest/types': 29.5.0
-      chalk: 4.1.1
+      chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
       import-local: 3.1.0
@@ -9434,7 +9434,7 @@ packages:
       '@jest/types': 29.5.0
       '@types/node': 18.15.11
       babel-jest: 29.5.0(@babel/core@7.21.8)
-      chalk: 4.1.1
+      chalk: 4.1.2
       ci-info: 3.8.0
       deepmerge: 4.3.1
       glob: 7.2.3
@@ -9460,7 +9460,7 @@ packages:
     resolution: {integrity: sha512-8RqP1B/OXzjjTWkqMX67iqgwBVJRgCyKD3L9nq+6ZqJMdvjE8RgHktqZ6jNrkdMT+dJuYNI3rhQpxaz7drJHfw==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
-      chalk: 4.1.1
+      chalk: 4.1.2
       diff-sequences: 28.1.1
       jest-get-type: 28.0.2
       pretty-format: 28.1.3
@@ -9470,7 +9470,7 @@ packages:
     resolution: {integrity: sha512-LtxijLLZBduXnHSniy0WMdaHjmQnt3g5sa16W4p0HqukYTTsyTW3GD1q41TyGl5YFXj/5B2U6dlh5FM1LIMgxw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      chalk: 4.1.1
+      chalk: 4.1.2
       diff-sequences: 29.4.3
       jest-get-type: 29.4.3
       pretty-format: 29.5.0
@@ -9556,7 +9556,7 @@ packages:
     resolution: {integrity: sha512-lecRtgm/rjIK0CQ7LPQwzCs2VwW6WAahA55YBuI+xqmhm7LAaxokSB8C97yJeYyT+HvQkH741StzpU41wohhWw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      chalk: 4.1.1
+      chalk: 4.1.2
       jest-diff: 29.5.0
       jest-get-type: 29.4.3
       pretty-format: 29.5.0
@@ -9569,7 +9569,7 @@ packages:
       '@babel/code-frame': 7.21.4
       '@jest/types': 29.5.0
       '@types/stack-utils': 2.0.1
-      chalk: 4.1.1
+      chalk: 4.1.2
       graceful-fs: 4.2.11
       micromatch: 4.0.5
       pretty-format: 29.5.0
@@ -9625,7 +9625,7 @@ packages:
     resolution: {integrity: sha512-1TzxJ37FQq7J10jPtQjcc+MkCkE3GBpBecsSUWJ0qZNJpmg6m0D9/7II03yJulm3H/fvVjgqLh/k2eYg+ui52w==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      chalk: 4.1.1
+      chalk: 4.1.2
       graceful-fs: 4.2.11
       jest-haste-map: 29.5.0
       jest-pnp-resolver: 1.2.3(jest-resolve@29.5.0)
@@ -9646,7 +9646,7 @@ packages:
       '@jest/transform': 29.5.0
       '@jest/types': 29.5.0
       '@types/node': 18.15.11
-      chalk: 4.1.1
+      chalk: 4.1.2
       emittery: 0.13.1
       graceful-fs: 4.2.11
       jest-docblock: 29.4.3
@@ -9677,7 +9677,7 @@ packages:
       '@jest/transform': 29.5.0
       '@jest/types': 29.5.0
       '@types/node': 18.15.11
-      chalk: 4.1.1
+      chalk: 4.1.2
       cjs-module-lexer: 1.2.2
       collect-v8-coverage: 1.0.1
       glob: 7.2.3
@@ -9711,7 +9711,7 @@ packages:
       '@types/babel__traverse': 7.18.5
       '@types/prettier': 2.7.2
       babel-preset-current-node-syntax: 1.0.1(@babel/core@7.21.8)
-      chalk: 4.1.1
+      chalk: 4.1.2
       expect: 29.5.0
       graceful-fs: 4.2.11
       jest-diff: 29.5.0
@@ -9732,7 +9732,7 @@ packages:
     dependencies:
       '@jest/types': 29.5.0
       '@types/node': 18.15.11
-      chalk: 4.1.1
+      chalk: 4.1.2
       ci-info: 3.8.0
       graceful-fs: 4.2.11
       picomatch: 2.3.1
@@ -9744,7 +9744,7 @@ packages:
     dependencies:
       '@jest/types': 29.5.0
       camelcase: 6.3.0
-      chalk: 4.1.1
+      chalk: 4.1.2
       jest-get-type: 29.4.3
       leven: 3.1.0
       pretty-format: 29.5.0
@@ -9758,7 +9758,7 @@ packages:
       '@jest/types': 29.5.0
       '@types/node': 18.15.11
       ansi-escapes: 4.3.2
-      chalk: 4.1.1
+      chalk: 4.1.2
       emittery: 0.13.1
       jest-util: 29.5.0
       string-length: 4.0.2
@@ -10194,7 +10194,7 @@ packages:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
     engines: {node: '>=10'}
     dependencies:
-      chalk: 4.1.1
+      chalk: 4.1.2
       is-unicode-supported: 0.1.0
     dev: true
 
@@ -11005,7 +11005,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       bl: 4.1.0
-      chalk: 4.1.1
+      chalk: 4.1.2
       cli-cursor: 3.1.0
       cli-spinners: 2.9.0
       is-interactive: 1.0.0
@@ -14323,8 +14323,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: true
 
-  github.com/misskey-dev/summaly/c7d71a9ec2467268b3911dc2ac805c2b8a898d3e:
-    resolution: {tarball: https://codeload.github.com/misskey-dev/summaly/tar.gz/c7d71a9ec2467268b3911dc2ac805c2b8a898d3e}
+  github.com/misskey-dev/summaly/2d63e2a0066f89871e777cc81d43c1ade8c97517:
+    resolution: {tarball: https://codeload.github.com/misskey-dev/summaly/tar.gz/2d63e2a0066f89871e777cc81d43c1ade8c97517}
     name: summaly
     version: 4.0.2
     dependencies:

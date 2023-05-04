@@ -1,4 +1,4 @@
-[submodule "misskeyV13"]
-	path = misskeyV13
-	url = https://github.com/fruitriin/misskey4ririca
-	branch = ririca/master
+[submodule "submodules/misskey-v13"]
+	path = submodules/misskey-v13
+	url = https://github.com/fruitriin/misskey4ririca.git
+    branch = ririca/master
