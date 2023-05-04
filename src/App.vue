@@ -1,5 +1,9 @@
 <template>
   <div v-if="!loggedIn">
+    <h1>MissRirica</h1>
+    <div>
+      MissRiricaはMisskeyクライアントです。
+    </div>
     <div>
     <label>
       サーバー名
@@ -20,8 +24,13 @@
     <input v-model="accessToken"  type="password" />
     </label>
     </div>
+    <div>
+    <input type="checkbox"><a href="https://riinswork.space/missRirica/privacy/" >MissRirica 利用規約 & プライバシーポリシー</a>
+    </div>
     <button @click="signIn">ろぐいん！</button>
     <pre>{{ account }}</pre>
+    <pre>{{  debug }}</pre>
+    <img src="ririca/ririca.png">
   </div>
 </template>
 
@@ -33,7 +42,6 @@ export default {
   mounted(){
     if(localStorage.getItem("account")) this.activateMisskeyV13()
   },
-
   data(){
     return {
       i18n: {
@@ -44,10 +52,14 @@ export default {
       accessToken: "",
       account: {},
       loggedIn: false,
+      debug: {},
     }
   },
   methods:{
     signIn(){
+      const url = "https://" + this.serverHost.replace("https://", "").replace("http://", "").split("/")[0];
+
+
       const cli = new misskeyApi.APIClient({
         origin: this.serverHost,
         credential: this.accessToken,
@@ -56,8 +68,10 @@ export default {
       cli.request("i").then((res) => {
         this.account = res
 
-        localStorage.setItem("account", JSON.stringify({...res, token: this.accessToken, instanceUrl: this.serverHost}))
+        localStorage.setItem("account", JSON.stringify({...res, token: this.accessToken, instanceUrl: url.origin}))
         this.activateMisskeyV13()
+      }).catch((e) => {
+        this.debug = e
       })
 
     },
