@@ -28,3 +28,5 @@ dist-ssr
 .env
 
 src/missRirica-Web!/capacitor.config.json
+
+public/misskey-v13

@@ -110,7 +110,7 @@ export default defineComponent({
       misskeyV13.setAttribute("type", "module")
       const misskeyV13Style = document.createElement("link")
       misskeyV13Style.setAttribute("rel", "stylesheet")
-      misskeyV13Style.setAttribute("href", "misskey-v13/init.css")
+      misskeyV13Style.setAttribute("href", "misskey-v13/style.css")
       document.head.appendChild(misskeyV13)
       document.head.appendChild(misskeyV13Style)
       this.loggedIn = true
