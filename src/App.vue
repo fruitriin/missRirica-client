@@ -1,48 +1,50 @@
 <template>
-  <div v-if="!loggedIn">
-    <h1>MissRirica</h1>
-    <div>
-      MissRiricaはMisskeyクライアントです。
-    </div>
-    <div>
-    <label>
-      サーバー名
-      <input v-model="serverHost" placeholder="https://misskey.example.com/" />
+  <div v-if="!loggedIn" class="ui middle aligned center aligned grid">
+    <h1 class="ui teal image">MissRirica</h1>
+    <form class="ui large form">
 
-    </label>
-    </div>
+      <div>
+        MissRiricaはMisskeyクライアントです。
+      </div>
+      <div class="ui stacked segment">
+        <div class="field">
+          <label class="ui left icon input">
+            <input v-model="serverHost" placeholder="https://misskey.example.com/"/>
+          </label>
+        </div>
+        <div class="field">
+          <label class="ui left icon input">
+            <input v-model="userName" placeholder="アカウント名"/>
+          </label>
+        </div>
+        <div class="field">
+          <label class="ui left icon input">
+            <input v-model="accessToken" type="password" placeholder="アクセストークン"/>
+          </label>
+        </div>
+        <div class="field">
+          <input type="checkbox"><a href="https://riinswork.space/missRirica/privacy/">MissRirica 利用規約 &
+          プライバシーポリシー</a>
+        </div>
+        <button @click="signIn" class="ui fluid large teal submit button">ろぐいん！</button>
+        <pre>{{ url }}</pre>
+        <pre>{{ debug }}</pre>
+        <img src="@@/assets/ririca.png">
+      </div>
+    </form>
 
-    <div>
-    <label>
-      アカウント名
-      <input v-model="userName" />
-
-    </label>
-    </div>
-    <div>
-    <label for="">アクセストークン
-    <input v-model="accessToken"  type="password" />
-    </label>
-    </div>
-    <div>
-    <input type="checkbox"><a href="https://riinswork.space/missRirica/privacy/" >MissRirica 利用規約 & プライバシーポリシー</a>
-    </div>
-    <button @click="signIn">ろぐいん！</button>
-    <pre>{{ url }}</pre>
-    <pre>{{  debug }}</pre>
-    <img src="@@/assets/ririca.png">
   </div>
 </template>
 
 <script>
-import { api as misskeyApi } from 'misskey-js';
+import {api as misskeyApi} from 'misskey-js';
 
 
 export default {
-  mounted(){
-    if(localStorage.getItem("account")) this.activateMisskeyV13()
+  mounted() {
+    if (localStorage.getItem("account")) this.activateMisskeyV13()
   },
-  data(){
+  data() {
     return {
       i18n: {
         ts: {}
@@ -60,8 +62,8 @@ export default {
       return "https://" + this.serverHost.replace("https://", "").replace("http://", "").split("/")[0];
     }
   },
-  methods:{
-    signIn(){
+  methods: {
+    signIn() {
       const cli = new misskeyApi.APIClient({
         origin: this.serverHost,
         credential: this.accessToken,
@@ -77,12 +79,12 @@ export default {
       })
 
     },
-    activateMisskeyV13(){
+    activateMisskeyV13() {
       const misskeyV13 = document.createElement("script")
       misskeyV13.setAttribute("src", "misskey-v13/app.js")
       misskeyV13.setAttribute("type", "module")
       const misskeyV13Style = document.createElement("link")
-      misskeyV13Style.setAttribute("rel", "stylesheet" )
+      misskeyV13Style.setAttribute("rel", "stylesheet")
       misskeyV13Style.setAttribute("href", "misskey-v13/init.css")
       document.head.appendChild(misskeyV13)
       document.head.appendChild(misskeyV13Style)
@@ -92,8 +94,13 @@ export default {
 }
 </script>
 
+<style lang="scss">
+@import 'semantic-ui-css/semantic.min.css';
+</style>
 
 <style lang="scss" scoped>
+
+
 .eppvobhk {
   > .auth {
     > .avatar {
