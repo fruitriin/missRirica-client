@@ -36,14 +36,33 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {api as misskeyApi} from 'misskey-js';
+import { useStorage } from '@vueuse/core'
+import { defineComponent } from "vue";
 
+export default defineComponent({
+  setup(){
+    const account = useStorage('account', {})
+    const accounts = useStorage('accounts', [])
 
-export default {
+    function addAccount(id: string, token : string, instanceUrl :string) {
+      console.log(instanceUrl)
+      if (!accounts.value.some((x) => x.id === id)) {
+        accounts.value.push({ id, token, instanceUrl})
+        console.log(accounts.value)
+      }
+      account.value = {id, token, instanceUrl}
+    }
+
+    return {
+      account,
+      accounts ,
+      addAccount
+    }
+  },
   mounted() {
-    local
-    if (localStorage.getItem("account")) this.activateMisskeyV13()
+    if (this.account.instanceUrl) this.activateMisskeyV13()
   },
   data() {
     return {
@@ -77,15 +96,15 @@ export default {
         }
         this.account = res
 
-
-        localStorage.setItem("account", JSON.stringify({...res, token: this.accessToken, instanceUrl: this.url}))
+        this.addAccount(res.id, this.accessToken, this.url)
         this.activateMisskeyV13()
       }).catch((e) => {
         this.debug = e
       })
-
     },
+
     activateMisskeyV13() {
+
       const misskeyV13 = document.createElement("script")
       misskeyV13.setAttribute("src", "misskey-v13/app.js")
       misskeyV13.setAttribute("type", "module")
@@ -97,7 +116,7 @@ export default {
       this.loggedIn = true
     }
   },
-}
+})
 </script>
 
 <style lang="scss">
