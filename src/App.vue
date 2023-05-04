@@ -30,7 +30,7 @@
     <button @click="signIn">ろぐいん！</button>
     <pre>{{ account }}</pre>
     <pre>{{  debug }}</pre>
-    <img src="ririca/ririca.png">
+    <img src="@@/assets/ririca.png">
   </div>
 </template>
 

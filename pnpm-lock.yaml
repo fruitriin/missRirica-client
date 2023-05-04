@@ -32,9 +32,6 @@ importers:
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
-      throttle-debounce:
-        specifier: 5.0.0
-        version: 5.0.0
       typescript:
         specifier: ~4.8.4
         version: 4.8.4
@@ -13038,6 +13035,7 @@ packages:
   /throttle-debounce@5.0.0:
     resolution: {integrity: sha512-2iQTSgkkc1Zyk0MeVrt/3BvuOXYPl/R8Z0U2xxo9rjwNciaHDG3R+Lm6dh4EeUci49DanvBnuqI6jshoQQRGEg==}
     engines: {node: '>=12.22'}
+    dev: false
 
   /through2@2.0.5:
     resolution: {integrity: sha512-/mrRod8xqpA+IHSLyGCQ2s8SPHiCDEeQJSep1jqLYeEUClOFG2Qsh+4FU6G9VeqpZnGW/Su8LQGc4YKni5rYSQ==}
