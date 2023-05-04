@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loggedIn" class="ui middle aligned center aligned grid">
     <h1 class="ui teal image">MissRirica</h1>
-    <form class="ui large form">
+    <form class="ui large form" @submit.prevent>
 
       <div>
         MissRiricaはMisskeyクライアントです。
@@ -42,6 +42,7 @@ import {api as misskeyApi} from 'misskey-js';
 
 export default {
   mounted() {
+    local
     if (localStorage.getItem("account")) this.activateMisskeyV13()
   },
   data() {
@@ -64,13 +65,18 @@ export default {
   },
   methods: {
     signIn() {
-      const cli = new misskeyApi.APIClient({
-        origin: this.serverHost,
+      const api = new misskeyApi.APIClient({
+        origin: this.url,
         credential: this.accessToken,
       });
 
-      cli.request("i").then((res) => {
+      api.request("i").then((res) => {
+        if(res.error) {
+          this.debug = res
+          return
+        }
         this.account = res
+
 
         localStorage.setItem("account", JSON.stringify({...res, token: this.accessToken, instanceUrl: this.url}))
         this.activateMisskeyV13()
