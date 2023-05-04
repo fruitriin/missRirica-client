@@ -28,8 +28,6 @@
 <script>
 import { api as misskeyApi } from 'misskey-js';
 
-import MkButton from "@/Components/MkButton.vue";
-import MkInput from "@/Components/MkInput.vue";
 
 export default {
   components: {
