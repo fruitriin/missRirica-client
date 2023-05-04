@@ -4,9 +4,10 @@
   "version": "1.5.3",
   "type": "module",
   "scripts": {
-    "prebuild": "cd misskeyV13/packages/frontend  && pnpm install && pnpm build",
+    "prebuild1": "cd misskeyV13/packages/misskey-js  && pnpm install && pnpm build",
+    "prebuild2": "cd misskeyV13/packages/frontend  && pnpm install && pnpm build",
     "dev": "cp capacitor.config.dev.json capacitor.config.json;cap copy; vite --host;",
-    "build": "pnpm prebuild && cp capacitor.config.prod.json capacitor.config.json ; vite build;cap copy;",
+    "build": "pnpm prebuild1 && pnpm prebuild2 && cp capacitor.config.prod.json capacitor.config.json ; vite build;cap copy;",
     "devbuild": "cp capacitor.config.prod.json capacitor.config.json; vite build  --mode development; cap sync",
     "lint": "vue-tsc",
     "preview": "vite preview",
