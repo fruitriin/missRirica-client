@@ -68,7 +68,7 @@ export default {
       cli.request("i").then((res) => {
         this.account = res
 
-        localStorage.setItem("account", JSON.stringify({...res, token: this.accessToken, instanceUrl: url.origin}))
+        localStorage.setItem("account", JSON.stringify({...res, token: this.accessToken, instanceUrl: url}))
         this.activateMisskeyV13()
       }).catch((e) => {
         this.debug = e
