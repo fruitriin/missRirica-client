@@ -28,7 +28,7 @@
     <input type="checkbox"><a href="https://riinswork.space/missRirica/privacy/" >MissRirica 利用規約 & プライバシーポリシー</a>
     </div>
     <button @click="signIn">ろぐいん！</button>
-    <pre>{{ account }}</pre>
+    <pre>{{ url }}</pre>
     <pre>{{  debug }}</pre>
     <img src="@@/assets/ririca.png">
   </div>
@@ -55,11 +55,13 @@ export default {
       debug: {},
     }
   },
+  computed: {
+    url() {
+      return "https://" + this.serverHost.replace("https://", "").replace("http://", "").split("/")[0];
+    }
+  },
   methods:{
     signIn(){
-      const url = "https://" + this.serverHost.replace("https://", "").replace("http://", "").split("/")[0];
-
-
       const cli = new misskeyApi.APIClient({
         origin: this.serverHost,
         credential: this.accessToken,
@@ -68,7 +70,7 @@ export default {
       cli.request("i").then((res) => {
         this.account = res
 
-        localStorage.setItem("account", JSON.stringify({...res, token: this.accessToken, instanceUrl: url}))
+        localStorage.setItem("account", JSON.stringify({...res, token: this.accessToken, instanceUrl: this.url}))
         this.activateMisskeyV13()
       }).catch((e) => {
         this.debug = e
