@@ -8,10 +8,11 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./misskeyV13/packages/frontend/src', import.meta.url))
     }
   },
   build: {
-    emptyOutDir: false
+    emptyOutDir: false,
   }
+
 })
