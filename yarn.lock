@@ -45,10 +45,10 @@
   resolved "https://registry.yarnpkg.com/@capacitor/android/-/android-4.6.2.tgz#2589525479a07c153f7ffd610684c3145c322aff"
   integrity sha512-PQpOJnMi0i/d4UrT8bPdfkwlKAlQLgsyo2YKj+iUYjEIu8sKQvqDirLYnpeKhj4cflIG2u9mh/eFncooA+u2gw==
 
-"@capacitor/app@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@capacitor/app/-/app-4.1.1.tgz#47329e19ecc080bc2934be86566a7673e0f94e5c"
-  integrity sha512-SJcJA1rhFQyeH6eLfUEbdKkHzAwzahJNVPNXmU88fdmXpMgM2dJGzZj1vrm6e21aQq+Z4aBVLJ2RCdj92zD7wg==
+"@capacitor/app@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@capacitor/app/-/app-5.0.0.tgz#a6264f95ab0c21970af067f9840cfc3df994c595"
+  integrity sha512-ORbR6PtKmoi57oUcuyoOxCfsakLiMM8KaIeG8iZUKZu1ETsbVnyMzA3kDa+MVUlbsBTQiBwe0mWBlve9lUBYkQ==
 
 "@capacitor/assets@^2.0.4":
   version "2.0.4"
