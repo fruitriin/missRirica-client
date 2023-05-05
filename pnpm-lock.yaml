@@ -14,9 +14,36 @@ importers:
         specifier: ^4.1.6
         version: 4.1.6(vue@3.2.47)
     devDependencies:
+      '@capacitor/android':
+        specifier: ^4.5.0
+        version: 4.5.0(@capacitor/core@4.5.0)
+      '@capacitor/app':
+        specifier: ^4.1.1
+        version: 4.1.1(@capacitor/core@4.5.0)
+      '@capacitor/camera':
+        specifier: ^4.1.4
+        version: 4.1.4(@capacitor/core@4.5.0)
       '@capacitor/cli':
         specifier: ^5.0.0
         version: 5.0.0
+      '@capacitor/core':
+        specifier: ^4.5.0
+        version: 4.5.0
+      '@capacitor/device':
+        specifier: ^4.1.0
+        version: 4.1.0(@capacitor/core@4.5.0)
+      '@capacitor/ios':
+        specifier: ^4.5.0
+        version: 4.5.0(@capacitor/core@4.5.0)
+      '@capacitor/preferences':
+        specifier: ^4.0.2
+        version: 4.0.2(@capacitor/core@4.5.0)
+      '@capacitor/push-notifications':
+        specifier: ^4.1.2
+        version: 4.1.2(@capacitor/core@4.5.0)
+      '@capacitor/status-bar':
+        specifier: ^4.1.1
+        version: 4.1.1(@capacitor/core@4.5.0)
       '@trapezedev/configure':
         specifier: ^7.0.8
         version: 7.0.8(@types/node@18.14.2)(typescript@4.8.4)
@@ -53,33 +80,6 @@ importers:
 
   submodules/misskey-v13/packages/frontend:
     dependencies:
-      '@capacitor/android':
-        specifier: ^4.5.0
-        version: 4.5.0(@capacitor/core@4.5.0)
-      '@capacitor/app':
-        specifier: ^4.1.1
-        version: 4.1.1(@capacitor/core@4.5.0)
-      '@capacitor/camera':
-        specifier: ^4.1.4
-        version: 4.1.4(@capacitor/core@4.5.0)
-      '@capacitor/core':
-        specifier: ^4.5.0
-        version: 4.5.0
-      '@capacitor/device':
-        specifier: ^4.1.0
-        version: 4.1.0(@capacitor/core@4.5.0)
-      '@capacitor/ios':
-        specifier: ^4.5.0
-        version: 4.5.0(@capacitor/core@4.5.0)
-      '@capacitor/preferences':
-        specifier: ^4.0.2
-        version: 4.0.2(@capacitor/core@4.5.0)
-      '@capacitor/push-notifications':
-        specifier: ^4.1.2
-        version: 4.1.2(@capacitor/core@4.5.0)
-      '@capacitor/status-bar':
-        specifier: ^4.1.1
-        version: 4.1.1(@capacitor/core@4.5.0)
       '@discordapp/twemoji':
         specifier: 14.1.2
         version: 14.1.2
@@ -1838,7 +1838,7 @@ packages:
       '@capacitor/core': ^4.4.0
     dependencies:
       '@capacitor/core': 4.5.0
-    dev: false
+    dev: true
 
   /@capacitor/app@4.1.1(@capacitor/core@4.5.0):
     resolution: {integrity: sha512-SJcJA1rhFQyeH6eLfUEbdKkHzAwzahJNVPNXmU88fdmXpMgM2dJGzZj1vrm6e21aQq+Z4aBVLJ2RCdj92zD7wg==}
@@ -1846,7 +1846,7 @@ packages:
       '@capacitor/core': ^4.0.0
     dependencies:
       '@capacitor/core': 4.5.0
-    dev: false
+    dev: true
 
   /@capacitor/camera@4.1.4(@capacitor/core@4.5.0):
     resolution: {integrity: sha512-7f4n7PlnstYsdGyxc0Kc4hIyS6csFLOjXvffm7pJsuy9pSo+kfdOPdYgGg360QwbUAmA+Yv+J1ZW1eFIwgvWrQ==}
@@ -1854,7 +1854,7 @@ packages:
       '@capacitor/core': ^4.0.0
     dependencies:
       '@capacitor/core': 4.5.0
-    dev: false
+    dev: true
 
   /@capacitor/cli@5.0.0:
     resolution: {integrity: sha512-d11L9xnnxmjyTHD3vjhOGnr7zN+uIzIeW4QrQC131rovP1cdFYVjG1DrmQa/mx6s49d2Bv7myNLHtl0j+dQIow==}
@@ -1886,7 +1886,7 @@ packages:
     resolution: {integrity: sha512-afx+hvQIrPcHbTdsBIryE96JlfSt1Rw8cWhb1J34v6Exje6zQZQa3fQZ6gcgkON+zkDIK8u3yRcIps0xMUdsMQ==}
     dependencies:
       tslib: 2.5.0
-    dev: false
+    dev: true
 
   /@capacitor/device@4.1.0(@capacitor/core@4.5.0):
     resolution: {integrity: sha512-BlcYb6e6m+vC1SxeyUDIUGfuNXdKEcpFPDCs/kxk2SByFc/BkvXeoy4NjY4qmTderGELofX9bta5Iy9JV7rGUg==}
@@ -1894,7 +1894,7 @@ packages:
       '@capacitor/core': ^4.0.0
     dependencies:
       '@capacitor/core': 4.5.0
-    dev: false
+    dev: true
 
   /@capacitor/ios@4.5.0(@capacitor/core@4.5.0):
     resolution: {integrity: sha512-2E7hqKqZOXPKEQqvdp2g68KtfjIkGEPmLpM0vRTUug08l4C/XoPufPnHiT1Y6dEXk8c02NdnilxarfbyaajQvg==}
@@ -1902,7 +1902,7 @@ packages:
       '@capacitor/core': ^4.4.0
     dependencies:
       '@capacitor/core': 4.5.0
-    dev: false
+    dev: true
 
   /@capacitor/preferences@4.0.2(@capacitor/core@4.5.0):
     resolution: {integrity: sha512-HgcRkMdVHSIV3TeQLZFmCaCeMWQ25wLyZZ7dA2f8Rw81Q1Nroxsi7HxTEGNqrWKSN9PNKBJD8vChr6eB2GNtZg==}
@@ -1910,7 +1910,7 @@ packages:
       '@capacitor/core': ^4.0.0
     dependencies:
       '@capacitor/core': 4.5.0
-    dev: false
+    dev: true
 
   /@capacitor/push-notifications@4.1.2(@capacitor/core@4.5.0):
     resolution: {integrity: sha512-ok6CGvedwK1azmf8VWhrNlg6jhi4PFz3HoyS0GNE2ew7+JGnxN77sgK5q1TVzdkge+vkqipO6uu5bD1xfj/pWQ==}
@@ -1918,7 +1918,7 @@ packages:
       '@capacitor/core': ^4.0.0
     dependencies:
       '@capacitor/core': 4.5.0
-    dev: false
+    dev: true
 
   /@capacitor/status-bar@4.1.1(@capacitor/core@4.5.0):
     resolution: {integrity: sha512-3wosxMD1XuIFz88+c2GdVEHSJV6u7suOeKQjyWf3zf9eFr622Sg+udZqDbC0dtTWXw97BWyCjv3r1EYJw7XnIA==}
@@ -1926,7 +1926,7 @@ packages:
       '@capacitor/core': ^4.0.0
     dependencies:
       '@capacitor/core': 4.5.0
-    dev: false
+    dev: true
 
   /@colors/colors@1.5.0:
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -3701,6 +3701,17 @@ packages:
       telejson: 7.1.0
     dev: true
 
+  /@storybook/channel-postmessage@7.0.9:
+    resolution: {integrity: sha512-6zsUPlsD3GVhKNq4UZ5MePJPjiMcPs/K02mH5/uVTN2JSgLdWgbLhZ4VYit4HgwE+d98bd9zWbgNgSOXpTArag==}
+    dependencies:
+      '@storybook/channels': 7.0.9
+      '@storybook/client-logger': 7.0.9
+      '@storybook/core-events': 7.0.9
+      '@storybook/global': 5.0.0
+      qs: 6.11.1
+      telejson: 7.1.0
+    dev: true
+
   /@storybook/channel-websocket@7.0.2:
     resolution: {integrity: sha512-YU3lFId6Nsi75ddA+3qfbnLfNUPswboYyx+SALhaLuXqz7zqfzX4ezMgxeS/h0gRlUJ7nf2/yJ5qie/kZaizjw==}
     dependencies:
@@ -3716,6 +3727,10 @@ packages:
 
   /@storybook/channels@7.0.8:
     resolution: {integrity: sha512-z8W4r8te/EiEDfk8qaxmjwMcKMe+x12leWEwtyz6e9XI0Q4qTk17dDtq/XZ5Ab2Ks4VSvWRu1e/QURiVpjbo2Q==}
+    dev: true
+
+  /@storybook/channels@7.0.9:
+    resolution: {integrity: sha512-LF/Mkr0/+VOawEAospLGUcfZIPak3yV/ZjEAe/lubvLPJ6s2FFOjDUsyDIa2oM4ZE9TI6AGVN51kddVToelM8A==}
     dev: true
 
   /@storybook/cli@7.0.2:
@@ -3775,6 +3790,12 @@ packages:
 
   /@storybook/client-logger@7.0.8:
     resolution: {integrity: sha512-UuyX57Jzn8L0QOhDPBA/v9UqIGCtFKqtaS23mNNNDoc1X3u+boULNgqWGD84F2U7JWg2xNopIJvjQxhH30/Jhw==}
+    dependencies:
+      '@storybook/global': 5.0.0
+    dev: true
+
+  /@storybook/client-logger@7.0.9:
+    resolution: {integrity: sha512-EJnXWvpTFEj462ixZbDouTN9X/FinRgaKKN6zXdhSSZUnm5PcZBtnoX5S+982z3LiAjdNIuAdZE/4vwBIAF88A==}
     dependencies:
       '@storybook/global': 5.0.0
     dev: true
@@ -3874,6 +3895,10 @@ packages:
 
   /@storybook/core-events@7.0.8:
     resolution: {integrity: sha512-CQJs3PKQ8HJmMe7kzYy2bWz3hw5d8myAtO5LAgvPHKsVqAZ0R+rN4lXlcPNWf/x3tb8JizDJpPgTCBdOBb+tkg==}
+    dev: true
+
+  /@storybook/core-events@7.0.9:
+    resolution: {integrity: sha512-xJiyX7Gq/TgDdBv+8KbfTJ4Sc7fCMeIEUqWTtnYCHWB7Mp6Iui37+caDX3aGQRTz7FVgb7aL5QkQES9Ihc1+dg==}
     dev: true
 
   /@storybook/core-server@7.0.2:
@@ -4007,6 +4032,16 @@ packages:
       '@storybook/preview-api': 7.0.8
     dev: true
 
+  /@storybook/instrumenter@7.0.9:
+    resolution: {integrity: sha512-ly/vLeQIGbcw3RLQv4vPugvlaMah7+rsYZtwN/ocseBbsDfFBqxI7NbJNBXSTo44eTTbzQUkeOZWqf6dZzRm0Q==}
+    dependencies:
+      '@storybook/channels': 7.0.9
+      '@storybook/client-logger': 7.0.9
+      '@storybook/core-events': 7.0.9
+      '@storybook/global': 5.0.0
+      '@storybook/preview-api': 7.0.9
+    dev: true
+
   /@storybook/jest@0.1.0:
     resolution: {integrity: sha512-TmybnEXlv5Fu2/Hq4nRj7alS9mw4CasLR0RDwaAzS+Vpvu1TC4+j9rh+b1BHtmWebbJh0JMT6mgzPqOyJdgtQA==}
     dependencies:
@@ -4092,6 +4127,26 @@ packages:
       '@storybook/csf': 0.1.0
       '@storybook/global': 5.0.0
       '@storybook/types': 7.0.8
+      '@types/qs': 6.9.7
+      dequal: 2.0.3
+      lodash: 4.17.21
+      memoizerific: 1.11.3
+      qs: 6.11.1
+      synchronous-promise: 2.0.17
+      ts-dedent: 2.2.0
+      util-deprecate: 1.0.2
+    dev: true
+
+  /@storybook/preview-api@7.0.9:
+    resolution: {integrity: sha512-cLyhq2nk0eiMOUwIIKhgDgZoS1ecRGojl92hR0agZDzNJrb1lvXK6uIkJh/Anl2Jbir28lAjQGU54voPODwTUA==}
+    dependencies:
+      '@storybook/channel-postmessage': 7.0.9
+      '@storybook/channels': 7.0.9
+      '@storybook/client-logger': 7.0.9
+      '@storybook/core-events': 7.0.9
+      '@storybook/csf': 0.1.0
+      '@storybook/global': 5.0.0
+      '@storybook/types': 7.0.9
       '@types/qs': 6.9.7
       dequal: 2.0.3
       lodash: 4.17.21
@@ -4230,8 +4285,8 @@ packages:
   /@storybook/testing-library@0.0.14-next.1:
     resolution: {integrity: sha512-1CAl40IKIhcPaCC4pYCG0b9IiYNymktfV/jTrX7ctquRY3akaN7f4A1SippVHosksft0M+rQTFE0ccfWW581fw==}
     dependencies:
-      '@storybook/client-logger': 7.0.8
-      '@storybook/instrumenter': 7.0.8
+      '@storybook/client-logger': 7.0.9
+      '@storybook/instrumenter': 7.0.9
       '@testing-library/dom': 8.20.0
       '@testing-library/user-event': 13.5.0(@testing-library/dom@8.20.0)
       ts-dedent: 2.2.0
@@ -4278,6 +4333,15 @@ packages:
     resolution: {integrity: sha512-x83vL/TzBlv21nHuP35c+z4AUjHSY9G7NpZLTZ/5REcuXbeIfhjGOAyeUHB4lXhPXxsOlq3wHiQippB7bSJeeQ==}
     dependencies:
       '@storybook/channels': 7.0.8
+      '@types/babel__core': 7.20.0
+      '@types/express': 4.17.17
+      file-system-cache: 2.1.1
+    dev: true
+
+  /@storybook/types@7.0.9:
+    resolution: {integrity: sha512-6aKrrsX3wgPMg9Nu3AK1GYmCZQiHqHv7l24ywNxZPv0T63rcpS86kWK4qVAywoaXGFc9GtRT+dz1rK8Fx50J9Q==}
+    dependencies:
+      '@storybook/channels': 7.0.9
       '@types/babel__core': 7.20.0
       '@types/express': 4.17.17
       file-system-cache: 2.1.1
