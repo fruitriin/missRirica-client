@@ -4,12 +4,9 @@ vars:
   RELEASE_TAG:
     default: 1
 platforms:
-
   android:
     versionName: 5.2.1
     incrementVersionCode: true
-
-
   ios:
     version: 16.4
     incrementBuild: true
