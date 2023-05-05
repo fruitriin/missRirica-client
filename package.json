@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^5.0.0",
+    "@trapezedev/configure": "^7.0.8",
     "@types/node": "^18.14.2",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/tsconfig": "^0.1.3",
