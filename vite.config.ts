@@ -19,7 +19,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/misskey-v13': {
-        target: "http://localhost:6013",
+        target: "http://localhost:6173",
         changeOrigin: true,
         rewrite: (path) => `${path}`.replace(/(.*?)\/misskey-v13/, "misskey-v13/$1")
       },
