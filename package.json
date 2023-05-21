@@ -4,7 +4,7 @@
   "version": "1.5.3",
   "type": "module",
   "scripts": {
-    "prebuild0": "cd submodules/misskey-v13 && git submodules update",
+    "prebuild0": "cd submodules/misskey-v13 && git submodule update",
     "prebuild1": "cd submodules/misskey-v13/packages/misskey-js && pnpm build",
     "prebuild2": "cd submodules/misskey-v13/packages/frontend  && pnpm build",
     "devall": "sh -c script/runAllWorkspace.sh",
