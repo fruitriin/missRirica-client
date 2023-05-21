@@ -108,7 +108,7 @@ export default defineComponent({
 
       const misskeyV13 = document.createElement("script")
       // devと本番でパスが可変
-      misskeyV13.setAttribute("src", "misskey-v13/init.js")
+      misskeyV13.setAttribute("src", "misskey-v13/app.js")
       misskeyV13.setAttribute("type", "module")
       const misskeyV13Style = document.createElement("link")
       misskeyV13Style.setAttribute("rel", "stylesheet")
