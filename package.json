@@ -4,11 +4,12 @@
   "version": "1.5.3",
   "type": "module",
   "scripts": {
+    "prebuild0": "cd submodules/misskey-v13 && git submodules update",
     "prebuild1": "cd submodules/misskey-v13/packages/misskey-js && pnpm build",
     "prebuild2": "cd submodules/misskey-v13/packages/frontend  && pnpm build",
     "devall": "sh -c script/runAllWorkspace.sh",
     "dev": "cp capacitor.config.dev.json capacitor.config.json;cap copy;  vite --host;",
-    "build": "pnpm prebuild1 && pnpm prebuild2 && cp capacitor.config.prod.json capacitor.config.json ; vite build;cap copy",
+    "build": "pnpm prebuild0 && pnpm prebuild1 && pnpm prebuild2 && cp capacitor.config.prod.json capacitor.config.json ; vite build;cap copy",
     "devbuild": "cp capacitor.config.prod.json capacitor.config.json; vite build  --mode development; cap sync",
     "lint": "vue-tsc",
     "preview": "vite preview",
