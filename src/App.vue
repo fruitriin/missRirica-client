@@ -46,13 +46,12 @@ export default defineComponent({
     const account = useStorage('account', {})
     const accounts = useStorage('accounts', [])
 
-    function addAccount(id: string, token : string, instanceUrl :string) {
+    function addAccount(user: any, token : string, instanceUrl :string) {
       console.log(instanceUrl)
-      if (!accounts.value.some((x) => x.id === id)) {
-        accounts.value.push({ id, token, instanceUrl})
-        console.log(accounts.value)
+      if (!accounts.value.some((x) => x.id === user.id)) {
+        accounts.value.push({ id: user.id, token, instanceUrl})
       }
-      account.value = {id, token, instanceUrl}
+      account.value = {...user, token, instanceUrl}
     }
 
     return {
@@ -63,6 +62,8 @@ export default defineComponent({
   },
   mounted() {
     if (this.account.instanceUrl) this.activateMisskeyV13()
+
+    window.addEventListener("deactivate", this.deactivate)
   },
   data() {
     return {
@@ -96,7 +97,7 @@ export default defineComponent({
         }
         this.account = res
 
-        this.addAccount(res.id, this.accessToken, this.url)
+        this.addAccount(res, this.accessToken, this.url)
         this.activateMisskeyV13()
       }).catch((e) => {
         this.debug = e
@@ -106,25 +107,27 @@ export default defineComponent({
     activateMisskeyV13() {
 
       const misskeyV13 = document.createElement("script")
-      misskeyV13.setAttribute("src", "misskey-v13/app.js")
+      misskeyV13.setAttribute("src", "misskey-v13/src/init.ts")
       misskeyV13.setAttribute("type", "module")
       const misskeyV13Style = document.createElement("link")
       misskeyV13Style.setAttribute("rel", "stylesheet")
-      misskeyV13Style.setAttribute("href", "misskey-v13/style.css")
+      misskeyV13Style.setAttribute("href", "misskey-v13/src/init.css")
       document.head.appendChild(misskeyV13)
       document.head.appendChild(misskeyV13Style)
       this.loggedIn = true
+    },
+    deactivate(){
+      this.loggedIn = false
     }
   },
 })
 </script>
 
 <style lang="scss">
-@import 'semantic-ui-css/semantic.min.css';
+//@import 'semantic-ui-css/semantic.min.css';
 </style>
 
 <style lang="scss" scoped>
-
 
 .eppvobhk {
   > .auth {

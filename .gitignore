@@ -30,3 +30,6 @@ dist-ssr
 src/missRirica-Web!/capacitor.config.json
 
 public/misskey-v13
+
+submodules/misskey-v13/packages/backend
+submodules/misskey-v13/packages/sw

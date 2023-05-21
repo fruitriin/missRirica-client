@@ -9,15 +9,14 @@ use_frameworks!
 install! 'cocoapods', :disable_input_output_paths => true
 
 def capacitor_pods
-  pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
-  pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
-  pod 'CapacitorApp', :path => '../../node_modules/@capacitor/app'
-  pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
-  pod 'CapacitorPreferences', :path => '../../node_modules/@capacitor/preferences'
-  pod 'CapacitorPushNotifications', :path => '../../node_modules/@capacitor/push-notifications'
-  pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
-  pod 'CapacitorCamera', :path => '../../node_modules/@capacitor/camera'
-  pod 'CordovaPluginsStatic', :path => '../capacitor-cordova-ios-plugins'
+  pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@4.5.0_@capacitor+core@4.5.0/node_modules/@capacitor/ios'
+  pod 'CapacitorCordova', :path => '../../node_modules/.pnpm/@capacitor+ios@4.5.0_@capacitor+core@4.5.0/node_modules/@capacitor/ios'
+  pod 'CapacitorApp', :path => '../../node_modules/.pnpm/@capacitor+app@4.1.1_@capacitor+core@4.5.0/node_modules/@capacitor/app'
+  pod 'CapacitorCamera', :path => '../../node_modules/.pnpm/@capacitor+camera@4.1.4_@capacitor+core@4.5.0/node_modules/@capacitor/camera'
+  pod 'CapacitorDevice', :path => '../../node_modules/.pnpm/@capacitor+device@4.1.0_@capacitor+core@4.5.0/node_modules/@capacitor/device'
+  pod 'CapacitorPreferences', :path => '../../node_modules/.pnpm/@capacitor+preferences@4.0.2_@capacitor+core@4.5.0/node_modules/@capacitor/preferences'
+  pod 'CapacitorPushNotifications', :path => '../../node_modules/.pnpm/@capacitor+push-notifications@4.1.2_@capacitor+core@4.5.0/node_modules/@capacitor/push-notifications'
+  pod 'CapacitorStatusBar', :path => '../../node_modules/.pnpm/@capacitor+status-bar@4.1.1_@capacitor+core@4.5.0/node_modules/@capacitor/status-bar'
 end
 
 target 'App' do
