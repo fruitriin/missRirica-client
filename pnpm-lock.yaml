@@ -68,12 +68,15 @@ importers:
       npm-run-all:
         specifier: ^4.1.5
         version: 4.1.5
+      sass:
+        specifier: 1.62.1
+        version: 1.62.1
       typescript:
         specifier: ~4.8.4
         version: 4.8.4
       vite:
         specifier: ^4.1.4
-        version: 4.1.4(@types/node@18.14.2)
+        version: 4.1.4(@types/node@18.14.2)(sass@1.62.1)
       vue-tsc:
         specifier: ^1.2.0
         version: 1.2.0(typescript@4.8.4)
@@ -5400,7 +5403,7 @@ packages:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.1.4(@types/node@18.14.2)
+      vite: 4.1.4(@types/node@18.14.2)(sass@1.62.1)
       vue: 3.2.47
     dev: true
 
@@ -15150,7 +15153,7 @@ packages:
     resolution: {integrity: sha512-irjKcKXRn7v5bPAg4mAbsS6DgibpP1VUFL9tlgxU6lloK6V9yw9qCZkS+s2PtbkZpWNzr3TN3zVJAc6J7gJZmA==}
     dev: true
 
-  /vite@4.1.4(@types/node@18.14.2):
+  /vite@4.1.4(@types/node@18.14.2)(sass@1.62.1):
     resolution: {integrity: sha512-3knk/HsbSTKEin43zHu7jTwYWv81f8kgAL99G5NWBcA1LKvtvcVAC4JjBH1arBunO9kQka+1oGbrMKOjk4ZrBg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -15180,6 +15183,7 @@ packages:
       postcss: 8.4.23
       resolve: 1.22.2
       rollup: 3.21.4
+      sass: 1.62.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
