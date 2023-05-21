@@ -107,10 +107,12 @@ export default defineComponent({
     activateMisskeyV13() {
 
       const misskeyV13 = document.createElement("script")
-      misskeyV13.setAttribute("src", "misskey-v13/init.ts")
+      // devと本番でパスが可変
+      misskeyV13.setAttribute("src", "misskey-v13/init.js")
       misskeyV13.setAttribute("type", "module")
       const misskeyV13Style = document.createElement("link")
       misskeyV13Style.setAttribute("rel", "stylesheet")
+      // devと本番でパスが可変
       misskeyV13Style.setAttribute("href", "misskey-v13/init.css")
       document.head.appendChild(misskeyV13)
       document.head.appendChild(misskeyV13Style)
