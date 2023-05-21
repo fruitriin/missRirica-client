@@ -62,6 +62,8 @@ export default defineComponent({
   },
   mounted() {
     if (this.account.instanceUrl) this.activateMisskeyV13()
+
+    window.addEventListener("deactivate", this.deactivate)
   },
   data() {
     return {
@@ -113,6 +115,9 @@ export default defineComponent({
       document.head.appendChild(misskeyV13)
       document.head.appendChild(misskeyV13Style)
       this.loggedIn = true
+    },
+    deactivate(){
+      this.loggedIn = false
     }
   },
 })
@@ -123,7 +128,6 @@ export default defineComponent({
 </style>
 
 <style lang="scss" scoped>
-
 
 .eppvobhk {
   > .auth {
