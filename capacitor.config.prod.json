@@ -1,7 +1,7 @@
 {
   "appId": "space.riinswork.missririca",
   "appName": "MissRirica",
-  "webDir": "dist",
+  "webDir": ".output/public",
   "bundledWebRuntime": false,
   "plugins": {
     "PushNotifications": {

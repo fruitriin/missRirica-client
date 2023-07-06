@@ -1,10 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  ssr: false,
   srcDir: "src/",
-  devServer: {
-    port: 8000,
-  },
-  ssr: false
 
+  devServer: {
+    port: 5173,
+    host: "0.0.0.0",
+  },
 })

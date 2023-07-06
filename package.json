@@ -1,26 +1,25 @@
 {
   "name": "missririca-client",
   "private": true,
-  "version": "1.5.3",
-  "type": "module",
+  "version": "2.0.0",
   "scripts": {
-    "dev": "cp capacitor.config.dev.json capacitor.config.json;cap copy; nuxt dev;",
+    "dev": "cp capacitor.config.dev.json capacitor.config.json;cap copy; nuxt dev",
     "prepare": "nuxt prepare",
-    "build": "cp capacitor.config.prod.json capacitor.config.json ; nuxt build;cap copy",
-    "devbuild": "cp capacitor.config.prod.json capacitor.config.json; nuxt build  --mode development; cap sync",
+    "build": "cp capacitor.config.prod.json capacitor.config.json ; nuxt generate;cap copy",
+    "devbuild": "cp capacitor.config.prod.json capacitor.config.json; nuxt generate  --mode development; cap sync",
     "lint": "vue-tsc",
     "preview": "nuxt preview",
     "ios": "npx cap open ios",
     "android": "studio android"
   },
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@capacitor/android": "^5.1.1",
     "@capacitor/cli": "^5.0.0",
-    "misskey-js": "0.0.16",
-    "@nuxt/devtools": "latest",
+    "@capacitor/core": "^5.1.1",
+    "@capacitor/ios": "^5.1.1",
     "@types/node": "^18",
-    "nuxt": "^3.6.2"
+    "misskey-js": "0.0.16",
+    "nuxt": "3.6.2"
   }
 }

@@ -1,7 +1,7 @@
 {
   "appId": "space.riinswork.missririca",
   "appName": "MissRirica",
-  "webDir": "dist",
+  "webDir": ".output/public",
   "bundledWebRuntime": false,
   "plugins": {
     "PushNotifications": {
@@ -9,7 +9,7 @@
     }
   },
   "server": {
-    "url": "http://192.168.86.35:5173/",
+    "url": "http://192.168.86.54:5173/",
     "cleartext": true
   }
 }
