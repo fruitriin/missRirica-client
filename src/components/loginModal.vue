@@ -18,20 +18,31 @@ export default defineNuxtComponent({
 </script>
 <template>
   <Teleport to="body">
-    <div>
-      サーバーURL
-      <input v-model="serverUrl" />
-      アクセストークン
-      <input v-model="accessToken">
-      ユーザーID
-      <input v-model="userId" />
-      パスワード
-      <input v-model="password" type="password" />
+    <Modal @close="$emit('close')">
+      <div>
+        <div>
+        サーバーURL
+        <input v-model="serverUrl" />
+        </div>
+        <div>
+        アクセストークン
+        <input v-model="accessToken">
+        </div>
+        <div>
+          ユーザーID
+          <input v-model="userId" />
+
+        </div>
+        <div>
+        パスワード
+        <input v-model="password" type="password" />
+        </div>
 
 
+        <button @click="login">ログイン</button>
+      </div>
+    </Modal>
 
-      <button @click="login">ログイン</button>
-    </div>
   </Teleport>
 </template>
 
