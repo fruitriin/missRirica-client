@@ -18,7 +18,7 @@ export default defineNuxtComponent({
 </script>
 <template>
   <Teleport to="body">
-    <Modal @close="$emit('close')">
+    <Modal key-name="login">
       <div>
         <div>
         サーバーURL

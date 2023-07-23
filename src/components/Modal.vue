@@ -14,33 +14,36 @@
 </template>
 
 <script lang="ts">
-import { useEventBus } from "@vueuse/core";
+import { ModalControlNames, useRiricaStateStore } from "~/store/globalState";
+import { PropType } from "@vue/runtime-core";
 
 export default defineNuxtComponent({
   setup(){
-    const bus = useEventBus("modal")
-    return {bus}
+    const { $state } = useRiricaStateStore()
+
+    return {
+      state: $state
+    }
+  },
+  props: {
+    keyName: {
+      type: String as unknown as PropType<ModalControlNames>,
+      required: true
+    },
+    isFireCloseOnClickBackground: {
+      type: Boolean,
+      default: true
+    },
   },
   methods: {
     handleClose(){
-      this.$emit("close")
-      this.bus.emit("close", this.name)
+      this.state.modalControl[this.keyName] = false
     },
     handleClickBackground(){
       if(!this.isFireCloseOnClickBackground) return
       this.handleClose()
     }
   },
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    isFireCloseOnClickBackground: {
-      type: Boolean,
-      default: true
-    },
-  }
 })
 
 // ref https://github.com/misskey-dev/misskey/blob/develop/packages/frontend/src/components/MkModal.vue

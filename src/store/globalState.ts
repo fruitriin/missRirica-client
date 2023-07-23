@@ -48,12 +48,15 @@ export const useStateStore = defineStore('state', {
   }
 })
 
-export const useRiricaStateStore = defineStore("riricaState", {
-  state: () => {
-    return {
-      modalControl: {
-        login: false
-      }
-    }
+const riricaState = {
+  modalControl: {
+    login: false,
+    something: true
   }
+} as const
+
+export const useRiricaStateStore = defineStore("riricaState", {
+  state: () => riricaState
 })
+
+export type ModalControlNames = keyof typeof riricaState.modalControl
