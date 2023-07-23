@@ -1,7 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { defineNuxtConfig } from "nuxt/config";
+import AppConfig from "@nuxt/schema"
 
-export default defineNuxtConfig({
+const option: AppConfig.NuxtConfig = {
   ssr: false,
   srcDir: "src/",
 
@@ -13,4 +14,6 @@ export default defineNuxtConfig({
     // ...
     '@pinia/nuxt',
   ],
-})
+}
+
+export default defineNuxtConfig(option as any )
