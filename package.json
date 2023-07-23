@@ -12,14 +12,18 @@
     "ios": "npx cap open ios",
     "android": "studio android"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@pinia/nuxt": "^0.4.11"
+  },
   "devDependencies": {
     "@capacitor/android": "^5.1.1",
     "@capacitor/cli": "^5.0.0",
     "@capacitor/core": "^5.1.1",
     "@capacitor/ios": "^5.1.1",
-    "@types/node": "^18",
+    "@types/node": "^20.4.4",
+    "@vueuse/core": "^10.2.1",
     "misskey-js": "0.0.16",
-    "nuxt": "3.6.2"
+    "nuxt": "3.6.2",
+    "pinia": "^2.1.4"
   }
 }

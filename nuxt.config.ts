@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { defineNuxtConfig } from "nuxt/config";
+
 export default defineNuxtConfig({
   ssr: false,
   srcDir: "src/",
@@ -7,4 +9,8 @@ export default defineNuxtConfig({
     port: 5173,
     host: "0.0.0.0",
   },
+  modules: [
+    // ...
+    '@pinia/nuxt',
+  ],
 })
