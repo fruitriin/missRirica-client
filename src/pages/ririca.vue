@@ -7,7 +7,7 @@
 
     <button @click="openLoginDialog">ログイン</button>
 
-    {{ usersStoragesModel.state.value }}
+    {{ getMain() }}
   </div>
 </template>
 <script lang="ts">
@@ -16,10 +16,11 @@ import { useStorageStore } from "~/store/globalState"
 export default defineNuxtComponent({
   setup(){
     const eventBus = useRiricaStateStore()
-    const { usersStoragesModel } = useStorageStore()
+    const { usersStorages, addUser, getMain } = useStorageStore()
     return {
       eventBus,
-      usersStoragesModel
+      usersStorages,
+      getMain
     }
   },
   data(){

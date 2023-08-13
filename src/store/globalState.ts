@@ -24,8 +24,9 @@ type UserStorage = {
   accessToken: string
   url: string
 }
-type UserStorages = Record<UserId, UserStorage> & {
+type UserStorages = {
   mainUserId: Maybe<string>
+  users: Record<UserId, UserStorage>
 
 }
 
@@ -43,44 +44,42 @@ export const useStorageStore = () => {
   )
   const usersStorages = useStorage(
     "usersStorage", {
+      mainUserId: "undefined",
+      users : {}
     } as UserStorages
   )
 
-  const usersStoragesModel = {
-    state : usersStorages,
-    mainUserId: undefined as Maybe<string>,
-    client: undefined as Maybe<APIClient>,
 
-    addUser (id: string, user:{ url: string, accessToken: string }){
-      this.state.value[id] = {
+
+
+  function addUser (id: string, user:{ url: string, accessToken: string }) {
+    usersStorages.value.users = {
+      [id]: {
         url: user.url,
-          accessToken: user.accessToken
+        accessToken: user.accessToken
       }
-    },
-    setMain (id: string){
-      this.state.value.mainUserId = id
-    },
-    getMain() {
-      if(this.state.value.mainUserId){
-        return this.state.value[this.state.value.mainUserId]
-      }else {
-        throw "something wrong"
-      }
-    },
-    noCredentialRequest(serverUrl: string, endpoint :  keyof Endpoints,  params: any){
-      const noCredentialClient = new api.APIClient({origin: serverUrl})
-      return noCredentialClient.request(endpoint, params)
-    },
-    request(endpoint: keyof Endpoints, params?: any,  credential?: string) {
-      if(this.client) return this.client.request(endpoint, params, credential)
-      this.client = new api.APIClient({origin: this.getMain().url, credential: this.getMain().accessToken})
-      return this.client.request(endpoint, params, credential)
+    }
+  }
+
+
+  function setMain (id: string) {
+    usersStorages.value.mainUserId = id
+  }
+
+  function getMain() {
+    if(usersStorages.value.mainUserId){
+      return usersStorages.value.users[usersStorages.value.mainUserId]
+    }else {
+      // throw "mainUserId Missing"
     }
   }
 
   return {
     applicationStorage,
-    usersStoragesModel
+    usersStorages,
+    addUser, getMain, setMain
+
+
   }
 }
 
