@@ -1,5 +1,13 @@
 <script lang="ts">
+import { useRiricaStateStore, useStorageStore } from "~/store/globalState";
+import { APIClient } from "misskey-js/built/api";
+
 export default defineNuxtComponent({
+  setup(){
+    const { usersStoragesModel } =  useStorageStore()
+    const { modalControl } = useRiricaStateStore()
+    return { usersStoragesModel, modalControl }
+  },
   data(){
     return {
       serverUrl: "",
@@ -9,8 +17,20 @@ export default defineNuxtComponent({
     }
   },
   methods:{
-    login(){
+    async login(){
       // ログインリクエスト投げて問題なければstoreへ入れる
+
+       const client = new APIClient({ origin: this.serverUrl, credential: this.accessToken})
+      const result = await client.request("i").catch((reason) => {
+        alert(reason)
+      })
+      if(!result) {
+        alert(result)
+        return
+      }
+
+      this.usersStoragesModel.addUser(result.id, {url: this.serverUrl, accessToken: this.accessToken})
+      this.modalControl.login = false
     }
   }
 })

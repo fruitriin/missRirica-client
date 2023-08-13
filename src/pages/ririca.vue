@@ -6,16 +6,20 @@
     <p>利用規約</p>
 
     <button @click="openLoginDialog">ログイン</button>
+
+    {{ usersStoragesModel.state.value }}
   </div>
 </template>
 <script lang="ts">
 import { useRiricaStateStore } from "~/store/globalState";
-
+import { useStorageStore } from "~/store/globalState"
 export default defineNuxtComponent({
   setup(){
     const eventBus = useRiricaStateStore()
+    const { usersStoragesModel } = useStorageStore()
     return {
-      eventBus
+      eventBus,
+      usersStoragesModel
     }
   },
   data(){

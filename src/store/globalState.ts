@@ -5,6 +5,8 @@ import { defineStore } from 'pinia'
 // and `Store` (e.g. `useUserStore`, `useCartStore`, `useProductStore`)
 // the first argument is a unique id of the store across your application
 
+import { api, Endpoints } from "misskey-js";
+
 type UserId = string
 /**
  * ユーザーごとに発生する揮発性のステート
@@ -12,12 +14,21 @@ type UserId = string
 type UserState = {}
 type UsersState = Record<UserId, UserState>
 import { useStorage } from '@vueuse/core'
+import { Maybe } from "~/utils/typeUitls ";
+import { APIClient } from "misskey-js/built/api";
 
 /**
  * LocalStorageに保存するユーザー固有データ
  */
-type UserStorage = {  }
-type UserStorages = Record<UserId, UserStorage>
+type UserStorage = {
+  accessToken: string
+  url: string
+}
+type UserStorages = Record<UserId, UserStorage> & {
+  mainUserId: Maybe<string>
+
+}
+
 
 /**
  * ローカルストレージで保存するデータ
@@ -30,12 +41,46 @@ export const useStorageStore = () => {
   const applicationStorage = useStorage(
     "applicationStorage", {}
   )
-  const usersStorage: UserStorage = useStorage(
-    "usersStorage", {} as UserStorages
+  const usersStorages = useStorage(
+    "usersStorage", {
+    } as UserStorages
   )
+
+  const usersStoragesModel = {
+    state : usersStorages,
+    mainUserId: undefined as Maybe<string>,
+    client: undefined as Maybe<APIClient>,
+
+    addUser (id: string, user:{ url: string, accessToken: string }){
+      this.state.value[id] = {
+        url: user.url,
+          accessToken: user.accessToken
+      }
+    },
+    setMain (id: string){
+      this.state.value.mainUserId = id
+    },
+    getMain() {
+      if(this.state.value.mainUserId){
+        return this.state.value[this.state.value.mainUserId]
+      }else {
+        throw "something wrong"
+      }
+    },
+    noCredentialRequest(serverUrl: string, endpoint :  keyof Endpoints,  params: any){
+      const noCredentialClient = new api.APIClient({origin: serverUrl})
+      return noCredentialClient.request(endpoint, params)
+    },
+    request(endpoint: keyof Endpoints, params?: any,  credential?: string) {
+      if(this.client) return this.client.request(endpoint, params, credential)
+      this.client = new api.APIClient({origin: this.getMain().url, credential: this.getMain().accessToken})
+      return this.client.request(endpoint, params, credential)
+    }
+  }
+
   return {
     applicationStorage,
-    usersStorage
+    usersStoragesModel
   }
 }
 
@@ -53,7 +98,7 @@ const riricaState = {
     login: false,
     something: true
   }
-} as const
+}
 
 export const useRiricaStateStore = defineStore("riricaState", {
   state: () => riricaState
