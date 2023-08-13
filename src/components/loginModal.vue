@@ -4,9 +4,9 @@ import { APIClient } from "misskey-js/built/api";
 
 export default defineNuxtComponent({
   setup(){
-    const usersStorages =  useStorageStore()
+    const { userStorage } =  useStorageStore()
     const { modalControl } = useRiricaStateStore()
-    return {  modalControl, usersStorages }
+    return {  modalControl, userStorage }
   },
   data(){
     return {
@@ -28,9 +28,8 @@ export default defineNuxtComponent({
         return
       }
 
-
-      this.usersStorages.setMain(result.id)
-      this.usersStorages.addUser(result.id, {url: this.serverUrl, accessToken: this.accessToken})
+      this.userStorage.addUser(result.id, {url: this.serverUrl, accessToken: this.accessToken})
+      this.userStorage.setMain(result.id)
 
       // このNextTickがないとlocalStorageへの反映前にインスタンスが消える
       await nextTick()

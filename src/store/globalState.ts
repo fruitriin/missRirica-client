@@ -5,7 +5,6 @@ import { defineStore } from 'pinia'
 // and `Store` (e.g. `useUserStore`, `useCartStore`, `useProductStore`)
 // the first argument is a unique id of the store across your application
 
-import { api, Endpoints } from "misskey-js";
 
 type UserId = string
 /**
@@ -15,7 +14,6 @@ type UserState = {}
 type UsersState = Record<UserId, UserState>
 import { useStorage } from '@vueuse/core'
 import { Maybe } from "~/utils/typeUitls ";
-import { APIClient } from "misskey-js/built/api";
 
 /**
  * LocalStorageに保存するユーザー固有データ
@@ -24,7 +22,7 @@ type UserStorage = {
   accessToken: string
   url: string
 }
-type UserStorages = {
+type UsersStorage = {
   mainUserId: Maybe<string>
   users: Record<UserId, UserStorage>
 
@@ -42,18 +40,15 @@ export const useStorageStore = () => {
   const applicationStorage = useStorage(
     "applicationStorage", {}
   )
-  const usersStorages = useStorage(
+  const usersStorage = useStorage(
     "usersStorage", {
       mainUserId: "undefined",
       users : {}
-    } as UserStorages
+    } as UsersStorage
   )
 
-
-
-
   function addUser (id: string, user:{ url: string, accessToken: string }) {
-    usersStorages.value.users = {
+    usersStorage.value.users = {
       [id]: {
         url: user.url,
         accessToken: user.accessToken
@@ -63,23 +58,26 @@ export const useStorageStore = () => {
 
 
   function setMain (id: string) {
-    usersStorages.value.mainUserId = id
+    usersStorage.value.mainUserId = id
   }
 
   function getMain() {
-    if(usersStorages.value.mainUserId){
-      return usersStorages.value.users[usersStorages.value.mainUserId]
+    if(usersStorage.value.mainUserId && usersStorage.value.users[usersStorage.value.mainUserId]){
+      return usersStorage.value.users[usersStorage.value.mainUserId]
     }else {
       // throw "mainUserId Missing"
+      return undefined
     }
+  }
+
+  const userStorage = {
+    user: getMain(),
+    addUser, setMain
   }
 
   return {
     applicationStorage,
-    usersStorages,
-    addUser, getMain, setMain
-
-
+    userStorage,
   }
 }
 

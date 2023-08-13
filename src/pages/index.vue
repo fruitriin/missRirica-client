@@ -1,18 +1,20 @@
 <script lang="ts">
-import { useStateStore } from "~/store/globalState";
+import { useStateStore, useStorageStore } from "~/store/globalState";
 
 
 export default defineNuxtComponent({
   setup(){
-    const { $state } = useStateStore()
+    const {userStorage} = useStorageStore()
+    const { $state, } = useStateStore()
 
     return {
-      state: $state
+      state: $state,
+      userStorage
     }
   },
   mounted(){
-    if(Object.keys(this.state.users).length === 0){
-      this.$router.replace("/ririca")
+    if(!this.userStorage.user){
+      this.$router.replace("/login")
     }
   }
 })
