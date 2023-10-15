@@ -14,6 +14,8 @@ type UserState = {}
 type UsersState = Record<UserId, UserState>
 import { useStorage } from '@vueuse/core'
 import { Maybe } from "~/utils/typeUitls ";
+import { api, Endpoints } from "misskey-js";
+import { APIClient } from "misskey-js/built/api";
 
 /**
  * LocalStorageに保存するユーザー固有データ
@@ -70,10 +72,24 @@ export const useStorageStore = () => {
     }
   }
 
+  let cli: Maybe<APIClient> = undefined
+  function request(endpoint: keyof Endpoints, params?: any){
+    if(!userStorage.user) return
+    if(cli) {
+      return cli.request(endpoint, params)
+    }
+    cli = new api.APIClient({ origin: userStorage.user.url, credential: userStorage.user.accessToken})
+
+    return cli.request(endpoint , params)
+  }
+
+
   const userStorage = {
     user: getMain(),
-    addUser, setMain
+    addUser, setMain,
+    request
   }
+
 
   return {
     applicationStorage,
