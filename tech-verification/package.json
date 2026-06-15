@@ -1,0 +1,27 @@
+{
+  "name": "tech-verification",
+  "version": "1.0.0",
+  "description": "Multi-version Vite apps with version switcher",
+  "scripts": {
+    "dev:v1": "cd app-v1 && npm run dev -- --port 5173",
+    "dev:v2": "cd app-v2 && npm run dev -- --port 5174",
+    "dev:v3": "cd app-v3 && npm run dev -- --port 5175",
+    "dev:switcher": "cd version-switcher && npm run dev -- --port 5176",
+    "dev:all": "npm-run-all --parallel dev:v1 dev:v2 dev:v3 dev:switcher",
+    "build:v1": "cd app-v1 && npm run build",
+    "build:v2": "cd app-v2 && npm run build",
+    "build:v3": "cd app-v3 && npm run build",
+    "build:switcher": "cd version-switcher && npm run build",
+    "build:all": "npm run build:v1 && npm run build:v2 && npm run build:v3 && npm run build:switcher",
+    "install:all": "npm install && cd app-v1 && npm install && cd ../app-v2 && npm install && cd ../app-v3 && npm install && cd ../version-switcher && npm install"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  },
+  "workspaces": [
+    "app-v1",
+    "app-v2",
+    "app-v3",
+    "version-switcher"
+  ]
+}

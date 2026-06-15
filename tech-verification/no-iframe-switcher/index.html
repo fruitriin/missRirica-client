@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No-iframe Version Switcher</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .app-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .app-button {
+            padding: 10px 20px;
+            border: 2px solid #007bff;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .app-button:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        .app-button.active {
+            background: #007bff;
+            color: white;
+        }
+
+        #app-container {
+            min-height: 400px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .app-unloader {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .app-unloader.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>JavaScript-Only Version Switcher</h1>
+
+    <div class="app-selector">
+        <button class="app-button" data-version="v1">App v1 (Counter)</button>
+        <button class="app-button" data-version="v2">App v2 (Todo List)</button>
+        <button class="app-button" data-version="v3">App v3 (Weather)</button>
+    </div>
+
+    <div id="app-container">
+        <button class="app-unloader" onclick="appManager.unloadCurrentApp()">✕ Close App</button>
+        <div id="app-content">
+            <p>Select an app version to load...</p>
+        </div>
+    </div>
+
+    <script type="module" src="./app-manager.js"></script>
+    <script type="module" src="./advanced-app-manager.js"></script>
+    <script type="module" src="./module-federation-example.js"></script>
+</body>
+</html>
