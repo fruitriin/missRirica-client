@@ -12,7 +12,7 @@ MissRirica は Misskey 用の iOS/Android クライアントです。
 MissRirica 2.0 は2つのリポジトリで構成されます。
 
 ```
-misskey-ririca（仮称・standalone リポジトリ）
+misskey4ririca（standalone リポジトリ）
 ├── ririca/instance-origin-decouple   ← rebase 前提の機能ブランチ群（資産）
 ├── ririca/standalone-frontend
 ├── ririca/token-signin
@@ -23,7 +23,7 @@ misskey-ririca（仮称・standalone リポジトリ）
 
 missRirica-client（このリポジトリ）
 ├── src/            ← 薄い Capacitor シェル（ランチャ・ネイティブブリッジ）
-├── misskey/        ← submodule → misskey-ririca @ ririca-main
+├── misskey/        ← submodule → misskey4ririca @ ririca-main
 └── script/ririca-統合.sh
 ```
 

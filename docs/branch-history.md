@@ -10,7 +10,7 @@
 | `origin/1.6` | 2022-11〜2023-01 | submodule + 差分ディレクトリ `RiricaV13/` + `patchsV13.txt`（12.8万行 diff メモ） | ビルド前の手作業オーバレイコピーが暗黙前提で clone しても動かず、試作止まり |
 | `origin/dev/1.6-3` | 2023-01〜02 | `src/` に本家フルコピー + `createPatch.sh` で `mypatch.patch` 自動生成 | ビルド可能になり **1.5.3 リリースの実体**に。ただし本家追従は毎回大手術（migrate/wip/retry の連打） |
 | `origin/main` | 〜2023-02-20 | dev/1.6-3 と同型 | **リリース版 1.5.3 の最終断面**。`mypatch.patch` は dev/1.6-3・skykid と同一。src の差は MkSignin.vue の fix login 1件のみ |
-| `origin/1.7` | 2023-05（2日間） | 本家を fork（misskey4ririca、現在は削除済み）して submodule 化。本体は semantic-ui 製ランチャ4ファイルのみ | v13.6.1→v13.11.3 を1コミットで追従。**方式として最も筋が良い**。CORS/pnpm/CI の立ち上げトラブルの末に停止 |
+| `origin/1.7` | 2023-05（2日間） | 本家を fork（misskey4ririca、当時のリポジトリは削除済み。2.0 で同名リポジトリを新設して名前を復活）して submodule 化。本体は semantic-ui 製ランチャ4ファイルのみ | v13.6.1→v13.11.3 を1コミットで追従。**方式として最も筋が良い**。CORS/pnpm/CI の立ち上げトラブルの末に停止 |
 | `origin/v2/alpha` | 2023-05 | fork submodule を pnpm workspace で抱え、ラッパーから本家 frontend をランタイム注入 | file:// 環境との整合が取れず "fix?" 連打で停止 |
 | `origin/v2-master` | 2023-07〜10 | Nuxt + misskey-js 直叩きのフルスクラッチ | ログイン+プレースホルダー画面で停止。「Misskey UI 全再実装は一人では割に合わない」の実証 |
 | `origin/something-new` | 〜2023-10 | 旧 1.x 系派生（v2 系ではない） | ビルド調整のみ |
