@@ -1,0 +1,219 @@
+# ============================================================
+# paths.toml — Plan 0037 旧→新パスマップ（単一ソース）
+#
+# migrate-paths.py（check / apply / rewrite）・lint-residual-paths.py・
+# test-migrate-paths.sh の全てがこのマップを参照する。
+# 将来の再配置はこのファイルの更新だけで各ツールが追従する
+# （手書きリスト間ドリフトの構造的排除 — Plan 0022 問題の根治）。
+#
+# エントリ書式:
+#   old      = 旧パス（リポジトリルート相対）
+#   new      = 新パス
+#   optional = true なら「存在しなければスキップ」（ダウンストリームに
+#              存在しないものはスキップして続行する）。false なら旧・新の
+#              両方が存在しないとき ERROR（apply を拒否する）
+#
+# dirs / files / dynamic の区分は人間向けの分類であり、実際の移動方式は
+# 実行時の git 追跡状態で自動判定される（追跡あり = git mv / なし = fs 移動）。
+#
+# 逐次置換の不変条件: どのエントリの new（新パス文字列）も、他のエントリの
+# old（旧キー）を部分文字列として含まないこと。含むと rewrite の逐次置換で
+# 置換済みテキストが再置換される。エントリ追加時はこの不変条件を目視確認する
+# （immovable と old の重複は migrate-paths.py がロード時に機械検査する）。
+# ============================================================
+
+[meta]
+# 新構造のアンカー。lint-residual-paths はこのディレクトリの存在で
+# 「移行済み」を判定する（移行前のリポジトリでは検査せず SKIP）
+new_root = ".claude/addf"
+# apply が git mv の前に作成する backup ref（不可逆操作前のロールバック点）
+backup_ref = "refs/backup/pre-0037-migration"
+
+# ------------------------------------------------------------
+# ディレクトリ（git mv 単位。中身ごと移動する）
+# ダウンストリームの docs/ は ADDF 管理サブディレクトリ
+# （plans/plans-add/knowhow/guides/project-overview）単位でのみ移動し、
+# docs/ 直下のその他ファイル（GitHub Pages コンテンツ等）には触れない
+# —「存在≠所有」原則（Plan 0034 の教訓）
+# ------------------------------------------------------------
+
+[[dirs]]
+old = "docs/plans"
+new = ".claude/addf/plans"
+optional = true
+
+[[dirs]]
+# ADDF 本体のみ存在（ダウンストリームでは SKIP）
+old = "docs/plans-add"
+new = ".claude/addf/plans-add"
+optional = true
+
+[[dirs]]
+# ダウンストリーム独自の knowhow 記事も「knowhow の仕組みの一部」として一緒に移動する
+old = "docs/knowhow"
+new = ".claude/addf/knowhow"
+optional = true
+
+[[dirs]]
+old = "docs/guides"
+new = ".claude/addf/guides"
+optional = true
+
+[[dirs]]
+old = "docs/project-overview"
+new = ".claude/addf/project-overview"
+optional = true
+
+[[dirs]]
+# 本スクリプト群の親ディレクトリ。これが旧・新どちらにも無いなら
+# ADDF プロジェクトではない可能性が高いため apply を拒否する
+old = ".claude/addfTools"
+new = ".claude/addf/addfTools"
+optional = false
+
+[[dirs]]
+old = ".claude/templates"
+new = ".claude/addf/templates"
+optional = true
+
+[[dirs]]
+old = ".claude/tests"
+new = ".claude/addf/tests"
+optional = true
+
+[[dirs]]
+old = ".claude/optional"
+new = ".claude/addf/optional"
+optional = true
+
+[[dirs]]
+old = ".claude/Progresses"
+new = ".claude/addf/Progresses"
+optional = true
+
+# ------------------------------------------------------------
+# ファイル（addf- プレフィックスの簡素化リネームを移動と同時に実施）
+# ------------------------------------------------------------
+
+[[files]]
+old = ".claude/addf-Behavior.toml"
+new = ".claude/addf/Behavior.toml"
+optional = true
+
+[[files]]
+old = ".claude/ADDF-CHANGELOG.md"
+new = ".claude/addf/CHANGELOG.md"
+optional = true
+
+[[files]]
+# addf-migrate の検出起点。旧位置の検出フォールバックは migrate 側に残す（フェーズ3）
+old = ".claude/addf-lock.json"
+new = ".claude/addf/lock.json"
+optional = true
+
+[[files]]
+# `.addf.md` サフィックスは維持する（Release.md に短縮しない）。
+# 理由: `*.addf.md` は addf-init / addf-migrate の配布除外規則
+# （「`*.addf.md` に該当するファイルはコピーしない」・
+# `find . -name '*.addf.md'` による旧配布残留検出）の判定パターンであり、
+# 短縮すると本体専用ファイルが配布対象に紛れ込む（存在≠所有の分離規約が壊れる）
+old = ".claude/ADDF-Release.addf.md"
+new = ".claude/addf/Release.addf.md"
+optional = true
+
+[[files]]
+old = ".claude/Progress.md"
+new = ".claude/addf/Progress.md"
+optional = true
+
+[[files]]
+old = ".claude/Feedback.md"
+new = ".claude/addf/Feedback.md"
+optional = true
+
+[[files]]
+old = ".claude/Questions.md"
+new = ".claude/addf/Questions.md"
+optional = true
+
+[[files]]
+old = ".claude/Questions.example.md"
+new = ".claude/addf/Questions.example.md"
+optional = true
+
+[[files]]
+old = ".claude/Dashboard.example.md"
+new = ".claude/addf/Dashboard.example.md"
+optional = true
+
+# ------------------------------------------------------------
+# 動的生成ファイル（.gitignore 対象の実行時生成物。存在すれば移動する。
+# git 未追跡のためファイルシステム移動になる）
+# ------------------------------------------------------------
+
+[[dynamic]]
+old = ".claude/Dashboard.md"
+new = ".claude/addf/Dashboard.md"
+optional = true
+
+[[dynamic]]
+# Plan の指示ではファイル扱いだが、.gitignore 対象の実行時生成物のため dynamic に分類
+old = ".claude/Worktrees.md"
+new = ".claude/addf/Worktrees.md"
+optional = true
+
+# ------------------------------------------------------------
+# 不動（移動しない）。機械処理はしないが判断の記録として明記する
+# ------------------------------------------------------------
+
+[immovable]
+paths = [
+  # Claude Code が読み込み位置を規定しており動かせない（addf- プレフィックスで分離を継続）
+  ".claude/commands",
+  ".claude/agents",
+  ".claude/hooks",
+  ".claude/skills",
+  ".claude/settings.json",
+  ".claude/settings.local.json",
+  # 実行時の作業領域（git 管理外）
+  ".claude/worktrees",
+  ".claude/logs",
+  # 本体 README 専用のロゴバナー画像。ADDF 由来だがダウンストリーム配布物ではなく、
+  # 移動すると README の画像リンクが切れるだけで益がない（調査事項2: 不動と判断）
+  ".claude/assets",
+  # ルートのエントリポイント（カレント配置の除外指定）
+  "CLAUDE.md",
+  "TODO.md",
+  "AGENTS.md",
+  "CLAUDE.repo.md",
+  "CLAUDE.repo.example.md",
+  "CLAUDE.local.example.md",
+  "README.md",
+]
+
+# ------------------------------------------------------------
+# 自己参照の除外（rewrite が書き換えず、lint-residual-paths が検査から除外する
+# ファイル）。**道具・テストのみ**に限定する — マップ定義・MAP_CANDIDATES・
+# テストの合成フィクスチャとして旧パス文字列が本質的に大量にあり、行単位
+# マーカーでは本文が成立しないため。移行前後の両方の位置を列挙する。
+#
+# ドキュメント（addf-migrate.md / addf-init.md / CHANGELOG.md）はここに
+# 入れない: ファイル丸ごとの除外はそのファイル全体が lint-residual-paths の
+# 永久盲点になる（旧パスのドリフトを注入しても OK が返る — Plan 0037
+# フェーズ3 attacker 指摘で実証）。ドキュメントの正当な旧パス言及行
+# （移行手順・移行ガイド・対応表）には行内マーカー `residual-path: allow` を
+# 付ける（コメント形式は問わない — 行内一致。migrate-paths.py /
+# lint-residual-paths.py の EXCLUSION_MARKER 参照）
+# ------------------------------------------------------------
+
+[rewrite_exclusions]
+files = [
+  ".claude/addfTools/paths.toml",
+  ".claude/addf/addfTools/paths.toml",
+  ".claude/addfTools/migrate-paths.py",
+  ".claude/addf/addfTools/migrate-paths.py",
+  ".claude/addfTools/lint-residual-paths.py",
+  ".claude/addf/addfTools/lint-residual-paths.py",
+  ".claude/tests/tools/test-migrate-paths.sh",
+  ".claude/addf/tests/tools/test-migrate-paths.sh",
+]

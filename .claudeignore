@@ -1,0 +1,7 @@
+node_modules
+
+# コンパイル済みバイナリ（Claude の読解対象外）
+.claude/addf/addfTools/window-info
+.claude/addf/addfTools/capture-window
+.claude/addf/addfTools/annotate-grid
+.claude/addf/addfTools/clip-image

@@ -1,0 +1,146 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/reset-turn-count.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-compact-recovery.sh"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pre-compact-archive.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/turn-reminder.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/skill-usage-log.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/destructive-git-guard.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "Agent",
+      "Skill",
+      "LSP",
+      "TaskCreate",
+      "TaskGet",
+      "TaskList",
+      "TaskOutput",
+      "TaskStop",
+      "TaskUpdate",
+      "TeamCreate",
+      "TeamDelete",
+      "SendMessage",
+      "ToolSearch",
+      "Bash(* --help)",
+      "Bash(* --help *)",
+      "Bash(* --version)",
+      "Bash(cp *)",
+      "Bash(mkdir *)",
+      "Bash(ls *)",
+      "Bash(tail *)",
+      "Bash(cd *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git rm *)",
+      "Bash(git ls-files *)",
+      "Bash(git branch *)",
+      "Bash(git worktree *)",
+      "Bash(git checkout *)",
+      "Bash(git show *)",
+      "Bash(git merge *)",
+      "Bash(git stash *)",
+      "Bash(git clone *)",
+      "Bash(git -C *)",
+      "Bash(mktemp *)",
+      "Bash(which *)",
+      "Bash(gh repo view *)",
+      "Bash(gh repo list *)",
+      "Bash(gh repo clone *)",
+      "Bash(gh issue list *)",
+      "Bash(gh issue view *)",
+      "Bash(gh issue status *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr status *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr checkout *)",
+      "Bash(bash .claude/addf/tests/run-all.sh *)",
+      "Bash(uv run --python 3.11 .claude/addf/addfTools/lint *)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean *)",
+      "Bash(git branch -D *)",
+      "Bash(git checkout -- *)",
+      "Bash(git restore .)",
+      "Bash(git restore -- *)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf $HOME)",
+      "Bash(rm -rf $HOME/*)",
+      "Bash(chmod 777 /)",
+      "Bash(chmod -R 777 /*)",
+      "Bash(dd if=* of=/dev/*)",
+      "Bash(mkfs.*)",
+      "Bash(shutdown *)",
+      "Bash(reboot *)"
+    ]
+  }
+}

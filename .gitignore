@@ -4,3 +4,27 @@ dist/
 *.local
 .env.local
 .idea/
+
+# --- ADDF Framework (do not remove) ---
+.claude/commands/*.exp.md
+.claude/.turn-count
+.claude/.context-reminder-state
+.claude/logs/
+CLAUDE.local.md
+.claude/addf/Dashboard.md
+.claude/addf/Worktrees.md
+# オプショナルスキルの有効化コピー（原本は .claude/addf/optional/。sync-optional-skills.py が配置）
+.claude/commands/addf-gui-test.md
+.claude/commands/addf-annotate-grid.md
+.claude/commands/addf-clip-image.md
+.claude/agents/addf-ui-test-agent.md
+# ccchain（EnumaElish）— Plan 0040 フェーズ2・オプトイン（[ccchain] enable = true で
+# sync-ccchain.py が配置）。バイナリはコミットしない（go install で各自取得。
+# Plan 0031 の配布バイナリ検証問題を回避）。.ccchain.conf は初回配置後プロジェクトが
+# 自由にチューニングする前提のためコミット対象、.ccchain.local.conf は個人上書きのため対象外
+/ccchain
+.ccchain.local.conf
+# ローカルダッシュボード（Plan 0058）— ディレクトリ全体が generate-dashboard.py の
+# 生成物（単一ソースはリポジトリ側の TODO・Plan・Questions・Progress）
+.claude/addf/dashboard/
+# --- /ADDF Framework ---

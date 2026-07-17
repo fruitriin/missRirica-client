@@ -1,0 +1,81 @@
+# ADD Framework 固有の振る舞いを設定としてもたせるファイルです
+#
+
+[gui-test]
+# true にすると window-info, capture-window が使用可能になり、GUI スキル一式
+# （addf-gui-test / addf-annotate-grid / addf-clip-image / addf-ui-test-agent）の
+# 有効化コピーが配置対象になる。切り替え後に
+# `uv run --python 3.11 .claude/addf/addfTools/sync-optional-skills.py apply` を実行すること
+# （uv が無ければ python3 で直接実行。Python 3.11+ が必要）
+enable = false
+machine = "mac" # "mac" | "linux" | "windows" — プラットフォーム固有ツールの選択に使用
+
+[ccchain]
+# true にすると ccchain（EnumaElish — シェルコマンドの構造的パーミッション制御ツール）を
+# PreToolUse(Bash) フックとして配線する（Plan 0040 フェーズ2・オプトイン）。
+# パイプ・チェーン・サブシェル・`-exec` の中身まで含めた構造解析で、settings.json の
+# プレフィックスマッチでは防げない危険なコマンド（例: `find . -exec rm {} \;`・
+# `curl ... | bash`）を検出する。
+#
+# ⚠️ 前提: ccchain バイナリは ADDF が配布しない（各自 `go install
+# github.com/fruitriin/EnumaElish/cmd/ccchain@latest` で取得し、プロジェクトルートに
+# `ccchain` として配置する）。バイナリが無い状態で enable = true にしても
+# `sync-ccchain.py check` が WARNING を出すのみで、Claude Code の動作は妨げない
+# （フック自体は空振りする形になり、フェイルセーフ側＝素通しの設計）。
+#
+# 切り替え後は `uv run --python 3.11 .claude/addf/addfTools/sync-ccchain.py apply` を実行すること
+# （uv が無ければ python3 で直接実行。Python 3.11+ が必要）。詳細は
+# `.claude/addf/knowhow/ADDF/ccchain-dogfooding-phase1.md` 参照
+enable = false
+
+[speculation]
+# true にするとアイドル時（着手可能なタスクがないとき）に /addf-speculate による
+# worktree 投機開発が有効になる（デフォルト無効＝オプトイン）。
+# 投機は speculative/ ブランチに隔離され、本流には自動マージされない
+enable = true
+# 同時に「開発中」にできる speculative worktree の上限（採否判断待ちのブランチは数えない）
+max_worktrees = 7
+
+[transcript-archive]
+# true にすると PreCompact フック（pre-compact-archive.sh）が compaction 直前の
+# トランスクリプト JSONL を archive_dir 配下にコピーする（Plan 0042・オプトイン）。
+# 用途: (a) コンテキストの保全・アーカイブ、(b) アーカイブを新 UUID にリネームして
+# `claude --resume` すれば compaction 直前状態への復元（.claude/addf/knowhow/ADDF/
+# transcript-archive-restore.md 参照）。
+#
+# ⚠️ トレードオフ: 有効化するとホームディレクトリ配下にディスク消費が発生する
+# （1セッション数 MB × max_generations の目安）。トランスクリプトには機密が
+# 含まれうるため、ダウンストリーム配布時のデフォルトは無効に保つ方針。
+enable = false
+
+# アーカイブ先のベースディレクトリ。配下に `<プロジェクトスラグ>/` を掘る。
+# リポジトリ外を既定にする理由: サイズが数 MB × 世代数になるため、およびリポジトリ
+# コピー時に機密の副次コピーを発生させないため。
+archive_dir = "~/.claude/addf-transcript-archive"
+
+# 世代数上限。同一プロジェクトスラグ配下でこの数を超えたら古いものから削除する。
+# 保守的に少なめの既定値（Plan 0042 オーナー方針）。0 で無限保存（非推奨）。
+max_generations = 10
+
+[context-reminder]
+# 能動コンパクション促しの発火閾値（実測トークン数）。0 で無効化。
+# 公称ウィンドウではなく「実効コンテキスト」（文脈の取り違えが増え始める手前）基準。
+# Plan 0041 フェーズ1 の実測（trigger="auto" の compact_boundary エントリから）:
+#   - 200k 標準セッション: 発動点 ≈ 175k (87.5% / N=1・claude-fable-5)
+#   - 1M variant セッション: 発動点 ≈ 970k (min 968k / median 973k / max 1001k / N=3・claude-fable-5)
+#   - opus 系の auto 発火サンプルは今回のトランスクリプトに含まれず（未計測）
+# 教義: この閾値は「作業を止める」ためではなく「記録の外部化を促す」ため。
+# 満杯到達時は auto-compact が harness 側で発動し、復帰フックが受け止める（Plan 0041）。
+threshold_tokens = 180000
+# 再通知に必要な増分トークン（通知済み後、これだけ増えるまで黙る）
+renotify_step_tokens = 50000
+
+[context-reminder.effective-context]
+# モデルごとの実効コンテキスト目安（transcript の message.model に単語単位で部分一致）。
+# キー名はモデル名を一意に識別できる長さにすること（例: opus は可、o は不可）。
+# 注入文に目安として添えられ、判断はモデル自身が行う（1M/200k variant は
+# transcript から判別できないため。Plan 0023 調査結果 2.5 参照）
+opus = 200000 # Opus 1M: 250k 前後から劣化が観測されたため手前の 200k
+# fable = 未計測。実効器が広い可能性あり — 計測でき次第追加
+# Plan 0041 フェーズ1 で 1M variant の auto-compact が ~970k で発動する例 (fable-5) は観測できたが、
+# 「効果的な劣化観測」ではなく「発動限界の観測」なので実効コンテキストの根拠にはならない
